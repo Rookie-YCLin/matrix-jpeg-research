@@ -1,10 +1,25 @@
-# 專案工作規範
+# AGENTS.md｜研究室常駐規則（Codex 必讀）
 
-- 開工先讀 PROJECT_SPEC.md 與 PROGRESS.md，核對程式、測試與實際輸出。
-- M3 已完成研究驗收並經 PR #3 合併。M4 在獨立分支交付正式報告、答辯稿及最終核對紀錄。CI 通過後等待 PR 外部研究審查，取得使用者批准前，禁止合併至 main。
-- 使用 Python 3.13 隔離環境和鎖定依賴。原圖及解碼矩陣以 float64 分析，展示用影像另行量化。
-- 圖表必須源自實際計算輸出的 CSV。保留輸入來源、雜湊、版本、命令及驗證證據。
-- 測試失敗須記錄、診斷、修正及重跑。保留原驗收標準。每個里程碑更新 PROGRESS.md。
-- PR 開啟、重新開啟或分支更新時觸發 Research CI。在 PR 的 Checks 查看 Python、套件與 JPEG 函式庫版本，以及 `python -m pytest -v` 的逐項結果。依賴安裝失敗會在安裝步驟標為失敗，pytest 結果另列於執行摘要。
-- CI 在暫存目錄重跑 SVD 與 JPEG，並核對 M2 已提交的 CSV、圖表輸入及必要檔案。存檔數據依當次保存的解碼 PNG 核對，runner 重跑依其實際 JPEG 解碼像素核對。
-- 失敗時保留 Checks 日誌，在原 PR 分支修正後重跑相同命令並推送。使用 PR 範本提供繁中驗收摘要，包含變更、結果、測試、資料位置、限制與待審查事項。
+本倉庫是**矩陣理論／影像處理研究室**，不是任意生成 PDF 或嘗試演算法的練習場。研究者決定題目與結論；Codex 實作可重現實驗；ChatGPT 進行獨立數學／數據／論述審查。
+
+## 開始前，先確認是哪一條研究線
+1. **正式且已驗證基線**：`PROJECT_SPEC.md`、`PROGRESS.md`、`experiment.py`、`svd.py`、`tests/`、`outputs/run-m2/`。這是**JPEG 對全影像 SVD 結構的影響**，並未做浮水印嵌入。
+2. **繳交備案**：[PR #7](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7) 是 JPEG／SVD 的 11 頁 PDF，未合併、封面仍待填；不得偷偷改題或稱為浮水印成果。
+3. **提議中的新方向**：[Issue #8](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8) 與 [Draft PR #9](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/9)。詳見 `docs/ONE_WEEK_RESEARCH_CHARTER.md`、`docs/CODEX_NEXT_SESSION.md`；**目前仍待研究者 G0 決策，不能自動改寫 `PROJECT_SPEC.md`。**
+
+## 每次任務的執行約定
+- 先讀對應 Issue 的**唯一目標、可修改範圍、不可修改項目、驗收條件、停損條件**。研究邊界不清楚，就先在 PR/Issue 報告分歧，**不要擅自啟動另一條演算法研究**。
+- 一個分支／PR 只解決一個可驗收問題。先保留上游 baseline，再修改單一主要變因；不可直接推送 `main`，不得擅自合併 PR、覆寫已驗證數據或刪除重要研究資料。
+- 不要將歷史 PDF、未驗證 BER、想像中的實驗、只有 pytest 通過的程式宣稱為已證實的研究結論；保留失敗案例及結果限制。
+- 提交圖表前檢查 CSV 原始引值、比較對象、誤差定義及圖文可讀性；文字採**問題→為何需要工具→實驗回答→限制**的自然論證，而非規格摘要。
+- 回報請用**完成／未完成／驗證證據／阻礙／下一步**，附 commit SHA、PR、命令、CSV 路徑與 CI。
+- 新增檔案前先分類為原始資料、程式、必要結果、報告或短期中介。臨時圖／重複 PDF 不應持續堆積。重要檔案的清理需先提案，禁止擅自刪除。
+
+## 原有 JPEG/SVD 重現指令
+```sh
+python -m pytest -v
+python -m experiment --input data/ascent.png --output-dir outputs/run-check --qualities 40 60 80 95
+```
+使用 `requirements.txt` 的鎖定套件；程式以 Python 3.13 和 float64 計算，8-bit 僅用於可視化影像。CI 於 PR 上執行測試；**CI 成功是技術基礎，不是研究主張通過驗收**。
+
+新浮水印工作尚未建立實驗腳本與測試；不能把上述舊命令誤當水印驗證。
