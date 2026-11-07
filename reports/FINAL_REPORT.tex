@@ -50,6 +50,7 @@
 \renewcommand{\figurename}{圖}
 \renewcommand{\tablename}{表}
 \makeatletter
+\newcommand{\settablecaption}{\def\@captype{table}}
 \newcommand{\reportfigure}[3]{\par\medskip\noindent\begin{minipage}{\linewidth}
 \centering\includegraphics[width=\linewidth]{#1}
 \def\@captype{figure}\caption{#2}\label{#3}
@@ -57,7 +58,7 @@
 \makeatother
 
 
-\section{同一張解碼圖，兩種排序}
+\section{同一組 JPEG 解碼圖，兩種比較基準}
 
 先看欄杆和後方的灰牆。圖 \ref{fig:main}(a) 的上排輪廓相似，下排差值沿邊緣可見，但這個窗口不能替整張圖評分。以 $A$ 表示原圖、$B_Q$ 表示品質因子 $Q$ 的解碼圖。圖中的兩條曲線各問一件事：$B_Q$ 離 $A$ 多遠，以及只保留 100 個成分後，重建離 $B_Q$ 自己多遠。
 
@@ -79,20 +80,22 @@ $Q=40$ 的 PSNR 為 32.44 dB，低於 $Q=95$ 的 46.03 dB。可是兩張解碼�
 \end{equation}
 兩列亮度不同，左右的比例始終是 $1:3$。若斜欄杆在下一列往右移，光把整列乘上一個常數無法移動亮點。疊加其他形狀的外積，才能在不同位置增減亮度。
 
-奇異值分解（SVD）讓我們把這種疊加用在整張影像。令 $X$ 是正在分析的像素矩陣。原圖記為 $A$。第 $i$ 個外積由直向向量 $u_i$ 和橫向向量 $v_i$ 組成，權重 $\sigma_i$ 為奇異值，按非遞增順序排列。$p$ 是矩陣的列數與欄數中較小者。原圖的加總截到第 $k$ 項，就是圖 \ref{fig:rank-crops} 的重建操作：
+奇異值分解（SVD）讓我們把這種疊加用在整張影像。令 $X$ 是正在分析的像素矩陣。原圖記為 $A$。第 $i$ 個外積由直向向量 $u_i$ 和橫向向量 $v_i$ 組成，權重 $\sigma_i$ 為奇異值，按非遞增順序排列。$p$ 是列數與欄數中較小者。將第 $i$ 個秩一方向記為 $D_i:=u_i v_i^{\mathsf T}$。原圖的加總截到第 $k$ 項，就是圖 \ref{fig:rank-crops} 的重建操作：
 \begin{align}
- X &= \sum_{i=1}^{p}\sigma_i u_i v_i^{\mathsf T}, \label{eq:svd}\\
- X_k &= \sum_{i=1}^{k}\sigma_i u_i v_i^{\mathsf T}.
+ X &= \sum_{i=1}^{p}\sigma_i D_i, \label{eq:svd}\\
+ X_k &= \sum_{i=1}^{k}\sigma_i D_i.
 \end{align}
-欄杆的外觀指出差在哪裡。要比較整張圖少了多少，則要把這些局部差異加總。
+左右奇異向量各自正交歸一，因此 $\langle D_i,D_j\rangle_F=\delta_{ij}$。$\delta_{ij}$ 在 $i=j$ 時為一，否則為零，故 $\lVert D_i\rVert_F=1$。欄杆的外觀指出差在哪裡，整張圖的差異則可由這些互相正交的方向加總。
 
+\begin{samepage}
 \section{兩個誤差，各自和誰比較？}
 
-把原圖換成品質因子 $Q$ 的解碼圖 $B_Q$，前一頁的截斷操作仍然成立。把影像減去它自己的截斷重建，差圖只剩沒保留的成分。左右奇異向量各自正交歸一，因此外積方向也在 Frobenius 內積下正交，且長度為一。以 Frobenius 範數將差圖的像素平方加總時，交叉項為零，所以對任一影像 $X$，
+把影像 $X$ 減去它自己的截斷重建，差圖只剩沒保留的成分。由於這些秩一方向彼此正交且長度為一，計算差圖的 Frobenius 範數平方時，交叉項為零：
 \begin{equation}
  \lVert X-X_k\rVert_F^2=\sum_{i>k}\sigma_i^2 . \label{eq:tail}
 \end{equation}
-在秩不超過 $k$ 的候選中，截斷 SVD 的 Frobenius 誤差最小。附錄給出完整證明 [1]。兩張圖的總平方能量可以不同，因此圖 \ref{fig:main}(c)對各非零矩陣另除以自身總平方能量：
+\end{samepage}
+在秩不超過 $k$ 的候選中，截斷 SVD 的 Frobenius 誤差最小。附錄給出完整證明 [1]。兩張圖的總平方能量可以不同，因此圖 \ref{fig:main}(c) 對各非零矩陣另除以自身總平方能量：
 \begin{equation}
  R_k(X)=\frac{\lVert X-X_k\rVert_F^2}{\lVert X\rVert_F^2}
        =\frac{\sum_{i>k}\sigma_i^2}{\sum_i\sigma_i^2}. \label{eq:relative}
@@ -109,9 +112,14 @@ PSNR 的計算不做截斷。令 $A$ 為原圖，$m,n$ 為影像的列數和欄�
 均方差為零時，PSNR 為無限大。Q=40 的 32.44 dB 低於 Q=95 的 46.03 dB，表示前者偏離原圖較多。兩項結果可以同時成立：解碼圖離原圖更遠，仍可能更容易描述它自己。較低的自身誤差無法證明它留下更多原圖細節。這項觀察限於同一張圖和四組編碼設定。
 
 \section{編碼改變像素，SVD 用來分析變化}
-JPEG 編碼與全影像 SVD 都涉及變換，卻使用不同的基底及範圍。JPEG 的 DCT 模式在局部 $8\times8$ 區塊使用固定的餘弦基底，量化步長讓部分係數在除法取整後改變。解碼再以反量化與反轉換回到像素 [2]。SVD 則依整幅影像求出自己的奇異向量。我們用 SVD 看 JPEG 解碼後的全域結構。區塊的高頻位置與全域奇異值的尾端索引沒有一一對應關係。
+JPEG 在局部 $8\times8$ 區塊使用固定的餘弦基底。量化會改變部分係數，解碼再以反量化與反轉換回到像素 [2]。
 
-\begin{table}[!htb]
+\begin{samepage}
+全影像 SVD 則依解碼像素求出奇異向量。區塊的高頻位置與全域奇異值的尾端索引沒有一一對應關係。
+\end{samepage}
+
+\par\medskip\noindent\begin{minipage}{\linewidth}
+\settablecaption
 \centering
 \caption{本研究中 JPEG 與 SVD 的工作分工}
 \begin{tabular}{@{}p{.20\linewidth}p{.36\linewidth}p{.36\linewidth}@{}}
@@ -123,16 +131,18 @@ JPEG 編碼與全影像 SVD 都涉及變換，卻使用不同的基底及範圍�
 實驗角色 & 編碼、實際解碼與量測檔案大小 & 分析奇異值、低秩近似與方向係數\\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{minipage}\par\medskip
 
 原圖是 SciPy 的 8 位元灰階 \texttt{ascent} [5]。每次從同一份原圖像素獨立編碼，品質因子 $Q$ 取 40、60、80、95，並關閉 progressive 與 optimize [4]。將實際 JPEG 檔重新開啟後，記解碼矩陣為 $B_Q$。此處的 $Q$ 是編碼器設定，儲存成本以檔案的實測位元組數表示。原圖及各解碼矩陣均以 float64 分析，保留秩取 1、5、10、20、50、100。
 
-圖 \ref{fig:flow} 說明哪些量共用原圖，哪些量由每張解碼圖各自取得。像素品質需要把 $B_Q$ 與 $A$ 配對。自身低秩誤差只分解 $B_Q$。固定方向投影則先在 $A$ 上選定方向，再把同一組方向用於每個 $B_Q$。因此比較表中同一列可以同時報告檔案大小、像素失真與自身誤差，各欄保留各自的比較基準。
+\begin{samepage}
+圖 \ref{fig:flow} 的三條路徑共用同一組解碼結果。像素品質比較 $B_Q$ 與 $A$，自身誤差只分解 $B_Q$，方向投影則沿用 $A$ 的基底。表中的三類量測因而可以並列，各有自己的比較基準。
+\end{samepage}
 \reportfigure{reports/figures/workflow.pdf}{研究資料流。上方原圖分成參照 SVD 與獨立 JPEG 編解碼兩條路徑。下方依研究問題選擇對應的矩陣與方向。}{fig:flow}
 
 \section{壓縮代價和低秩結構在哪裡分開？}
 
-在開場的比較裡，$Q$ 只表示編碼器的品質設定。若關心儲存成本，需要讀取實際檔案的位元組數。圖 \ref{fig:size} 將位元組數放在橫軸，四個標記是四個獨立編碼結果。表 \ref{tab:results} 給出精確值。就這張圖而言，提高 $Q$ 時，檔案變大且 PSNR 上升。較細量化可能減少解碼的像素誤差，但四個實測點不足以預測其他影像的檔案大小或畫質。
+在開場的比較裡，$Q$ 只表示編碼器的品質設定。若關心儲存成本，需要讀取實際檔案的位元組數。圖 \ref{fig:size} 將位元組數放在橫軸，四個標記是四個獨立編碼結果。表 \ref{tab:results} 給出精確值。就這張圖而言，提高 $Q$ 時，檔案變大且 PSNR 上升。較細量化可能減少解碼的像素誤差，但四個實測點不足以預測其他影像的檔案大小或畫質。這項比較說明像素保真度的儲存代價。若改問一張解碼圖需要多少秩一項才能近似，就得改變保留秩，而非只比較編碼檔案。
 
 \reportfigure{reports/figures/size_fidelity.pdf}{儲存代價與像素保真度。橫軸為實際檔案大小，1 kB 為 1000 位元組。每個點都是一次實際 JPEG 編解碼。}{fig:size}
 
@@ -153,25 +163,32 @@ $Q$ & 檔案（bytes） & MSE & PSNR（dB） & $R_{100}(B_Q)$\\
 \end{table}
 
 \subsection{近似差異出現在多少個成分之後？}
-若只比較 $k=100$，容易忽略五張圖其實有相近的整體下降形狀。圖 \ref{fig:rank} 上方呈現完整的取樣秩，依式 \eqref{eq:tail}，固定矩陣的誤差隨保留項增加而下降。下方只看 $k=50,100$，將解碼圖自身的誤差百分比減去原圖在同一個 $k$ 的誤差百分比。零線代表兩者一樣易於近似，負值代表解碼圖的自身誤差較低。每張圖仍使用各自的總能量作分母，差值接近零無法證明解碼像素也接近原圖。
+若只比較 $k=100$，容易忽略五張圖其實有相近的整體下降形狀。圖 \ref{fig:rank} 上方呈現完整的取樣秩，依式 \eqref{eq:tail}，固定矩陣的誤差隨保留項增加而下降。下方只看 $k=50,100$，將解碼圖自身的誤差百分比減去原圖在同一個 $k$ 的誤差百分比。零線代表兩者一樣易於近似，負值代表解碼圖的自身誤差較低。每張圖仍使用各自的總能量作分母，差值接近零無法證明解碼像素也接近原圖。圖中的線段只連接已計算的秩，下圖僅有 $k=50,100$ 兩點，未量測其間的變化。
 \reportfigure{reports/figures/rank_error.pdf}{上圖以雙對數尺度呈現自身低秩誤差。下圖以百分點（pp）標示 $100[R_k(B_Q)-R_k(A)]$。線段只連接已計算的秩。}{fig:rank}
 
-要理解 $R_{100}$ 為何不同，可以回到奇異值分布。圖 \ref{fig:spectrum} 的前段大致重合，尾段的差別較明顯。以索引 400 為例，原圖奇異值為 27.10575，$Q=40$ 為 6.09311，$Q=95$ 為 28.75731。同一索引可以變大也可以變小。把前 100 項平方加總再除以各自總能量，原圖為 99.48323\%，$Q=40$ 為 99.53478\%，與自身相對平方誤差互補。較粗的 JPEG 量化可能減弱部分局部細節，讓能量更集中，但這些資料尚無法將特定區塊頻率的改變歸因到某個全域奇異值。
-\reportfigure{reports/figures/spectrum.pdf}{各影像自身的奇異值分布。縱軸使用對稱對數尺度，直線標出文中比較的第 400 項。各線的奇異向量由各影像獨立求得。}{fig:spectrum}
+要理解 $R_{100}$ 為何不同，可以回到奇異值分布。圖 \ref{fig:spectrum} 的前段大致重合，尾段的差別較明顯。第 400 項只是尾段的讀圖示例。此處原圖奇異值為 27.10575，$Q=40$ 為 6.09311，$Q=95$ 為 28.75731。同一索引可以變大也可以變小。把前 100 項平方加總再除以各自總能量，原圖為 99.48323\%，$Q=40$ 為 99.53478\%，與自身相對平方誤差互補。較粗的 JPEG 量化可能減弱部分局部細節，讓能量更集中，但這些資料尚無法將特定區塊頻率的改變歸因到某個全域奇異值。
+\reportfigure{reports/figures/spectrum.pdf}{各影像自身的奇異值分布。縱軸在 0 至 2 間採線性刻度，以保留零點附近的差異，大於 2 的範圍採對數刻度，以容納前段的大奇異值。直線標出第 400 項作為尾段示例。各線的奇異向量由各影像獨立求得。}{fig:spectrum}
 
 同一索引的奇異值可以拿來比較譜形，卻無法指出原圖哪一條方向的係數改了。因為各張影像各自選基底，這個問題需要固定參照。
 
+\begingroup
+\raggedright
+\setlength{\parindent}{2em}
 \section{固定原圖方向後，係數如何改變？}
-把 $B_Q$ 重新分解，可以得到它最適合自己的方向。若想知道「原圖的同一個成分，在解碼後變強或變弱多少」，換用解碼圖的方向就失去了共同參照。我們改用式 \eqref{eq:svd} 的 $D_i$ 作固定方向。它的 Frobenius 長度為一，因而可以用 Frobenius 內積讀取 $B_Q$ 在該方向的有號分量。令 $c_i(Q)$ 為此分量，$\Delta_i(Q)$ 為它相對原圖權重的變化：
+把 $B_Q$ 重新分解，可以得到它最適合自己的方向。若想知道「原圖的同一個成分，在解碼後變強或變弱多少」，換用解碼圖的方向就失去了共同參照。將式 \eqref{eq:svd} 用於原圖 $A$。此處的 $u_i,v_i,\sigma_i$ 均取自 $A$ 的 SVD，固定方向寫作 $D_i^{(A)}:=u_i v_i^{\mathsf T}$。它的 Frobenius 長度為一，可用內積讀取 $B_Q$ 在該方向的有號分量。令 $c_i(Q)$ 為此分量，$\Delta_i(Q)$ 為它相對原圖權重的變化：
 \begin{align}
-c_i(Q) &= \langle B_Q,D_i\rangle_F
+c_i(Q) &= \langle B_Q,D_i^{(A)}\rangle_F
         = u_i^{\mathsf T} B_Q v_i, \label{eq:projection}\\
 \Delta_i(Q) &= c_i(Q)-\sigma_i
-        =\langle B_Q-A,D_i\rangle_F. \label{eq:delta}
+        =\langle B_Q-A,D_i^{(A)}\rangle_F. \label{eq:delta}
 \end{align}
-式 \eqref{eq:projection} 的第二個等號來自逐元素乘積求和。先沿 $v_i$ 把每列加權，再沿 $u_i$ 合併。若 $B_Q=A$，各個 $D_i$ 的正交性使 $c_i=\sigma_i$。變成其他矩陣後，內積可以是負值，表示沿該固定方向的分量符號相反。$B_Q$ 自身的奇異值皆非負，而且重新排序。若原圖有重複奇異值，對應子空間可改選基底，個別係數會依方向而異。這組投影只取原圖基底中配對的 $i,i$ 項，沒有包含所有跨方向項。
+式 \eqref{eq:projection} 的第二個等號來自逐元素乘積求和。先沿 $v_i$ 把每列加權，再沿 $u_i$ 合併。若 $B_Q=A$，各個 $D_i^{(A)}$ 的正交性使 $c_i=\sigma_i$。變成其他矩陣後，內積可以是負值，表示沿該固定方向的分量符號相反。$B_Q$ 自身的奇異值皆非負，而且重新排序。若原圖有重複奇異值，對應子空間可改選基底，個別係數會依方向而異。這組投影只取原圖基底中配對的 $i,i$ 項，沒有包含所有跨方向項。
 
-圖 \ref{fig:proj} 上方先看差值分布。第 200 項在 $Q=40$ 為 $-75.10047$，在 $Q=95$ 為 $-1.43469$，說明同一方向可以隨設定有不同幅度的變化。下方改看第 512 項的係數本身。原圖在此方向的奇異值為 0.15024，$Q=95$ 的係數為 $-1.35063$。這個負號是式 \eqref{eq:projection} 的方向資訊，無法由解碼圖自身的奇異值正負看出。個別方向的變化也不足以代替整體像素誤差或資訊保留率。
+圖 \ref{fig:proj} 上方畫的是係數差。以第 200 項為例，$Q=40$ 為 $-75.10047$，$Q=95$ 為 $-1.43469$。同一原圖方向在兩個設定下的變化幅度不同。
+
+\begin{samepage}
+下方改看第 512 項的係數本身。原圖在此方向的奇異值為 0.15024，$Q=95$ 的係數為 $-1.35063$。式 \eqref{eq:projection} 的負號顯示分量方向，解碼圖自身的非負奇異值不提供這項資訊。個別方向的變化也不足以代替整體像素誤差。
+\end{samepage}
 \reportfigure{reports/figures/projection.pdf}{固定原圖方向的變化。上圖為各索引的有號差值，直線標出第 200 項。下圖為第 512 項的有號係數，水平線標示零。}{fig:proj}
 
 \section{結論與限制}
@@ -180,9 +197,13 @@ c_i(Q) &= \langle B_Q,D_i\rangle_F
 
 如果要追問原圖某一方向受到什麼影響，固定基底的有號投影能提供額外線索。它可以指出一個方向的係數變小或反號，卻不能把該方向等同於某段欄杆或特定 DCT 頻率。整體失真、低秩可近似性與方向係數，都應在各自定義下解讀。
 
-本研究只使用一張灰階影像與指定 JPEG 編碼設定。PSNR 衡量像素差異，自身平方能量描述可近似性，均無法直接推估感知畫質或語意保留。未來可用不同紋理的影像檢驗現象是否重現。若要延伸至浮水印，需另設嵌入、取回及未壓縮對照，再量測壓縮後的位元錯誤率。本研究未執行這類實驗。
+本研究只使用一張灰階影像與指定 JPEG 設定，結果無法直接推估感知畫質或語意保留。不同紋理的影像是否有相同現象，仍待驗證。浮水印也須另做嵌入、取回與未壓縮對照，才能評估壓縮後的位元錯誤率。
 
+\endgroup
 \appendix
+\renewcommand{\normalsize}{\fontsize{12bp}{16.5bp}\selectfont}
+\normalsize
+\setlength{\parskip}{2bp}
 \section{截斷 SVD 最佳性的證明}
 式 \eqref{eq:tail} 先告訴我們截斷的誤差是多少。要得到最佳性，還必須和所有同樣受秩限制的候選比較。以下以任一實矩陣 $X$ 說明，令它的奇異值為 $s_i$、左奇異向量為 $a_i$。任取秩至多 $k$ 的候選 $Y$，用 $P$ 表示投影到 $Y$ 欄空間的正交投影。因為 $PY=Y$，誤差可拆成兩個正交部分：
 \begin{align}
@@ -236,14 +257,12 @@ Get-FileHash data/ascent.png -Algorithm SHA256
 
 JPEG 函式庫可能影響解碼像素，BLAS 可能影響浮點末位。用當次解碼結果驗證 MSE、頻譜與投影，並核對環境版本和輸入雜湊。報告圖表由封存資料產生。
 
-\begin{samepage}
 \section*{參考文獻}
-\begin{enumerate}
-\item Eckart, C., \& Young, G. (1936). The approximation of one matrix by another of lower rank. \textit{Psychometrika}, 1(3), 211--218. \url{https://doi.org/10.1007/BF02288367}
-\item ITU-T. (1992). \textit{Recommendation T.81: Information technology -- Digital compression and coding of continuous-tone still images -- Requirements and guidelines}. \url{https://www.itu.int/rec/T-REC-T.81/en}
-\item NumPy Developers. \textit{numpy.linalg.svd}. \url{https://numpy.org/doc/stable/reference/generated/numpy.linalg.svd.html}
-\item Pillow Contributors. \textit{Image file formats: JPEG}. \url{https://pillow.readthedocs.io/en/stable/handbook/image-file-formats.html#jpeg}
-\item SciPy Developers. \textit{scipy.datasets.ascent}. \url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.datasets.ascent.html}
+\begin{enumerate}\setlength{\itemsep}{2bp}
+\item Eckart, C., \& Young, G. (1936). The approximation of one matrix by another of lower rank. \textit{Psychometrika}, 1(3), 211--218. \href{https://doi.org/10.1007/BF02288367}{DOI 10.1007/BF02288367}
+\item ITU-T. (1992). \textit{Recommendation T.81: Information technology -- Digital compression and coding of continuous-tone still images -- Requirements and guidelines}. \href{https://www.itu.int/rec/T-REC-T.81/en}{官方連結}
+\item NumPy Developers. \textit{numpy.linalg.svd}. \href{https://numpy.org/doc/stable/reference/generated/numpy.linalg.svd.html}{官方連結}
+\item Pillow Contributors. \textit{Image file formats: JPEG}. \href{https://pillow.readthedocs.io/en/stable/handbook/image-file-formats.html#jpeg}{官方連結}
+\item SciPy Developers. \textit{scipy.datasets.ascent}. \href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.datasets.ascent.html}{官方連結}
 \end{enumerate}
-\end{samepage}
 \end{document}

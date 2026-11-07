@@ -1,13 +1,13 @@
 name                                 type              encoding         emb sub uni object ID
 ------------------------------------ ----------------- ---------------- --- --- --- ---------
-HGPLFI+DFKaiShu-SB-Estd-BF           CID TrueType      Identity-H       yes yes yes      4  0
-MYFCME+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes      6  0
-WAMPOF+TimesNewRomanPS-BoldMT        CID TrueType      Identity-H       yes yes yes     12  0
-VGNVVX+CMMI12                        Type 1C           Builtin          yes yes yes     15  0
-ZVISWV+CMMI8                         Type 1C           Builtin          yes yes yes     16  0
-JZBXUD+CMSY10                        Type 1C           Builtin          yes yes yes     82  0
-OJUIRH+CMR8                          Type 1C           Builtin          yes yes yes     83  0
-CCIUEJ+CMR12                         Type 1C           Builtin          yes yes yes     84  0
+GXCRRU+DFKaiShu-SB-Estd-BF           CID TrueType      Identity-H       yes yes yes      4  0
+HLKDUJ+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes      6  0
+KLYOXJ+TimesNewRomanPS-BoldMT        CID TrueType      Identity-H       yes yes yes     12  0
+OERYEQ+CMMI12                        Type 1C           Builtin          yes yes yes     15  0
+VVGGNB+CMMI8                         Type 1C           Builtin          yes yes yes     16  0
+SAJATI+CMSY10                        Type 1C           Builtin          yes yes yes     82  0
+MOOSUF+CMR8                          Type 1C           Builtin          yes yes yes     83  0
+PWUKRT+CMR12                         Type 1C           Builtin          yes yes yes     84  0
 BBWSWP+STIXGeneral-Regular           CID TrueType      Identity-H       yes yes yes     18  0
 FMZBOJ+STIXGeneral-Regular           CID TrueType      Identity-H       yes yes yes     25  0
 GEDLJH+STIXGeneral-Italic            CID TrueType      Identity-H       yes yes yes     32  0
@@ -15,8 +15,8 @@ GTSPUC+DFKaiShu-SB-Estd-BF           CID TrueType      Identity-H       yes yes 
 ENIYMZ+DFKaiShu-SB-Estd-BF           CID TrueType      Identity-H       yes yes yes     46  0
 HHKYQX+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes     53  0
 EHDSJJ+TimesNewRomanPS-BoldMT        CID TrueType      Identity-H       yes yes yes     60  0
-HOOOZO+CMEX10                        Type 1C           Builtin          yes yes yes     91  0
-WANYIS+LMSans8-Regular-Identity-H    CID Type 0C       Identity-H       yes yes yes     93  0
+QXJTOY+CMEX10                        Type 1C           Builtin          yes yes yes     91  0
+UPAPUG+LMSans8-Regular-Identity-H    CID Type 0C       Identity-H       yes yes yes     92  0
 FRWEZC+STIXGeneral-Italic            CID TrueType      Identity-H       yes yes yes    105  0
 GVZNFS+DFKaiShu-SB-Estd-BF           CID TrueType      Identity-H       yes yes yes    112  0
 GODUXZ+DFKaiShu-SB-Estd-BF           CID TrueType      Identity-H       yes yes yes    119  0
@@ -26,5 +26,5 @@ CECFXM+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes 
 DCFDOK+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes    186  0
 FECRHU+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes    210  0
 CECFXM+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes    217  0
-ZOFQSY+CMSY8                         Type 1C           Builtin          yes yes yes    238  0
-KOEDVA+TimesNewRomanPS-ItalicMT      CID TrueType      Identity-H       yes yes yes    255  0
+SKOANJ+CMSY8                         Type 1C           Builtin          yes yes yes    238  0
+VDGOSJ+TimesNewRomanPS-ItalicMT      CID TrueType      Identity-H       yes yes yes    252  0

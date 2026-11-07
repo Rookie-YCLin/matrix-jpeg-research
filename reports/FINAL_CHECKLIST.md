@@ -1,7 +1,7 @@
 # 最終核對紀錄｜階段 II
 
-- [x] [正式 PDF](FINAL_REPORT.pdf) 實測 12 頁 A4、單欄、正文 12 pt。嵌入標楷體與 Times New Roman。公式使用相容數學字型。
-- [x] 完成 [逐頁檢查與縮圖](pdf-review/REVIEW.md)、[字型清單](pdf-review/pdffonts.txt) 及 CSV 引值核對。交付 PDF SHA-256 為 `be5612e54a86d5785a93c0f12f9af164f4170f36557b4d25734a2db82f4b2b0c`。
+- [x] [正式 PDF](FINAL_REPORT.pdf) 實測 11 頁 A4、單欄、正文 12 pt。嵌入標楷體與 Times New Roman。公式使用相容數學字型。
+- [x] 完成 [逐頁檢查與縮圖](pdf-review/REVIEW.md)、[字型清單](pdf-review/pdffonts.txt) 及 CSV 引值核對。交付 PDF SHA-256 為 `b3ad3c0f312ab52b638d6f4c8b297230a5d732baef1ba19f9eda00f15857b379`。
 - [x] Figure 1 的原始灰階與差值映射分開，Q=60 與 Q=80 的精確值移到表 2。見 [圖說及來源](figure-1/CAPTION.md)。
 - [x] 沿用 M2 存檔與已驗收研究結論。回歸測試 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。GitHub 另見 PR Checks。
 - [ ] 學校／系級、授課教師與繳交日期待填。PR #7 待使用者與外部審查批准。
