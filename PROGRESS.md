@@ -90,3 +90,9 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 - 交付 [正式報告](reports/FINAL_REPORT.md)、[答辯稿](reports/DEFENSE_NOTES.md)及[最終核對紀錄](reports/FINAL_CHECKLIST.md)。已核對公式、四份 M2 CSV 引值、文獻、五張圖與相對路徑。
 - 在另一個 Windows 隔離環境重跑 M2 至新暫存目錄。兩份 CSV 有浮點末位差異，已通過數值容差核對，差異詳見最終核對紀錄。本機 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。
 - M4 待外部研究審查及使用者批准合併。正式題目、繳交格式與封面資料仍待確認。
+
+## 最終 PDF 繳交版
+
+- M4 已驗收，[PR #5](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/5) 已合併至 main（`ede4ce330b2e21790cacf3bb6fed879e8b79ec67`）。依 [Issue #6](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/6) 在 `research/final-pdf` 交付 [10 頁 PDF](reports/FINAL_REPORT.pdf) 與 [XeLaTeX 原稿](reports/FINAL_REPORT.tex)。
+- 完成單欄、12 pt、標楷體與 Times New Roman 嵌入及逐頁驗收。封面已填林易辰與學號 B143012007。其餘欄位及正式題目與教師的確認事項見 [最終檢查表](reports/FINAL_CHECKLIST.md)。
+- 本機 pytest 為 13 通過、0 失敗、0 跳過。研究程式、數據與結論沿用已驗收版本。PDF PR 待外部審查。
