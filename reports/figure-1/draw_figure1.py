@@ -7,6 +7,7 @@ import matplotlib
 matplotlib.use("Agg")
 from matplotlib import font_manager, pyplot as plt
 from matplotlib.patches import Rectangle
+import numpy as np
 from PIL import Image
 
 HERE = Path(__file__).resolve().parent
@@ -71,13 +72,26 @@ def main():
         ("Q=40 解碼", DATA / "jpeg_q40_decoded.png", COLORS[0]),
         ("Q=95 解碼", DATA / "jpeg_q95_decoded.png", COLORS[3]),
     )
-    for x, (label, path, color) in zip((3, 55, 107), sources, strict=True):
+    zoom_pixels = []
+    for _, path, _ in sources:
+        with Image.open(path) as image:
+            zoom_pixels.append(np.array(image.crop(ZOOM), dtype=np.int16))
+    differences = [np.abs(pixels - zoom_pixels[0]) for pixels in zoom_pixels[1:]]
+    ceiling = max(1, *(int(diff.max()) for diff in differences))
+    for i, (x, (label, path, color)) in enumerate(zip((3, 55, 107), sources, strict=True)):
         text(x + 23, 138.5, label, ha="center", color=color)
         overview = axes(x, 103, 46, 32.5)
         detail = axes(x, 85, 46, 14.45)
         with Image.open(path) as image:
             overview.imshow(image.crop(ROI), cmap="gray", vmin=0, vmax=255, interpolation="nearest")
-            detail.imshow(image.crop(ZOOM), cmap="gray", vmin=0, vmax=255, interpolation="nearest")
+        if i:
+            detail.imshow(differences[i - 1], cmap="gray", vmin=0, vmax=ceiling,
+                          interpolation="nearest")
+        else:
+            detail.text(.5, .64, "黃框內的絕對像素差", ha="center", va="center",
+                        fontproperties=chinese, fontsize=10)
+            detail.text(.5, .31, f"黑 = 0，白 = {ceiling}", ha="center", va="center",
+                        fontproperties=chinese, fontsize=9)
         overview.add_patch(Rectangle(
             (ZOOM[0] - ROI[0] - .5, ZOOM[1] - ROI[1] - .5),
             ZOOM[2] - ZOOM[0], ZOOM[3] - ZOOM[1],
@@ -85,9 +99,7 @@ def main():
         ))
         for axis in (overview, detail):
             axis.set_axis_off()
-        detail.add_patch(Rectangle((0, 0), 1, 1, transform=detail.transAxes,
-                                   edgecolor="#b38b20", linewidth=.85, facecolor="none"))
-    text(78, 81, "下排放大黃框區域，三圖採相同倍率及灰階。", size=9, ha="center")
+    text(78, 81, "上排共用原始灰階。下排差值另用共同灰階映射。", size=9, ha="center")
 
     psnr, rank, original = source_data()
     heading(2, 74, "(b)", "與原圖比較")
@@ -111,8 +123,9 @@ def main():
         axis.plot(QUALITIES, values, color="#8a969e", linewidth=.85, linestyle=(0, (3, 2)))
         for q, value, color, marker in zip(QUALITIES, values, COLORS, MARKERS, strict=True):
             axis.scatter(q, value, c=color, marker=marker, s=31, zorder=3)
-            axis.annotate(f"{value:.{digits}f}", (q, value), xytext=(0, 5),
-                          textcoords="offset points", ha="center", va="bottom", fontsize=8.5)
+            if q in (40, 95):
+                axis.annotate(f"{value:.{digits}f}", (q, value), xytext=(0, 5),
+                              textcoords="offset points", ha="center", va="bottom", fontsize=9)
 
     heading(2, 18, "(d)", "兩種比較各自減去什麼？")
     for x, pair, detail in (

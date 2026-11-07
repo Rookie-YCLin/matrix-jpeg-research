@@ -109,3 +109,9 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 - 樣稿從 Q=40 的排序反差起筆，重建圖先於 SVD 公式。圖表取自 M2 存檔，正式 PDF 保留原版本，階段 II 尚未開始。
 - 依 [階段 I 外部審查](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7#issuecomment-6711084398) 精修樣稿。首頁加入 JPEG 共同裁切，第二頁只比較原圖與截斷重建，第三頁把兩種誤差的比較基準講完才留下固定方向問題。中文核心圖保留原圖虛線與四組實測值。樣稿仍為三頁，待重新審查。
 - [第五輪審查](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7#issuecomment-6711217063) 有條件通過敘事架構。另交 [Figure 1](reports/figure-1/FIGURE_1.pdf) 與 [圖說](reports/figure-1/CAPTION.md) 供圖表設計審查。原圖、解碼影像及 CSV 皆取自 M2。正式 PDF 與階段 I 樣稿未改動。
+
+## PR #7 階段 II
+
+- 第六輪確認 Figure 1 設計方向有條件通過，使用者同意進入階段 II。依核准的敘事順序完成 [12 頁正式報告](reports/FINAL_REPORT.pdf)，並將 Figure 1 差值映射、標註減量與分母說明整合至開場。
+- 原圖重建先於 SVD 定義。正文分開兩種誤差，完整最佳性證明移至附錄。中文流程與投影圖各自服務其問題，M2 影像與 CSV 沿用存檔。
+- 全頁渲染、字型與數據核對見 [逐頁紀錄](reports/pdf-review/REVIEW.md)。本機 pytest 13 項通過，PR 待外部審查。

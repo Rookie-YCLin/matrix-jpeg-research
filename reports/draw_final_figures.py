@@ -69,11 +69,12 @@ def legend(axis, **kwargs):
 
 def workflow():
     figure, axis = plt.subplots(figsize=(6.05, 3.65))
+    kai = font_manager.FontProperties(fname="C:/Windows/Fonts/kaiu.ttf")
     axis.set(xlim=(0, 1), ylim=(0, 1))
     axis.set_axis_off()
 
     def box(x, y, label, *, highlight=False):
-        axis.text(x, y, label, ha="center", va="center", linespacing=1.35,
+        axis.text(x, y, label, ha="center", va="center", linespacing=1.35, fontproperties=kai,
                   bbox={"boxstyle": "round,pad=0.48", "edgecolor": "#354764",
                         "facecolor": "#edf3fa" if highlight else "white"})
 
@@ -81,17 +82,17 @@ def workflow():
         axis.annotate("", xy=end, xytext=start,
                       arrowprops={"arrowstyle": "->", "color": "#354764", "lw": 1.25})
 
-    box(.5, .9, "Source image A\n512 × 512 grayscale", highlight=True)
-    box(.25, .64, "Reference SVD\nOriginal rank-one directions")
-    box(.75, .64, "JPEG encode and decode\nQ = 40, 60, 80, 95")
-    box(.75, .40, "Decoded matrix B(Q)", highlight=True)
+    box(.5, .9, "灰階原圖 A\n512 × 512", highlight=True)
+    box(.25, .64, "全圖 SVD\n固定原圖秩一方向")
+    box(.75, .64, "JPEG 編碼再解碼\nQ = 40, 60, 80, 95")
+    box(.75, .40, r"解碼矩陣 $B_Q$", highlight=True)
     arrow((.44, .81), (.29, .72))
     arrow((.56, .81), (.71, .72))
     arrow((.75, .56), (.75, .46))
     for x, label in [
-        (.18, "Fixed direction\nSigned projection"),
-        (.50, "Pixel fidelity\nA vs B(Q): PSNR"),
-        (.85, "Decoded SVD\nSpectrum and error"),
+        (.18, "沿原圖方向\n有號投影"),
+        (.50, "相對原圖\nMSE 與 PSNR"),
+        (.85, "解碼圖 SVD\n頻譜與自身誤差"),
     ]:
         box(x, .10, label)
         arrow((.75, .34), (x, .19))

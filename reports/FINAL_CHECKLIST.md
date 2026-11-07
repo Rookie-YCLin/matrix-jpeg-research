@@ -1,31 +1,23 @@
-# M4 最終核對紀錄
+# 最終核對紀錄｜階段 II
 
-## PR #7 重製版
+- [x] [正式 PDF](FINAL_REPORT.pdf) 實測 12 頁 A4、單欄、正文 12 pt。嵌入標楷體與 Times New Roman。公式使用相容數學字型。
+- [x] 完成 [逐頁檢查與縮圖](pdf-review/REVIEW.md)、[字型清單](pdf-review/pdffonts.txt) 及 CSV 引值核對。交付 PDF SHA-256 為 `be5612e54a86d5785a93c0f12f9af164f4170f36557b4d25734a2db82f4b2b0c`。
+- [x] Figure 1 的原始灰階與差值映射分開，Q=60 與 Q=80 的精確值移到表 2。見 [圖說及來源](figure-1/CAPTION.md)。
+- [x] 沿用 M2 存檔與已驗收研究結論。回歸測試 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。GitHub 另見 PR Checks。
+- [ ] 學校／系級、授課教師與繳交日期待填。PR #7 待使用者與外部審查批准。
 
-正式題目依使用者定案為「JPEG 壓縮對影像奇異值與低秩結構之影響分析」。封面與 PDF metadata 已同步，姓名及學號為林易辰、B143012007。
+## 重製
 
-- [x] [最終 PDF](FINAL_REPORT.pdf) 為 13 頁 A4。正文單欄 12 pt，章節與圖表自然分頁，封面後沒有硬斷頁指令。
-- [x] `pdffonts` 證實標楷體與 Times New Roman 已嵌入。以 `pdftohtml -xml -zoom 1` 檢查兩種 12 pt 正文字型及文字邊界。公式使用相容數學字型。新圖的英文字及刻度使用 Times New Roman，圖像面板保留原始像素。
-- [x] 以 `pdftoppm -r 112 -png` 渲染 13 頁，逐頁核對圖文、圖說、公式與分頁。詳見 [逐頁審查](pdf-review/REVIEW.md)及[字型原始清單](pdf-review/pdffonts.txt)。
-- [x] 從 PDF 擷取表 2 的四列資料，逐列核對 M2 CSV 四捨五入。核對正文所引頻譜、能量與投影例子、8 張圖及 3 張表的編號。XeLaTeX 最終日誌未見缺字、超寬方框或未解析參照警告。
-- [x] 本機 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。這是研究程式的回歸驗證。PDF 可讀性另以逐頁審查確認。
-- [x] PDF SHA-256 為 `bc8edb299bf9111e0586c5066ab9eb397e95226557dfbaddc221ba7cb60544bc`。
-
-## 重製方法
-
-從專案根目錄執行。繪圖使用原有 Python 依賴和 Windows 本機的 Times New Roman，排版另需安裝標楷體及 XeLaTeX。儲存庫只保存生成的向量圖與報告，沒有字型檔。
+從專案根目錄執行。Python 使用原專案環境，Windows 需有標楷體、Times New Roman 與 XeLaTeX。三頁樣稿及其裁切仍保留作為階段 I 證據，正式 PDF 共用其 Rank-k 裁切。
 
 ```powershell
 .\.venv\Scripts\python reports/draw_final_figures.py
+.\.venv\Scripts\python reports/stage-i/draw_comparison.py
+.\.venv\Scripts\python reports/figure-1/draw_figure1.py
 xelatex -interaction=nonstopmode -halt-on-error -output-directory=reports reports/FINAL_REPORT.tex
 xelatex -interaction=nonstopmode -halt-on-error -output-directory=reports reports/FINAL_REPORT.tex
 pdfinfo reports/FINAL_REPORT.pdf
 pdffonts reports/FINAL_REPORT.pdf
 ```
 
-## 研究驗收與待確認
-
-- [x] M4 研究內容已完成外部審查，PR #5 已合併。歷史重跑證據記於 [PROGRESS.md](../PROGRESS.md)。
-- [x] 四份 M2 CSV、圖像和研究程式均沿用已驗收存檔。本輪從存檔重畫，裁切圖使用共同窗口。圖 4 下方是同秩誤差的百分點相減。
-- [ ] 學校／系級、授課教師與繳交日期待填。
-- [ ] PR #7 重製版待使用者逐頁驗收與批准。
+輸入 PNG、四份 M2 CSV 和原始解碼影像沿用已驗收存檔。完整實驗重現步驟在 PDF 附錄。
