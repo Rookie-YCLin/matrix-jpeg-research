@@ -5,7 +5,7 @@
 ## 開始前，先確認是哪一條研究線
 1. **正式且已驗證基線**：`PROJECT_SPEC.md`、`PROGRESS.md`、`experiment.py`、`svd.py`、`tests/`、`outputs/run-m2/`。這是**JPEG 對全影像 SVD 結構的影響**，並未做浮水印嵌入。
 2. **繳交備案**：[PR #7](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7) 是 JPEG／SVD 的 11 頁 PDF，未合併、封面仍待填；不得偷偷改題或稱為浮水印成果。
-3. **提議中的新方向**：[Issue #8](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8) 與 [Draft PR #9](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/9)。詳見 `docs/ONE_WEEK_RESEARCH_CHARTER.md`、`docs/CODEX_NEXT_SESSION.md`；**目前仍待研究者 G0 決策，不能自動改寫 `PROJECT_SPEC.md`。**
+3. **本週已核准的研究主線（G0=A，2026-11-08）**：[Issue #8](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8) 是研究方向；[Issue #10](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/10) 是唯一當前工作包 W0/G1；[Draft PR #9](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/9) 有管理規範與交接卡。**先原版盲擷取與 JPEG BER baseline，禁止提前改 d2 或生成改良報告**。`PROJECT_SPEC.md` 原始 JPEG/SVD 內容不覆寫。
 
 ## 每次任務的執行約定
 - 先讀對應 Issue 的**唯一目標、可修改範圍、不可修改項目、驗收條件、停損條件**。研究邊界不清楚，就先在 PR/Issue 報告分歧，**不要擅自啟動另一條演算法研究**。
@@ -22,4 +22,4 @@ python -m experiment --input data/ascent.png --output-dir outputs/run-check --qu
 ```
 使用 `requirements.txt` 的鎖定套件；程式以 Python 3.13 和 float64 計算，8-bit 僅用於可視化影像。CI 於 PR 上執行測試；**CI 成功是技術基礎，不是研究主張通過驗收**。
 
-新浮水印工作尚未建立實驗腳本與測試；不能把上述舊命令誤當水印驗證。
+新浮水印工作目前尚未有完成的實驗腳本與測試；**已授權新分支開始 Issue #10 G1**。不能把上述舊命令誤當水印驗證。
