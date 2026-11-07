@@ -69,3 +69,9 @@ M0、M1 技術驗收完成，無未修復的測試失敗。待人工確認研究
 - 結果限於單張影像和鎖定版本的編解碼器。Q 是編碼設定，位元組是實測儲存成本。
 - 請審查 `c_i = u_iᵀ B v_i` 的索引與符號，以及它與 B 的奇異值、資訊保留率的區別。遇到重複奇異值時，個別係數依賴選用的原圖基底。
 - 請確認各自低秩誤差與相對原圖的像素品質分開解讀，並核對 [頻譜](outputs/run-m2/spectra.png)、[大小與 PSNR](outputs/run-m2/jpeg_metrics.png) 及 [測試紀錄](outputs/pytest-m2.txt)。
+
+### M2 PR 自動驗收
+
+- PR 建立、更新分支或重新開啟時觸發 Research CI。在 GitHub 標準 Ubuntu runner 安裝鎖定依賴，記錄 Python、套件與 Pillow 編解碼器版本，執行 `python -m pytest -v`。
+- 沿用既有數學驗收，另逐項檢查 M2 存檔與重跑的 CSV、投影和品質圖的繪圖資料、圖檔與 manifest。Q=80 仍核對 M1 相容性，分別比較同次環境重新編碼的資料以及已提交的兩份存檔。
+- 在 PR 的 Checks 查看逐項 PASS 或 FAIL，展開失敗步驟保留錯誤。修正後在原分支重跑並推送。使用 PR 範本記錄繁中驗收摘要。
