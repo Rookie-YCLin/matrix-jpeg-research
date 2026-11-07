@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "first": "outputs/run-r1",
+  "second": "outputs/run-r1-replay",
+  "rtol": 1e-08,
+  "atol": 1e-12,
+  "max_absolute_differences": {
+    "W": 0.0,
+    "sigma_i": 0.0,
+    "S_i": 0.0
+  },
+  "sha256": {
+    "weights.npy": {
+      "first": "c2fe5e78fb6f4e3889a43a1ee443a0c89a8b2ee525abec9e4430c1bd2ea8469c",
+      "second": "c2fe5e78fb6f4e3889a43a1ee443a0c89a8b2ee525abec9e4430c1bd2ea8469c",
+      "byte_identical": true
+    },
+    "sensitivity.csv": {
+      "first": "04969175ac76c96e33f7fdbf3e22b797f195457bc23bdca66952ffddc1fa0572",
+      "second": "04969175ac76c96e33f7fdbf3e22b797f195457bc23bdca66952ffddc1fa0572",
+      "byte_identical": true
+    }
+  }
+}

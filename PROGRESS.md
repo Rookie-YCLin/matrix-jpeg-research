@@ -84,6 +84,29 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 - 本機 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。原有實驗程式、測試與存檔均保留。
 - M3 交付後等待 PR 人工研究審查。M4 正式書面報告、引用核對與重現驗收留待批准。題目與教師的確認選項已列入草稿。
 
+## R1｜原圖秩一方向的分塊 DCT 與 JPEG 量化步長
+
+- 依 [Issue #11](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/11) 與 [開工交接](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/11#issuecomment-6713144151)，從 `origin/main` 的 `ede4ce330b2e21790cacf3bb6fed879e8b79ec67` 建立 `codex/r1-svd-dct-sensitivity`。已讀 Draft PR #9 在 `e3e613a50a1ef1eb4efb71938c8193902eb915cf` 的交接卡、章程與 AGENTS.md。工作樹乾淨，基線 13 項測試通過。
+- 固定原始 512×512 灰階 PNG 與四張 M2 JPEG 的 SHA-256。依 JPEG [ITU-T T.81](https://www.itu.int/rec/T-REC-T.81/en) 的 SOF0 分量選擇器及 DQT zigzag 掃描座標，獨立核對 Pillow 12.3.0 的自然列序。四張均為分量 ID 1、量化表 ID 0、8 位元正值，64 個座標全部相等。兩種排列及各檔案雜湊保存在 manifest。
+- 對 512 個方向完成 float64 分塊正交 DCT-II，未做位準平移。每個 8×8 的 W 皆非負，總和偏離 1 的最大值為 3.774758283725532e-15（絕對容差 1e-12）。`weights.npy` 的索引為 `[i-1, k, l]`，k 垂直、l 水平。CSV 有 2048 列 `i,sigma_i,Q,S_i`。
+- 同一鎖定環境在兩個新目錄獨立執行。W、奇異值及 S 的最大絕對差均為 0，兩份數值產物的 SHA-256 也逐一相同。比較容差 rtol=1e-8、atol=1e-12。見[主執行 manifest](outputs/run-r1/manifest.json)、[第二次 manifest](outputs/run-r1-replay/manifest.json)及[比較證據](outputs/r1-replay-comparison.json)。
+- 本機 Python 3.13.14、NumPy 2.4.6、SciPy 1.18.0、Pillow 12.3.0、JPEG codec 8.0（libjpeg-turbo 3.1.4.1）。`pip check` 通過，完整測試 27 通過、0 失敗、0 跳過，含原有 13 項。見[逐項測試](outputs/r1-pytest.txt)。GitHub Research CI 的逐項證據見 R1 PR 的 Checks。
+- S 是以量化步長加權的頻譜量；重複奇異值子空間的個別方向依基底而定。R1 待審查，實際誤差關係留待另獲授權的 R2。本輪沒有浮水印或 BER 實驗。
+
+從專案根目錄重跑，輸出路徑必須為新目錄，`--report` 亦須指定新檔名。
+
+```powershell
+py -3.13 -m venv .venv-r1
+$python = '.\.venv-r1\Scripts\python.exe'
+& $python -m pip install -r requirements.txt
+& $python -m pip check
+$env:OPENBLAS_NUM_THREADS = '1'
+& $python -m analysis.r1 --input data/ascent.png --jpeg-dir outputs/run-m2 --output-dir outputs/run-r1-local
+& $python -m analysis.r1 --input data/ascent.png --jpeg-dir outputs/run-m2 --output-dir outputs/run-r1-local-replay
+& $python -m analysis.compare_r1 outputs/run-r1-local outputs/run-r1-local-replay --report outputs/r1-local-comparison.json
+& $python -m pytest -v
+```
+
 ## 2026-11-08 M4 正式交付
 
 - M3 已完成研究驗收，[PR #3](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/3) 已合併至 main（`3f8223b3d77c7342eb85403a98d1135f12b1fa82`）。M4 依 [Issue #4](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/4) 從該基線建立 `research/m4-final-report`。
