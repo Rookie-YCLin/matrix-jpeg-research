@@ -83,3 +83,10 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 - 依 [Issue #2](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/2) 從最新 main 建立 `research/m3-analysis`，交付 [M3 分析與答辯草稿](reports/M3_ANALYSIS.md)。已逐圖核對，並以現有四份 CSV 交叉核對 PSNR、檔案大小、能量、尾端誤差、投影差值及文中引值。
 - 本機 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。原有實驗程式、測試與存檔均保留。
 - M3 交付後等待 PR 人工研究審查。M4 正式書面報告、引用核對與重現驗收留待批准。題目與教師的確認選項已列入草稿。
+
+## 2026-11-08 M4 正式交付
+
+- M3 已完成研究驗收，[PR #3](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/3) 已合併至 main（`3f8223b3d77c7342eb85403a98d1135f12b1fa82`）。M4 依 [Issue #4](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/4) 從該基線建立 `research/m4-final-report`。
+- 交付 [正式報告](reports/FINAL_REPORT.md)、[答辯稿](reports/DEFENSE_NOTES.md)及[最終核對紀錄](reports/FINAL_CHECKLIST.md)。已核對公式、四份 M2 CSV 引值、文獻、五張圖與相對路徑。
+- 在另一個 Windows 隔離環境重跑 M2 至新暫存目錄。兩份 CSV 有浮點末位差異，已通過數值容差核對，差異詳見最終核對紀錄。本機 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。
+- M4 待外部研究審查及使用者批准合併。正式題目、繳交格式與封面資料仍待確認。
