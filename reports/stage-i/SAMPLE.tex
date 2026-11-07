@@ -1,0 +1,65 @@
+\documentclass[12pt,a4paper,onecolumn]{article}
+\usepackage[margin=27mm]{geometry}
+\usepackage{fontspec,xeCJK,amsmath,graphicx}
+\setmainfont[Path=C:/Windows/Fonts/,BoldFont=timesbd.ttf]{times.ttf}
+\setCJKmainfont[Path=C:/Windows/Fonts/,BoldFont=kaiu.ttf]{kaiu.ttf}
+\renewcommand{\normalsize}{\fontsize{12bp}{18bp}\selectfont}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{5bp}
+\newcommand{\captionline}[1]{\par\smallskip\noindent #1\par\medskip}
+\begin{document}
+\normalsize
+\noindent\textbf{階段 I｜正文示範}\par
+\section*{JPEG 壓縮對影像奇異值與低秩結構之影響分析}
+
+同一張樓梯照片，分別以品質因子 40 和 95 編碼。還原後，哪張圖更接近原圖？若把兩張解碼圖各自改畫成只用 100 個秩一成分的版本，哪張會改變得比較少？這兩個問題看似都在問畫質，實驗結果卻把它們分開了。
+
+\begin{center}
+\includegraphics[width=\linewidth]{reports/stage-i/COMPARISON.pdf}
+\end{center}
+\captionline{圖 1．上下兩圖共用品質因子 Q。上圖以峰值訊雜比（PSNR）衡量解碼圖與原圖的像素差異，數值越高越接近。下圖比較各解碼圖和它自己的 Rank-100 近似，誤差越小越易近似。虛線是原圖自身的 Rank-100 誤差。數據來自 M2 的 JPEG 指標及低秩誤差表。}
+
+看圖 1 的兩端。Q=40 的 PSNR 為 32.44 dB，比 Q=95 的 46.03 dB 低。把視線移到下圖，Q=40 的誤差卻只有 0.46522\%，小於 Q=95 的 0.52482\%。上圖問解碼圖偏離原圖多少，下圖問用少量成分重建解碼圖時會失去多少。兩張圖各有自己的比較對象。至於第二個問題為什麼值得問，可以先把「少量成分」變成看得見的東西。
+
+\newpage
+\section*{把樓梯照片拆開來看}
+
+若一幅圖只能用少數成分表示，哪些結構會先消失？下圖從同一張未經本輪 JPEG 編碼的原圖出發，保留不同數量的成分。先看樓梯的斜線，再看欄杆細線。較少成分時已有明暗輪廓，但要辨清相鄰的欄杆，需要更多成分。
+
+\begin{center}
+\includegraphics[width=\linewidth]{reports/figures/reconstruction.pdf}
+\end{center}
+\captionline{圖 2．原圖、六組原圖截斷重建與 Q=80 解碼圖。所有影像使用相同灰階範圍。右下角是 JPEG 解碼結果，其餘標為 Rank 的面板是原圖的截斷重建。圖像沿用 M2 存檔。}
+
+這裡的「成分」可以從一個外積想起。拿一條橫向亮度輪廓 $v$，在不同列乘上不同的倍數 $u_r$，就得到矩陣 $uv^{\mathsf T}$。每列只是同一條輪廓的縮放，所以一個這樣的成分只能表達一種列方向的輪廓。要逐步畫出斜線與欄杆，就讓多個外積疊在一起。
+
+SVD 替影像選出這些方向，並為每個方向配上非負權重。令 $X$ 為正在分析的影像矩陣，可以是原圖，也可以是其中一張解碼圖。令 $p$ 為矩陣列數與欄數的較小值，$u_i,v_i$ 分別為第 $i$ 組左右奇異向量，$\sigma_i$ 為按大小遞減排列的奇異值。保留前 $k$ 個權重最大的方向，就得到圖 2 所示的那種重建：
+\begin{equation}
+ X = \sum_{i=1}^{p}\sigma_i u_iv_i^{\mathsf T},
+ \qquad X_k = \sum_{i=1}^{k}\sigma_i u_iv_i^{\mathsf T}.
+\end{equation}
+圖像讓我們看見差異。要比較不同解碼圖，還需要一把能量測整張圖差異的尺。
+
+\newpage
+\section*{量的是失去的成分，還是失真的像素？}
+
+拿掉前 $k$ 項以外的成分後，怎麼知道少了多少？用 Frobenius 範數，將差矩陣所有元素平方加總。兩組奇異向量各自正交歸一，所以不同的秩一外積也彼此正交，且每個外積的 Frobenius 長度為一。把尾端成分相加後取平方範數，交叉項恰好為零：
+\begin{equation}
+ \lVert X-X_k\rVert_F^2=\sum_{i>k}\sigma_i^2.
+\end{equation}
+在秩至多 $k$ 的候選中，截斷 SVD 達到最小 Frobenius 誤差。但兩張影像的總能量可以不同，光看尾端的絕對大小不夠。圖 1 下半部用的是尾端占比。對非零影像，將尾端平方和除以它自己的總平方能量，得到
+\begin{equation}
+ R_k(X)=\frac{\sum_{i>k}\sigma_i^2}{\sum_i\sigma_i^2}.
+\end{equation}
+
+現在回看 Q=40。它的 $R_{100}$ 較小，意思是前 100 個成分占這張解碼圖自身的平方能量較多。即使 JPEG 已改變不少原圖像素，解碼圖仍可能更容易用較少成分描述。至於離原圖多遠，要另外令 $A$ 為原圖、$B_Q$ 為品質因子 $Q$ 的解碼圖，計算兩張圖逐像素的均方差，再換算成 PSNR。這四組設定只說明同一張灰階圖在指定編碼器下的結果。
+
+還有一個問題是這兩把尺都答不了的：原圖的某個成分，到解碼後究竟變強還是變弱？若直接分解 $B_Q$，它會選出自己的方向，索引相同也不保證是同一方向。於是我們改用原圖的秩一方向作參照。此時 $u_i,v_i$ 專指原圖的左右奇異向量，而
+\begin{equation}
+ c_i(Q)=\langle B_Q,u_iv_i^{\mathsf T}\rangle_F
+       =u_i^{\mathsf T}B_Qv_i
+\end{equation}
+是沿同一方向讀出的係數。它能帶負號，與解碼圖自身的非負奇異值回答不同問題。若原圖有重複奇異值，個別方向仍取決於所選基底。
+
+\captionline{資料定位。圖 1 取自 M2 存檔目錄 \texttt{outputs/run-m2/}。上圖為 \texttt{jpeg\_metrics.csv} 的 \texttt{psnr\_db}。下圖為 \texttt{rank\_errors.csv} 中 $k=100$ 的 \texttt{relative\_squared} 乘 100。圖 2 使用同目錄的重建及解碼圖，原圖為 \texttt{data/ascent.png}。}
+\end{document}
