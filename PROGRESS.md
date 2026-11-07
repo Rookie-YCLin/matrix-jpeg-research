@@ -107,3 +107,4 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 
 - 13 頁版未通過敘事與圖文順序驗收。依 [第三輪審查](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7#issuecomment-6710981801) 交付 [故事大綱](reports/stage-i/STORY_OUTLINE.md)、[三頁樣稿](reports/stage-i/SAMPLE.pdf) 與 [核心對照圖](reports/stage-i/COMPARISON.pdf)，待使用者審查。
 - 樣稿從 Q=40 的排序反差起筆，重建圖先於 SVD 公式。圖表取自 M2 存檔，正式 PDF 保留原版本，階段 II 尚未開始。
+- 依 [階段 I 外部審查](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7#issuecomment-6711084398) 精修樣稿。首頁加入 JPEG 共同裁切，第二頁只比較原圖與截斷重建，第三頁把兩種誤差的比較基準講完才留下固定方向問題。中文核心圖保留原圖虛線與四組實測值。樣稿仍為三頁，待重新審查。
