@@ -1,22 +1,23 @@
-# M4 最終核對紀錄
+# 最終核對紀錄｜階段 II
 
-## 已核對
+- [x] [正式 PDF](FINAL_REPORT.pdf) 實測 11 頁 A4、單欄、正文 12 pt。嵌入標楷體與 Times New Roman。公式使用相容數學字型。
+- [x] 完成 [逐頁檢查與縮圖](pdf-review/REVIEW.md)、[字型清單](pdf-review/pdffonts.txt) 及 CSV 引值核對。交付 PDF SHA-256 為 `b3ad3c0f312ab52b638d6f4c8b297230a5d732baef1ba19f9eda00f15857b379`。
+- [x] Figure 1 的原始灰階與差值映射分開，Q=60 與 Q=80 的精確值移到表 2。見 [圖說及來源](figure-1/CAPTION.md)。
+- [x] 沿用 M2 存檔與已驗收研究結論。回歸測試 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。GitHub 另見 PR Checks。
+- [ ] 學校／系級、授課教師與繳交日期待填。PR #7 待使用者與外部審查批准。
 
-- [x] [正式報告](FINAL_REPORT.md) 具封面欄位、中文摘要、數學推導、方法、結果、討論、結論、文獻及重現步驟。
-- [x] [答辯稿](DEFENSE_NOTES.md) 涵蓋研究主線、公式、五張圖的讀法與八題問答。
-- [x] 核對數學推導及適用條件。最佳性限秩至多 k 與 Frobenius 範數，零矩陣的相對誤差未定義。PSNR、解碼圖自身低秩誤差與固定方向投影各有明確基準。
-- [x] 用 M2 的 [JPEG 指標](../outputs/run-m2/jpeg_metrics.csv)、[低秩誤差](../outputs/run-m2/rank_errors.csv)、[頻譜](../outputs/run-m2/spectrum.csv) 和 [投影](../outputs/run-m2/projections.csv) 核對公式、引用條件及四捨五入。
-- [x] 五張圖均沿用 M2 存檔。核對圖號、相對路徑、圖說、座標軸與圖檔可讀性。學術與技術文獻連結已核對原始來源。
-- [x] 本機 Windows 使用另一個已建立的 Python 3.13.14 隔離環境執行 `pip check`，依正式報告附錄的實驗命令重跑至新暫存目錄。原圖 SHA-256 與 JPEG 參數均與 M2 相符。
-- [x] 四份重跑 CSV 的列索引與資料通過數值比對。各 JPEG、圖像、`jpeg_metrics.csv` 及 `spectrum.csv` 位元組一致。首次整批雜湊比對在 `projections.csv` 發現差異，逐檔核對後確認 `rank_errors.csv` 也有差異。兩者最大絕對差分別約 2.27e-13 與 1.07e-6（後者含未正規化平方誤差）。保留原始存檔，數值比對使用既定相對容差與對應絕對容差。
-- [x] 本機 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。GitHub Ubuntu 的最新結果與 Python、Pillow 和 JPEG 函式庫版本由 M4 PR 的 Checks 查閱。CI 驗證存檔及在 runner 重新編解碼的數學與資料一致性。
+## 重製
 
-## 待使用者或教師確認
+從專案根目錄執行。Python 使用原專案環境，Windows 需有標楷體、Times New Roman 與 XeLaTeX。三頁樣稿及其裁切仍保留作為階段 I 證據，正式 PDF 共用其 Rank-k 裁切。
 
-- [ ] **正式題目與教師確認：待使用者確認。** 目前報告題目對應已完成的 JPEG／SVD 實驗。若教師要求維持浮水印題目，現有資料無法回答浮水印抗 JPEG 的問題。最小延伸可限定同一圖、固定嵌入設定及短位元序列，測未壓縮對照與 Q=80 的取回錯誤率，另量測嵌入失真。待使用者批准再實作，工時取決於是否有可靠的嵌入及取回方法。
-- [ ] 填寫作者、學號、學校、教師及繳交日期，確認教師接受的繳交格式。交付物為 Markdown 與專案相對路徑圖表。
-- [ ] M4 外部研究審查與使用者合併批准。
+```powershell
+.\.venv\Scripts\python reports/draw_final_figures.py
+.\.venv\Scripts\python reports/stage-i/draw_comparison.py
+.\.venv\Scripts\python reports/figure-1/draw_figure1.py
+xelatex -interaction=nonstopmode -halt-on-error -output-directory=reports reports/FINAL_REPORT.tex
+xelatex -interaction=nonstopmode -halt-on-error -output-directory=reports reports/FINAL_REPORT.tex
+pdfinfo reports/FINAL_REPORT.pdf
+pdffonts reports/FINAL_REPORT.pdf
+```
 
-## 驗證範圍
-
-本機重跑與 Ubuntu CI 是不同環境的執行證據。未要求兩個作業系統產生相同 JPEG 位元組，未測其他影像、編解碼器或浮水印。GitHub 上保留原始數據及圖檔，提交報告時需讓相對圖檔路徑仍可讀取。
+輸入 PNG、四份 M2 CSV 和原始解碼影像沿用已驗收存檔。完整實驗重現步驟在 PDF 附錄。

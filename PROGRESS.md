@@ -90,3 +90,33 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 - 交付 [正式報告](reports/FINAL_REPORT.md)、[答辯稿](reports/DEFENSE_NOTES.md)及[最終核對紀錄](reports/FINAL_CHECKLIST.md)。已核對公式、四份 M2 CSV 引值、文獻、五張圖與相對路徑。
 - 在另一個 Windows 隔離環境重跑 M2 至新暫存目錄。兩份 CSV 有浮點末位差異，已通過數值容差核對，差異詳見最終核對紀錄。本機 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。
 - M4 待外部研究審查及使用者批准合併。正式題目、繳交格式與封面資料仍待確認。
+
+## 最終 PDF 繳交版
+
+- M4 已驗收，[PR #5](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/5) 已合併至 main（`ede4ce330b2e21790cacf3bb6fed879e8b79ec67`）。依 [Issue #6](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/6) 在 `research/final-pdf` 交付 [10 頁 PDF](reports/FINAL_REPORT.pdf) 與 [XeLaTeX 原稿](reports/FINAL_REPORT.tex)。
+- 完成單欄、12 pt、標楷體與 Times New Roman 嵌入及逐頁驗收。封面已填林易辰與學號 B143012007。其餘欄位及正式題目與教師的確認事項見 [最終檢查表](reports/FINAL_CHECKLIST.md)。
+- 本機 pytest 為 13 通過、0 失敗、0 跳過。研究程式、數據與結論沿用已驗收版本。PDF PR 待外部審查。
+
+## PR #7 PDF 重製
+
+- 首版 PDF 未通過使用者逐頁驗收。依 [逐頁審查](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7#issuecomment-6710698188) 在原分支重製，題目採「JPEG 壓縮對影像奇異值與低秩結構之影響分析」。
+- 新版 13 頁，以比較基準組織敘事，加入秩一教學例及分步公式。從原始存檔生成 8 張圖，含流程圖、雙基準主結果、末秩誤差差值及同區域裁切。沒有新增研究實驗。
+- 已核對實際頁數、正文 12 pt、嵌入字型、表格數值與全頁渲染。證據見 [逐頁紀錄](reports/pdf-review/REVIEW.md)。本機 pytest 為 13 通過，PR #7 待使用者重新驗收。
+
+## PR #7 第三輪審查｜階段 I
+
+- 13 頁版未通過敘事與圖文順序驗收。依 [第三輪審查](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7#issuecomment-6710981801) 交付 [故事大綱](reports/stage-i/STORY_OUTLINE.md)、[三頁樣稿](reports/stage-i/SAMPLE.pdf) 與 [核心對照圖](reports/stage-i/COMPARISON.pdf)，待使用者審查。
+- 樣稿從 Q=40 的排序反差起筆，重建圖先於 SVD 公式。圖表取自 M2 存檔，正式 PDF 保留原版本，階段 II 尚未開始。
+- 依 [階段 I 外部審查](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7#issuecomment-6711084398) 精修樣稿。首頁加入 JPEG 共同裁切，第二頁只比較原圖與截斷重建，第三頁把兩種誤差的比較基準講完才留下固定方向問題。中文核心圖保留原圖虛線與四組實測值。樣稿仍為三頁，待重新審查。
+- [第五輪審查](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7#issuecomment-6711217063) 有條件通過敘事架構。另交 [Figure 1](reports/figure-1/FIGURE_1.pdf) 與 [圖說](reports/figure-1/CAPTION.md) 供圖表設計審查。原圖、解碼影像及 CSV 皆取自 M2。正式 PDF 與階段 I 樣稿未改動。
+
+## PR #7 階段 II
+
+- 第六輪確認 Figure 1 設計方向有條件通過，使用者同意進入階段 II。依核准的敘事順序完成 [12 頁正式報告](reports/FINAL_REPORT.pdf)，並將 Figure 1 差值映射、標註減量與分母說明整合至開場。
+- 原圖重建先於 SVD 定義。正文分開兩種誤差，完整最佳性證明移至附錄。中文流程與投影圖各自服務其問題，M2 影像與 CSV 沿用存檔。
+- 全頁渲染、字型與數據核對見 [逐頁紀錄](reports/pdf-review/REVIEW.md)。本機 pytest 13 項通過，PR 待外部審查。
+
+## PR #7 第七輪精修
+
+- 依 [第七輪外部審查](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7#issuecomment-6711559029)補上秩一方向定義及原圖基底記號，修正投影和結論段落的字距、核心公式與方法表的跨頁位置，並交代頻譜的線性區間及索引示例。
+- 附錄重現步驟和五筆文獻合在末頁，實測 11 頁 A4、單欄 12 pt。已逐頁渲染與核對數據。圖表資產與 M2 原始數據未更動。PR 待重新審查，封面未知欄位仍待填。
