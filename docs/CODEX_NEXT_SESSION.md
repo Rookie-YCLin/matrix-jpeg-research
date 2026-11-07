@@ -13,7 +13,7 @@ git pull --ff-only
 git status --short
 ```
 
-上述僅作**讀取 PR #9 研究規劃**，不要在此分支寫入浮水印實驗。若環境沒有本地分支，使用 `git switch -c planning/watermark-7day-charter --track origin/planning/watermark-7day-charter`。若工作樹未清空、分支已有他人更新或 checkout 失敗，**不可用 `reset --hard`、`clean -fd` 或 force push 解決**；先回報。閱讀完成後，開工前回到使用者已授權的目標分支，或等研究者批准新實驗路線。
+上述僅作**讀取 PR #9 研究規劃**，不要在此分支寫入浮水印實驗。若環境沒有本地分支，使用 `git switch -c planning/watermark-7day-charter --track origin/planning/watermark-7day-charter`。若工作樹未清空、分支已有他人更新或 checkout 失敗，**不可用 `reset --hard`、`clean -fd` 或 force push 解決**；先回報。閱讀完成後，開工前回到使用者已授權的目標分支，；本次 G0=A 已授權 Issue #10 的 G1 baseline。
 
 **首次回報只要四行：** ① 目前所在分支／HEAD SHA；② G0 已核准 A 而 G1 尚未驗收；③ PR #7、#9、Issue #8/#10 的角色；④ 如何建立 W0/G1 獨立分支、實際進行 baseline 與停損。**G1 已獲授權，可在獨立新分支開工；PR #9 僅供讀取規範，不得直接在規劃分支寫實驗。**
 
@@ -24,7 +24,7 @@ git status --short
 **現有資料分級（不刪除）**
 - **已驗證基準**：`main` 的 `PROJECT_SPEC.md`、程式、`data/ascent.png`、`outputs/run-m2`、測試與 M3；不得覆蓋。
 - **繳交備案**：PR #7 的 11 頁 PDF 與來源，仍 open，尚缺封面資料；不與浮水印研究混寫。
-- **正在討論**：Issue #8、Draft PR #9 及本交接卡；研究者確認前不得假裝已定案。
+- **已核准主線**：G0=A 已經由研究者決定；Issue #8 管研究方向、Issue #10 管當前 G1 baseline、Draft PR #9 管交接文件；G1 尚未驗收，不得假裝已有結果。
 - **歷史探索**：已遺失原始碼/CSV 的舊浮水印報告；可當假說來源，不能當結果引用。
 - **後續想法**：DFT、全圖秩一方向、量化代理、ECC 等先記在既有 Issue，不另開平行工作或堆一批新檔。
 
@@ -44,7 +44,7 @@ git status --short
 - 專案：`Rookie-YCLin/matrix-jpeg-research`，私有；`main` 是既有全影像 JPEG／SVD 已驗證成果。
 - [PR #7](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7) 原有 11 頁單欄 PDF 已外部審查為 **PASS WITH CONDITIONS**，但封面未填；仍 open，**不得合併、關閉、重寫或把它當作浮水印成果**。
 - [Issue #8](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8) 是使用者真正感興趣的 blind_watermark SVD 嵌入抗 JPEG 議題。
-- 先讀 `docs/ONE_WEEK_RESEARCH_CHARTER.md`；它是**提案**，不是已經測得的結果。既有 `PROJECT_SPEC.md` 目前明確排除浮水印實驗。
+- 先讀 `docs/ONE_WEEK_RESEARCH_CHARTER.md`；它的研究範圍 **G0 已核准**，但不是已經測得的實驗結果。既有 `PROJECT_SPEC.md` 目前明確排除浮水印實驗。
 - 歷史三篇浮水印報告的原始碼／CSV 已被刪除，舊 BER 數字**不可直接視為真實可重現的成績**。
 
 ## 下一次僅有一個先決問題
