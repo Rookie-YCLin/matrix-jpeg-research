@@ -20,8 +20,9 @@ def save_display(matrix, path):
     Image.fromarray(pixels).save(path)
 
 
-def jpeg_round_trip(pixels, path):
-    Image.fromarray(pixels).save(path, format="JPEG", **JPEG_SETTINGS)
+def jpeg_round_trip(pixels, path, quality=JPEG_SETTINGS["quality"]):
+    settings = {**JPEG_SETTINGS, "quality": quality}
+    Image.fromarray(pixels).save(path, format="JPEG", **settings)
     with Image.open(path) as image:
         if image.format != "JPEG" or image.mode != "L":
             raise ValueError("Expected a grayscale JPEG")
