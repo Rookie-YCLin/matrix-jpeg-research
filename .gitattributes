@@ -1,0 +1,3 @@
+# Keep acceptance artifacts byte-for-byte for SHA-256 verification.
+outputs/** -text
+data/ascent.png -text
