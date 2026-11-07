@@ -23,7 +23,8 @@ jobs:
       - name: Install and record dependencies
         run: |
           python --version
-          python -m pip install -r requirements.txt
+          python -m pip install -r requirements-w0.txt
+          python -m pip install --no-build-isolation -r watermark_baseline/upstream.txt
           python -m pip check
           python -m pip freeze
           python -m PIL
@@ -31,8 +32,10 @@ jobs:
         shell: bash
         run: |
           if python -m pytest -v; then
-            echo 'PASS — SVD、JPEG 與研究資料驗收' | tee -a "$GITHUB_STEP_SUMMARY"
+            echo 'PASS — SVD、JPEG、W0 與研究資料驗收' | tee -a "$GITHUB_STEP_SUMMARY"
           else
             echo 'FAIL — 請查看 Verify research results 的 pytest 錯誤紀錄' | tee -a "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
+      - name: Replay W0 with the runner codec
+        run: python -m watermark_baseline --output-dir "$RUNNER_TEMP/w0-replay"

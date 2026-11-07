@@ -1,0 +1,50 @@
+{
+  "revision": "ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8",
+  "release": "scikit-image v0.26.0",
+  "license_reference": "https://scikit-image.org/docs/0.26.x/api/skimage.data.html",
+  "preprocessing": "None. Original distributed PNG bytes.",
+  "images": [
+    {
+      "id": "astronaut",
+      "file": "astronaut.png",
+      "sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGB",
+      "bit_depth": 8,
+      "license": "NASA (public domain)",
+      "texture": "portrait, smooth and high-contrast areas",
+      "source": "https://raw.githubusercontent.com/scikit-image/scikit-image/ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8/src/skimage/data/astronaut.png"
+    },
+    {
+      "id": "chelsea",
+      "file": "chelsea.png",
+      "sha256": "596aa1e7cb875eb79f437e310381d26b338a81c2da23439704a73c4651e8c4bb",
+      "size": [
+        451,
+        300
+      ],
+      "mode": "RGB",
+      "bit_depth": 8,
+      "license": "Stefan van der Walt (CC0)",
+      "texture": "fur and diagonal edges",
+      "source": "https://raw.githubusercontent.com/scikit-image/scikit-image/ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8/src/skimage/data/chelsea.png"
+    },
+    {
+      "id": "coffee",
+      "file": "coffee.png",
+      "sha256": "cc02f8ca188b167c775a7101b5d767d1e71792cf762c33d6fa15a4599b5a8de7",
+      "size": [
+        600,
+        400
+      ],
+      "mode": "RGB",
+      "bit_depth": 8,
+      "license": "Rachel Michetti (CC0), courtesy of Pikolo Espresso Bar",
+      "texture": "smooth porcelain and wood grain",
+      "source": "https://raw.githubusercontent.com/scikit-image/scikit-image/ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8/src/skimage/data/coffee.png"
+    }
+  ]
+}
