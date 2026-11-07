@@ -1,25 +1,11 @@
-# AGENTS.md｜研究室常駐規則（Codex 必讀）
+# 專案工作規範
 
-本倉庫是**矩陣理論／影像處理研究室**，不是任意生成 PDF 或嘗試演算法的練習場。研究者決定題目與結論；Codex 實作可重現實驗；ChatGPT 進行獨立數學／數據／論述審查。
+研究者於 2026-11-08 正式批准《基於 SVD 秩一分解與區塊 DCT 頻譜之 JPEG 壓縮穩定性分析》。[Issue #11](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/11) 是 Codex 唯一有效的新實驗工作包。[Issue #8](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8) 保存正式決策，[Issue #10](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/10) 的舊 W0/G1 浮水印工作包已暫緩。禁止執行舊浮水印工作、嵌入／擷取開發及 BER 實驗。R2 暫緩。
 
-## 開始前，先確認是哪一條研究線
-1. **正式且已驗證基線**：`PROJECT_SPEC.md`、`PROGRESS.md`、`experiment.py`、`svd.py`、`tests/`、`outputs/run-m2/`。這是**JPEG 對全影像 SVD 結構的影響**，並未做浮水印嵌入。
-2. **繳交備案**：[PR #7](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7) 是 JPEG／SVD 的 11 頁 PDF，未合併、封面仍待填；不得偷偷改題或稱為浮水印成果。
-3. **本週已核准的研究主線（G0=A，2026-11-08）**：[Issue #8](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8) 是研究方向；[Issue #10](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/10) 是唯一當前工作包 W0/G1；[Draft PR #9](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/9) 有管理規範與交接卡。**先原版盲擷取與 JPEG BER baseline，禁止提前改 d2 或生成改良報告**。`PROJECT_SPEC.md` 原始 JPEG/SVD 內容不覆寫。
-
-## 每次任務的執行約定
-- 先讀對應 Issue 的**唯一目標、可修改範圍、不可修改項目、驗收條件、停損條件**。研究邊界不清楚，就先在 PR/Issue 報告分歧，**不要擅自啟動另一條演算法研究**。
-- 一個分支／PR 只解決一個可驗收問題。先保留上游 baseline，再修改單一主要變因；不可直接推送 `main`，不得擅自合併 PR、覆寫已驗證數據或刪除重要研究資料。
-- 不要將歷史 PDF、未驗證 BER、想像中的實驗、只有 pytest 通過的程式宣稱為已證實的研究結論；保留失敗案例及結果限制。
-- 提交圖表前檢查 CSV 原始引值、比較對象、誤差定義及圖文可讀性；文字採**問題→為何需要工具→實驗回答→限制**的自然論證，而非規格摘要。
-- 回報請用**完成／未完成／驗證證據／阻礙／下一步**，附 commit SHA、PR、命令、CSV 路徑與 CI。
-- 新增檔案前先分類為原始資料、程式、必要結果、報告或短期中介。臨時圖／重複 PDF 不應持續堆積。重要檔案的清理需先提案，禁止擅自刪除。
-
-## 原有 JPEG/SVD 重現指令
-```sh
-python -m pytest -v
-python -m experiment --input data/ascent.png --output-dir outputs/run-check --qualities 40 60 80 95
-```
-使用 `requirements.txt` 的鎖定套件；程式以 Python 3.13 和 float64 計算，8-bit 僅用於可視化影像。CI 於 PR 上執行測試；**CI 成功是技術基礎，不是研究主張通過驗收**。
-
-新浮水印工作目前尚未有完成的實驗腳本與測試；**已授權新分支開始 Issue #10 G1**。不能把上述舊命令誤當水印驗證。
+- 開工先讀 Issue #11、[研究章程](docs/ONE_WEEK_RESEARCH_CHARTER.md)、[交接卡](docs/CODEX_NEXT_SESSION.md)、`PROJECT_SPEC.md` 與 `PROGRESS.md`，核對程式、測試與實際輸出。管理規格位於 Draft PR #9，R1 程式從最新 `origin/main` 另開分支。
+- 保留 `main` 的 `PROJECT_SPEC.md`、`experiment.py`、既有 13 項測試、`outputs/run-m2/` 及歷史 CSV。[PR #7](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7) 保持開啟、未合併，分支與內容完整保留。禁止直接修改 `main` 或自動合併 PR。
+- 使用 Python 3.13 隔離環境和鎖定依賴。以 float64 分析，展示影像另行量化。
+- 圖表源自實際輸出 CSV。保留輸入來源、雜湊、版本、命令及驗證證據。每個里程碑更新 `PROGRESS.md`。
+- 保留原驗收標準。Research CI 在暫存目錄重跑 SVD 與 JPEG，核對 M2 已提交的 CSV、圖表輸入與必要檔案。存檔數據依保存的解碼 PNG 核對，runner 重跑依其實際 JPEG 解碼像素核對。
+- 在 PR 的 Checks 查閱 Python、套件、JPEG codec 版本及 `python -m pytest -v` 逐項結果。依賴安裝失敗與 pytest 結果分開查閱。失敗時保留日誌，診斷、修正後重跑相同命令，在原 PR 分支推送。
+- 以 PR 範本提供繁中驗收摘要，包含變更、結果、測試、資料位置、限制與待審查事項。CI 通過後等待外部研究審查及研究者合併批准。

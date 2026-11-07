@@ -1,52 +1,13 @@
 # Matrix JPEG Research｜研究室入口
 
-這是私有的矩陣理論與影像處理課程研究倉庫。**請先辨別「已驗證的 JPEG／SVD 研究」與「G0 已核准、仍待實測的水印研究」**，不要把兩者的證據混在一起。
+研究者於 2026-11-08 正式批准《基於 SVD 秩一分解與區塊 DCT 頻譜之 JPEG 壓縮穩定性分析》。[Issue #11](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/11) 是 Codex 唯一有效的新實驗工作包。[Issue #8](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8) 保存正式決策，[Issue #10](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/10) 的舊 W0/G1 浮水印工作包已暫緩。禁止執行舊浮水印工作、嵌入／擷取開發及 BER 實驗。R2 暫緩。
 
-## 現在的狀態
+先讀[一週研究章程](docs/ONE_WEEK_RESEARCH_CHARTER.md)與 [Codex 交接卡](docs/CODEX_NEXT_SESSION.md)。這些管理文件目前位於 [Draft PR #9](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/9) 的規劃分支。實驗從最新 `origin/main` 另開分支。
 
-| 路線 | 位置 | 事實與限制 |
-|---|---|---|
-| **已驗證：JPEG 對影像 SVD 結構的影響** | `main`、`PROJECT_SPEC.md`、`outputs/run-m2/` | 原圖與 JPEG 解碼圖的奇異值、低秩誤差、固定原圖方向投影；**不是浮水印實驗** |
-| **正式 PDF 交件備案** | [PR #7](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7) | 舊 JPEG/SVD 11 頁報告經有條件驗收；封面待填；保持 open、不可混作水印成果 |
-| **本週已核准主線（G0=A）：盲浮水印抗 JPEG** | [Issue #8](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8)、[Issue #10](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/10) | 已授權 G1 **原版 baseline**；目前尚無可重現的新 BER，不准跳到 G2 |
-| **研究管理規範** | [Draft PR #9](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/9) | 研究者已決策 G0=A；管理文件仍是草稿 PR，尚未合併 `main` |
+## 既有研究基線
 
-## 對三人研究室的導航
+`PROJECT_SPEC.md`、`PROGRESS.md` 與 `reports/` 保存已驗收的全圖 SVD、低秩誤差及固定原圖方向投影研究。`data/README.md` 記錄影像來源，`outputs/run-m2/` 保存四種品質的 JPEG、解碼圖、CSV 與執行紀錄。
 
-**研究者**：決定問題、限制與是否接受結論；不需要每天管理分支。
+保留 `main` 的 `PROJECT_SPEC.md`、`experiment.py`、既有 13 項測試、`outputs/run-m2/` 及歷史 CSV。[PR #7](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7) 保持開啟、未合併，分支與內容完整保留。禁止直接修改 `main` 或自動合併 PR。
 
-**Codex**：開工先讀 `AGENTS.md`，再讀本次 Issue；目前水印主線已核准，須讀 `docs/ONE_WEEK_RESEARCH_CHARTER.md` 與 `docs/CODEX_NEXT_SESSION.md`（目前位於 PR #9 分支，還不在 `main`）。**目前只做 Issue #10 的原版 baseline**。
-
-**ChatGPT**：管理 Issue／PR，對數學、數據、實驗公平性、圖表及報告做獨立審查；審查意見留在 PR Conversation。CI 通過不代表研究結論有效。
-
-## 研究材料在哪裡？
-
-| 類別 | 目前路徑 | 使用原則 |
-|---|---|---|
-| 研究規格與紀錄 | `PROJECT_SPEC.md`、`PROGRESS.md` | 目前正式生效的是 JPEG／SVD 範圍 |
-| 程式與測試 | `experiment.py`、`svd.py`、`imaging.py`、`charts.py`、`tests/` | 以鎖定環境和實測輸出為準 |
-| 原始影像 | `data/ascent.png`、`data/README.md` | 輸入來源、SHA 與重跑保持可追溯 |
-| 實驗數據 | `outputs/run-m2/` | JPEG Q40/60/80/95 對照，勿覆寫 |
-| 研究分析／已合併文字 | `reports/M3_ANALYSIS.md`、`reports/FINAL_REPORT.md` | 已合併版本，與 PR #7 的進階排版不同 |
-| 一週水印研究章程 | `docs/ONE_WEEK_RESEARCH_CHARTER.md`（PR #9） | **G0 已核准 A；G1 尚待實測**，不是已驗收實驗 |
-
-## 重現既有研究
-
-```sh
-python -m pip install -r requirements.txt
-python -m pytest -v
-python -m experiment --input data/ascent.png --output-dir outputs/run-check --qualities 40 60 80 95
-```
-
-Python 3.13；請用新輸出目錄，不要直接覆寫 `outputs/run-m2/`。跨環境 JPEG 位元組可能不同，必須記錄版本及相容性。
-
-## 最小協作流程
-
-研究問題寫進 **Issue** → Codex 獨立分支做單一任務 → **PR** 提供修改與數據來源 → CI 和 ChatGPT 審查 → 研究者決定是否接受及合併。
-
-- **一個 PR 一個問題**：先能重現、再談改良；不把實驗計畫寫成已驗證結果。
-- **不要堆檔案**：保留能重建圖表的資料、程式和最終圖；中介物與重複版 PDF 不應大量提交。
-- **不要清除歷史**：整理先列保留／歸檔／候選刪除提案，研究者批准才刪除已驗證資料。
-- **報告目標**：數學可理解、圖表有研究主張、觀察與推測清楚區分，而非只滿足頁數與字型。
-
-參考工作原則：[OpenAI Codex best practices](https://learn.chatgpt.com/docs/learn/best-practices)、[OpenAI Cookbook：Iterating development workflows](https://github.com/openai/openai-cookbook/blob/main/examples/codex/iterating-development-workflows-with-codex.md)、[The Turing Way：Research Compendia](https://book.the-turing-way.org/reproducible-research/compendia/)。
+舊版 G0=A 與 W0/G1 章程保存在 [PR #9 的前版提交](https://github.com/Rookie-YCLin/matrix-jpeg-research/tree/070110609d11f6b7ed25d820e87bf7a020bc02fb)，僅供追溯。
