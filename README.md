@@ -1,6 +1,6 @@
 # Matrix JPEG Research｜研究室入口
 
-這是私有的矩陣理論與影像處理課程研究倉庫。**請先辨別「已驗證的舊研究」與「G0 已核准、正在開始的水印研究」**，不要把兩者的證據混在一起。
+這是私有的矩陣理論與影像處理課程研究倉庫。**請先辨別「已驗證的 JPEG／SVD 研究」與「G0 已核准、仍待實測的水印研究」**，不要把兩者的證據混在一起。
 
 ## 現在的狀態
 
@@ -15,7 +15,7 @@
 
 **研究者**：決定問題、限制與是否接受結論；不需要每天管理分支。
 
-**Codex**：開工先讀 `AGENTS.md`，再讀本次 Issue；目前水印主線已核准，須，須讀 `docs/ONE_WEEK_RESEARCH_CHARTER.md` 與 `docs/CODEX_NEXT_SESSION.md`（目前位於 PR #9 分支，還不在 `main`）。**目前只做 Issue #10 的原版 baseline**。
+**Codex**：開工先讀 `AGENTS.md`，再讀本次 Issue；目前水印主線已核准，須讀 `docs/ONE_WEEK_RESEARCH_CHARTER.md` 與 `docs/CODEX_NEXT_SESSION.md`（目前位於 PR #9 分支，還不在 `main`）。**目前只做 Issue #10 的原版 baseline**。
 
 **ChatGPT**：管理 Issue／PR，對數學、數據、實驗公平性、圖表及報告做獨立審查；審查意見留在 PR Conversation。CI 通過不代表研究結論有效。
 
