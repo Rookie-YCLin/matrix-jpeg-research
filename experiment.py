@@ -1,4 +1,4 @@
-"""Run the approved first-stage experiment from a local grayscale PNG."""
+"""Compare original and JPEG-decoded grayscale matrices."""
 import argparse
 import csv
 from hashlib import sha256
@@ -26,7 +26,13 @@ def write_csv(path, rows):
         writer.writerows(rows)
 
 
-def run(input_path, output):
+def run(input_path, output, qualities=None):
+    compare = qualities is not None
+    qualities = tuple(qualities) if compare else (imaging.JPEG_SETTINGS["quality"],)
+    if not qualities or len(set(qualities)) != len(qualities) or any(
+        not 1 <= quality <= 95 for quality in qualities
+    ):
+        raise ValueError("Choose distinct JPEG quality factors from 1 through 95")
     payload = input_path.read_bytes()
     pixels = imaging.read_gray_png(payload)
     if min(pixels.shape) < max(RANKS):
@@ -34,13 +40,38 @@ def run(input_path, output):
     output.mkdir(parents=True, exist_ok=False)
     try:
         original = pixels.astype(np.float64)
-        jpeg_path = output / "jpeg_q80.jpg"
-        decoded = imaging.jpeg_round_trip(pixels, jpeg_path)
-        imaging.save_display(decoded, output / "jpeg_decoded.png")
+        original_factors = svd.decompose(original)
+        original_sigma = original_factors[1]
+        labels = {"original": "Original"}
+        matrices = [("original", original, original_factors)]
+        metrics, projections = [], []
+        if compare:
+            np.testing.assert_allclose(
+                svd.project_onto_rank_one_directions(original, original_factors),
+                original_sigma, rtol=svd.RTOL, atol=1e-10,
+            )
+        for quality in qualities:
+            name = f"jpeg_q{quality}"
+            labels[name] = f"JPEG Q={quality}"
+            jpeg_path = output / f"{name}.jpg"
+            decoded = imaging.jpeg_round_trip(pixels, jpeg_path, quality)
+            decoded_name = f"{name}_decoded.png" if compare else "jpeg_decoded.png"
+            imaging.save_display(decoded, output / decoded_name)
+            matrices.append((name, decoded, svd.decompose(decoded)))
+            mse, psnr = imaging.quality_metrics(original, decoded)
+            metrics.append({
+                "quality_factor": quality, "jpeg_bytes": jpeg_path.stat().st_size,
+                "mse": mse, "psnr_db": psnr,
+            })
+            if compare:
+                coefficients = svd.project_onto_rank_one_directions(decoded, original_factors)
+                projections.extend({
+                    "quality_factor": quality, "i": i, "original_sigma": sigma,
+                    "coefficient": coefficient, "delta": coefficient - sigma,
+                } for i, (sigma, coefficient) in enumerate(zip(original_sigma, coefficients), 1))
         error_rows, spectrum_rows = [], []
         validation = {}
-        for name, matrix in (("original", original), ("jpeg_q80", decoded)):
-            factors = svd.decompose(matrix)
+        for name, matrix, factors in matrices:
             rows = svd.validate(matrix, factors, RANKS)
             error_rows.extend({"image": name, **row} for row in rows)
             validation[name] = {
@@ -60,14 +91,15 @@ def run(input_path, output):
                 for k in RANKS:
                     imaging.save_display(svd.reconstruct(factors, k), output / f"rank_{k:03}.png")
 
-        mse, psnr = imaging.quality_metrics(original, decoded)
         write_csv(output / "rank_errors.csv", error_rows)
         write_csv(output / "spectrum.csv", spectrum_rows)
-        write_csv(output / "jpeg_metrics.csv", [{
-            "quality_factor": imaging.JPEG_SETTINGS["quality"],
-            "jpeg_bytes": jpeg_path.stat().st_size, "mse": mse, "psnr_db": psnr,
-        }])
-        charts.render(output, pixels, RANKS)
+        write_csv(output / "jpeg_metrics.csv", metrics)
+        if compare:
+            write_csv(output / "projections.csv", projections)
+            charts.render_comparison(output)
+        preview_quality = 80 if 80 in qualities else qualities[0]
+        preview_name = f"jpeg_q{preview_quality}_decoded.png" if compare else "jpeg_decoded.png"
+        charts.render(output, pixels, RANKS, labels, preview_quality, preview_name)
         manifest = {
             "status": "passed",
             "input": {"path": str(input_path), "sha256": sha256(payload).hexdigest(),
@@ -77,7 +109,10 @@ def run(input_path, output):
             "packages": {name: version(name) for name in ("numpy", "Pillow", "matplotlib")},
             "jpeg_library": features.version_codec("jpg"),
             "libjpeg_turbo": features.version_feature("libjpeg_turbo"),
-            "jpeg_settings": imaging.JPEG_SETTINGS,
+            "jpeg_settings": (
+                {"qualities": qualities, "optimize": False, "progressive": False}
+                if compare else imaging.JPEG_SETTINGS
+            ),
             "validation": {"rtol": svd.RTOL, "atol": svd.ATOL, **validation},
             "artifacts": sorted(path.name for path in output.iterdir()),
         }
@@ -92,9 +127,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--qualities", nargs="+", type=int, help="Enable JPEG comparison and projections")
     args = parser.parse_args()
     try:
-        run(args.input, args.output_dir)
+        run(args.input, args.output_dir, args.qualities)
     except (ValueError, OSError, AssertionError, np.linalg.LinAlgError) as error:
         print(f"Experiment failed: {error}", file=sys.stderr)
         return 1

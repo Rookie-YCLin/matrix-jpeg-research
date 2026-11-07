@@ -39,4 +39,40 @@ $python = '.\.venv-local\Scripts\python'
 
 已用全新的 `.venv-replay` 安裝鎖定依賴，`pip check` 通過，重跑至 `outputs/run-replay`。第二輪測試為 8 通過、0 失敗、0 跳過，見 `outputs/pytest-replay.txt`。兩次執行的輸入 SHA-256 一致，14 個受索引的輸出檔（含三個 CSV）SHA-256 逐檔相同，見 `outputs/replay-comparison.txt`。驗證範圍為同一台 Windows 主機的兩個獨立環境。
 
-M0、M1 技術驗收完成，無未修復的測試失敗。待人工確認研究方法與初步結果。通過後才進行多品質比較與原始方向投影。
+M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者指示「請延續既定的 M2 實驗計畫」，並要求自 M2 起在獨立分支開發、測試後推送及開 PR。此指令解除 M1 階段的等待，允許進入既定的 M2 多品質比較與原始方向投影，交付後仍須經 PR 人工驗收。未經使用者批准，禁止合併至 main 或進入 M3。
+
+## 2026-11-08 M2 多品質比較
+
+- 在 `research/m2-jpeg-comparison` 完成四品質獨立編解碼與共用原圖基底的投影。M0、M1 輸出保留。預設命令仍執行單次 Q=80。
+- 重跑命令為 `python -m experiment --input data/ascent.png --output-dir outputs/run-m2-local --qualities 40 60 80 95`。
+- 技術驗收通過，下一步為 GitHub PR 審查。最終書面報告留待後續里程碑。
+
+### 實驗與驗收
+
+- 同一張 512×512 灰階 `ascent` 各自以 Q=40、60、80、95 編碼，重新解碼後計算各自的 SVD 與低秩誤差。原圖只分解一次，四組投影共用其秩一方向。
+- M2 初次執行的 `python -m pytest -q` 有 11 項通過。Research CI 擴充存檔驗證後，`python -m pytest -v` 有 13 項通過、0 項失敗、0 項跳過。測試交叉核對投影與 Frobenius 內積、實際解碼像素與頻譜、JPEG 檔案大小及新圖的繪圖資料。Q=80 的 JPEG 位元組和品質指標與 M1 一致。
+- 五個矩陣的 Frobenius 正規化平方殘差恆等式最大差為 1.11e-15，見 [執行紀錄](outputs/run-m2/manifest.json)。
+
+| JPEG Q | 實際大小（bytes） | MSE | PSNR（dB） | Rank-100 相對平方誤差 |
+|---:|---:|---:|---:|---:|
+| 40 | 23,780 | 37.09696 | 32.43742 | 0.46522% |
+| 60 | 30,965 | 23.62286 | 34.39748 | 0.52460% |
+| 80 | 45,222 | 10.26691 | 38.01641 | 0.53177% |
+| 95 | 89,876 | 1.62239 | 46.02924 | 0.52482% |
+
+來源為 [JPEG 指標](outputs/run-m2/jpeg_metrics.csv) 各 Q 的 jpeg_bytes、mse、psnr_db，以及 [低秩誤差](outputs/run-m2/rank_errors.csv) 各解碼圖 k=100 的 relative_squared。原圖同一欄為 0.51677%。此案例中，Q 越高，PSNR 與檔案大小越高，Rank-100 相對平方誤差則未呈單調變化。Rank-100 誤差以各矩陣自身為基準，PSNR 以原圖為基準。
+
+[投影表](outputs/run-m2/projections.csv) 中 i=1 的 delta 依 Q 順序約為 +67.47546、+5.91717、+0.41804、−1.93513。[投影圖](outputs/run-m2/projections.png) 保留正負號。
+
+### 研究限制與待審查
+
+- 結果限於單張影像和鎖定版本的編解碼器。Q 是編碼設定，位元組是實測儲存成本。
+- 請審查 `c_i = u_iᵀ B v_i` 的索引與符號，以及它與 B 的奇異值、資訊保留率的區別。遇到重複奇異值時，個別係數依賴選用的原圖基底。
+- 請確認各自低秩誤差與相對原圖的像素品質分開解讀，並核對 [頻譜](outputs/run-m2/spectra.png)、[大小與 PSNR](outputs/run-m2/jpeg_metrics.png) 及 [測試紀錄](outputs/pytest-m2.txt)。
+
+### M2 PR 自動驗收
+
+- PR 建立、更新分支或重新開啟時觸發 Research CI。在 GitHub 標準 Ubuntu runner 安裝鎖定依賴，記錄 Python、套件與 Pillow 編解碼器版本，執行 `python -m pytest -v`。
+- 沿用既有數學驗收，另逐項檢查 M2 存檔與重跑的 CSV、投影和品質圖的繪圖資料、圖檔與 manifest。Q=80 仍核對 M1 相容性，分別比較同次環境重新編碼的資料以及已提交的兩份存檔。
+- 在 PR 的 Checks 查看逐項 PASS 或 FAIL，展開失敗步驟保留錯誤。修正後在原分支重跑並推送。使用 PR 範本記錄繁中驗收摘要。
+- [外部補充審查](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/1#issuecomment-6709916235) 確認 [Research CI](https://github.com/Rookie-YCLin/matrix-jpeg-research/actions/runs/42391388981) 技術驗收通過，並要求補記 M1 至 M2 的授權與現行審查門檻。本次僅同步文件，M2 仍待 PR 人工驗收。

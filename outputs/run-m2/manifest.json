@@ -1,0 +1,130 @@
+{
+  "status": "passed",
+  "input": {
+    "path": "data\\ascent.png",
+    "sha256": "3b7cae537bc09699016556df746184a2376083244ae375a2740ee7157970ebf3",
+    "shape": [
+      512,
+      512
+    ],
+    "mode": "L"
+  },
+  "python": "3.13.14",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "numpy": "2.4.6",
+    "Pillow": "12.3.0",
+    "matplotlib": "3.11.1"
+  },
+  "jpeg_library": "8.0",
+  "libjpeg_turbo": "3.1.4.1",
+  "jpeg_settings": {
+    "qualities": [
+      40,
+      60,
+      80,
+      95
+    ],
+    "optimize": false,
+    "progressive": false
+  },
+  "validation": {
+    "rtol": 1e-08,
+    "atol": 1e-12,
+    "original": {
+      "checked_ranks": [
+        0,
+        1,
+        5,
+        10,
+        20,
+        50,
+        100,
+        512
+      ],
+      "max_relative_identity_gap": 2.220446049250313e-16,
+      "full_reconstruction_relative_squared": 1.0004750611051563e-29
+    },
+    "jpeg_q40": {
+      "checked_ranks": [
+        0,
+        1,
+        5,
+        10,
+        20,
+        50,
+        100,
+        512
+      ],
+      "max_relative_identity_gap": 3.3306690738754696e-16,
+      "full_reconstruction_relative_squared": 9.654855638876298e-30
+    },
+    "jpeg_q60": {
+      "checked_ranks": [
+        0,
+        1,
+        5,
+        10,
+        20,
+        50,
+        100,
+        512
+      ],
+      "max_relative_identity_gap": 1.1102230246251565e-15,
+      "full_reconstruction_relative_squared": 9.353873198157088e-30
+    },
+    "jpeg_q80": {
+      "checked_ranks": [
+        0,
+        1,
+        5,
+        10,
+        20,
+        50,
+        100,
+        512
+      ],
+      "max_relative_identity_gap": 3.3306690738754696e-16,
+      "full_reconstruction_relative_squared": 9.331153852433957e-30
+    },
+    "jpeg_q95": {
+      "checked_ranks": [
+        0,
+        1,
+        5,
+        10,
+        20,
+        50,
+        100,
+        512
+      ],
+      "max_relative_identity_gap": 2.220446049250313e-16,
+      "full_reconstruction_relative_squared": 9.960731947678666e-30
+    }
+  },
+  "artifacts": [
+    "jpeg_metrics.csv",
+    "jpeg_metrics.png",
+    "jpeg_q40.jpg",
+    "jpeg_q40_decoded.png",
+    "jpeg_q60.jpg",
+    "jpeg_q60_decoded.png",
+    "jpeg_q80.jpg",
+    "jpeg_q80_decoded.png",
+    "jpeg_q95.jpg",
+    "jpeg_q95_decoded.png",
+    "projections.csv",
+    "projections.png",
+    "rank_001.png",
+    "rank_005.png",
+    "rank_010.png",
+    "rank_020.png",
+    "rank_050.png",
+    "rank_100.png",
+    "rank_errors.csv",
+    "rank_errors.png",
+    "reconstructions.png",
+    "spectra.png",
+    "spectrum.csv"
+  ]
+}

@@ -1,0 +1,38 @@
+name: Research CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Install and record dependencies
+        run: |
+          python --version
+          python -m pip install -r requirements.txt
+          python -m pip check
+          python -m pip freeze
+          python -m PIL
+      - name: Verify research results
+        shell: bash
+        run: |
+          if python -m pytest -v; then
+            echo 'PASS — SVD、JPEG 與研究資料驗收' | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'FAIL — 請查看 Verify research results 的 pytest 錯誤紀錄' | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi

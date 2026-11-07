@@ -19,6 +19,12 @@ def reconstruct(factors, k):
     return (u[:, :k] * s[:k]) @ vh[:k, :]
 
 
+def project_onto_rank_one_directions(matrix, factors):
+    """Return the signed Frobenius coefficients in the original rank-one directions."""
+    u, _, vh = factors
+    return np.sum((u.T @ matrix) * vh, axis=1)
+
+
 def validate(matrix, factors, ranks):
     u, s, vh = factors
     p = min(matrix.shape)
