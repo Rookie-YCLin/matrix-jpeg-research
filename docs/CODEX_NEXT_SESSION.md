@@ -2,6 +2,21 @@
 
 > 狀態：**待研究者確認新研究方向**。本文件隨「一週研究範圍」規劃 PR 出現，並不自行改寫 `PROJECT_SPEC.md`。
 
+## 最先讀這段：分支與授權防呆
+
+**目前此交接卡、更新的 AGENTS.md 與 README.md 只存在於 Draft PR #9 分支** `planning/watermark-7day-charter`，不是預設的 `main`！Codex 不可只讀 `main/AGENTS.md` 就宣稱已接收新版規則。
+
+```sh
+git fetch origin
+git switch planning/watermark-7day-charter
+git pull --ff-only
+git status --short
+```
+
+上述僅作**讀取 PR #9 研究規劃**，不要在此分支寫入浮水印實驗。若環境沒有本地分支，使用 `git switch -c planning/watermark-7day-charter --track origin/planning/watermark-7day-charter`。若工作樹未清空、分支已有他人更新或 checkout 失敗，**不可用 `reset --hard`、`clean -fd` 或 force push 解決**；先回報。閱讀完成後，開工前回到使用者已授權的目標分支，或等研究者批准新實驗路線。
+
+**首次回報只要四行：** ① 目前所在分支／HEAD SHA；② 認定的唯一研究題目及其授權狀態；③ PR #7、#9 與 Issue #8 各是什麼；④ 下一個可做的工作及其停止條件。未確認研究方向前，**不得自動動手實作 G1**。
+
 ## 研究室去蕪存菁守則｜Codex 必讀
 
 **唯一優先順序：** 確認研究目標（G0）→ 上游 baseline（G1）→ 單因子比較（G2）→ 正式報告（G3）。**當前只處理 G0**；下一階段需要研究者明確確認。禁止因「可以做」就自行增加新實驗。
