@@ -1,35 +1,22 @@
-# Codex 下一次工作階段｜只執行 Issue #11 的 R1
+# Codex 交接｜執行 Issue #10 的原版浮水印基準
 
-研究者於 2026-11-08 正式批准《基於 SVD 秩一分解與區塊 DCT 頻譜之 JPEG 壓縮穩定性分析》。[Issue #11](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/11) 是 Codex 唯一有效的新實驗工作包。[Issue #8](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8) 保存正式決策，[Issue #10](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/10) 的舊 W0/G1 浮水印工作包已暫緩。禁止執行舊浮水印工作、嵌入／擷取開發及 BER 實驗。R2 暫緩。
-
-## 開工與環境
-
-先讀 Issue #11 全文，再核對 `PROJECT_SPEC.md`、`PROGRESS.md`、程式、測試與既有輸出。這份交接仍在 [Draft PR #9](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/9)，前 4 行只讀取文件。工作樹須乾淨，且尚未有 R1 分支，才執行下列建立分支命令。若已有 R1 分支，先核對其來源與現有改動，再接續。保護使用者的本地變更。
+先讀 [Issue #10](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/10) 及 [研究決議](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8)。從 Draft PR #9 的規劃分支讀正式規格，從最新 `origin/main` 建立實驗分支。先核對 `PROGRESS.md`、現有程式、測試及輸出。下列建立分支命令以工作樹乾淨且分支尚未建立為前提。
 
 ```powershell
 git fetch origin
-git show origin/planning/watermark-7day-charter:docs/CODEX_NEXT_SESSION.md
-git show origin/planning/watermark-7day-charter:docs/ONE_WEEK_RESEARCH_CHARTER.md
 git show origin/planning/watermark-7day-charter:AGENTS.md
+git show origin/planning/watermark-7day-charter:PROJECT_SPEC.md
+git show origin/planning/watermark-7day-charter:docs/ONE_WEEK_RESEARCH_CHARTER.md
+git show origin/planning/watermark-7day-charter:docs/CODEX_NEXT_SESSION.md
 git status --short
-git switch -c codex/r1-svd-dct-sensitivity origin/main
-py -3.13 -m venv .venv-r1
-$python = '.\.venv-r1\Scripts\python.exe'
+git switch -c codex/w0-watermark-baseline origin/main
+py -3.13 -m venv .venv-w0
+$python = '.\.venv-w0\Scripts\python.exe'
 & $python -m pip install -r requirements.txt
 & $python -m pip check
 & $python -m pytest -v
 ```
 
-## 實作後驗收
+固定上游提交 `322c90dc02d45644692095b34d3a6b735b6edbd8`。在 W0 分支另建鎖定依賴清單，確認 Python 3.13 相容，保存 OpenCV、PyWavelets、NumPy、Pillow、JPEG codec 和上游 SHA。先凍結輸入 manifest，再在 `watermark_baseline/` 包裝上游公開介面。新增獨立測試與新輸出目錄，保留歷史資料。
 
-在 `analysis/` 實作 Issue #11 的數學、量化表讀取及輸出。先確認 Pillow 排列與灰階分量表 ID。若來源不齊，先回報並依 Issue #11 記錄同設定重建方法。新增獨立測試，完成下列兩次執行，再比較數值與表格並保留容差與差異。兩個輸出路徑都須是新目錄。
-
-```powershell
-& $python -m analysis.r1 --input data/ascent.png --jpeg-dir outputs/run-m2 --output-dir outputs/run-r1
-& $python -m analysis.r1 --input data/ascent.png --jpeg-dir outputs/run-m2 --output-dir outputs/run-r1-replay
-& $python -m pytest -v
-```
-
-保存來源、雜湊、版本、四張實際量化表、CSV、Wᵢ 及檢查證據，更新 `PROGRESS.md`。提交、推送 R1 分支並開 PR，附重跑命令、SHA、CI 與限制，等待研究審查。
-
-保留 `main` 的 `PROJECT_SPEC.md`、`experiment.py`、既有 13 項測試、`outputs/run-m2/` 及歷史 CSV。[PR #7](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7) 保持開啟、未合併，分支與內容完整保留。禁止直接修改 `main` 或自動合併 PR。
+依 Issue #10 完成無攻擊驗證，再執行四組黑盒 JPEG 攻擊並重跑。交付逐位證據、CSV、manifest、確切重跑命令與 `python -m pytest -v` 結果，更新 `PROGRESS.md` 並開 W0 PR 待審。G2 在基準成功、可重現且通過審查後另開。
