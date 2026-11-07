@@ -1,0 +1,24 @@
+name                                 type              encoding         emb sub uni object ID
+------------------------------------ ----------------- ---------------- --- --- --- ---------
+WFUGAZ+DFKaiShu-SB-Estd-BF           CID TrueType      Identity-H       yes yes yes      4  0
+LQSOWK+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes      6  0
+FKHCCD+TimesNewRomanPS-BoldMT        CID TrueType      Identity-H       yes yes yes     12  0
+OFGNPO+CMMI12                        Type 1C           Builtin          yes yes yes     14  0
+KBHCES+CMMI8                         Type 1C           Builtin          yes yes yes     15  0
+XHAPXD+LMSans8-Regular-Identity-H    CID Type 0C       Identity-H       yes yes yes     16  0
+IOVAZZ+CMR12                         Type 1C           Builtin          yes yes yes     18  0
+LRRXLG+CMEX10                        Type 1C           Builtin          yes yes yes     19  0
+AZYBBS+CMSY10                        Type 1C           Builtin          yes yes yes     23  0
+DLSAZK+CMR8                          Type 1C           Builtin          yes yes yes     24  0
+NDGEAX+CMSY8                         Type 1C           Builtin          yes yes yes     30  0
+ENGKEV+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes     37  0
+GJNNDA+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes     55  0
+GXPUHM+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes     73  0
+FAUDZV+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes     93  0
+CECFXM+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes    100  0
+DCFDOK+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes    125  0
+GWVQDX+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes    142  0
+FRUTUT+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes    175  0
+FECRHU+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes    203  0
+CECFXM+TimesNewRomanPSMT             CID TrueType      Identity-H       yes yes yes    210  0
+UMPSFI+TimesNewRomanPS-ItalicMT      CID TrueType      Identity-H       yes yes yes    244  0

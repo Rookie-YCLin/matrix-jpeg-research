@@ -96,3 +96,9 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 - M4 已驗收，[PR #5](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/5) 已合併至 main（`ede4ce330b2e21790cacf3bb6fed879e8b79ec67`）。依 [Issue #6](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/6) 在 `research/final-pdf` 交付 [10 頁 PDF](reports/FINAL_REPORT.pdf) 與 [XeLaTeX 原稿](reports/FINAL_REPORT.tex)。
 - 完成單欄、12 pt、標楷體與 Times New Roman 嵌入及逐頁驗收。封面已填林易辰與學號 B143012007。其餘欄位及正式題目與教師的確認事項見 [最終檢查表](reports/FINAL_CHECKLIST.md)。
 - 本機 pytest 為 13 通過、0 失敗、0 跳過。研究程式、數據與結論沿用已驗收版本。PDF PR 待外部審查。
+
+## PR #7 PDF 重製
+
+- 首版 PDF 未通過使用者逐頁驗收。依 [逐頁審查](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7#issuecomment-6710698188) 在原分支重製，題目採「JPEG 壓縮對影像奇異值與低秩結構之影響分析」。
+- 新版 13 頁，以比較基準組織敘事，加入秩一教學例及分步公式。從原始存檔生成 8 張圖，含流程圖、雙基準主結果、末秩誤差差值及同區域裁切。沒有新增研究實驗。
+- 已核對實際頁數、正文 12 pt、嵌入字型、表格數值與全頁渲染。證據見 [逐頁紀錄](reports/pdf-review/REVIEW.md)。本機 pytest 為 13 通過，PR #7 待使用者重新驗收。
