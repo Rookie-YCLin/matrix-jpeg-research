@@ -1,0 +1,1 @@
+blind_watermark @ git+https://github.com/guofei9987/blind_watermark.git@322c90dc02d45644692095b34d3a6b735b6edbd8

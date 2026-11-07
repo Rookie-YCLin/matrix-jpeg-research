@@ -1,0 +1,4 @@
+-r requirements.txt
+opencv-python==4.13.0.92
+PyWavelets==1.10.0
+setuptools==84.2.1

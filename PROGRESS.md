@@ -90,3 +90,11 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 - 交付 [正式報告](reports/FINAL_REPORT.md)、[答辯稿](reports/DEFENSE_NOTES.md)及[最終核對紀錄](reports/FINAL_CHECKLIST.md)。已核對公式、四份 M2 CSV 引值、文獻、五張圖與相對路徑。
 - 在另一個 Windows 隔離環境重跑 M2 至新暫存目錄。兩份 CSV 有浮點末位差異，已通過數值容差核對，差異詳見最終核對紀錄。本機 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。
 - M4 待外部研究審查及使用者批准合併。正式題目、繳交格式與封面資料仍待確認。
+
+## W0／G1 原版盲浮水印基準
+
+- 依 [Issue #10](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/10) 從 `origin/main` 建立 `codex/w0-watermark-baseline`。凍結三張 RGB PNG 與固定 32-bit payload，使用固定提交的公開 bit 介面、common 模式和 d1=36、d2=20。上游及歷史實驗程式與輸出保留。
+- 無攻擊三圖各 0/32。Q40、Q60、Q80、Q95 各合計 0/96。含浮水印 PNG 相對原圖 PSNR 為 37.59–38.20 dB。JPEG 解碼相對原圖的 PSNR 範圍依 Q 分別為 29.88–32.24、31.03–33.35、32.90–34.78、36.05–36.87 dB。
+- Python 3.13.14 隔離環境的 `pip check` 通過，原有 13 項與新增 5 項測試共 18 通過。兩次獨立輸出核對 17 個檔案，SHA-256 全數相同。逐位結果、manifest 與 OpenCV 建置資訊見 [正式輸出](outputs/run-w0)，另有 [重跑輸出](outputs/run-w0-repeat)、[比對結果](outputs/w0-replay-comparison.json) 及 [pytest 紀錄](outputs/pytest-w0.txt)。
+- 安裝及存檔失敗原因、修正與上游 PNG writer 提示見 [執行診斷](watermark_baseline/DIAGNOSTICS.md)。Research CI 沿用舊測試，另安裝 W0 鎖定依賴並於 runner 重跑 W0。
+- 待審查固定影像代表性與 BER 下限。每個品質只有三張圖、單一 payload 共 96 位元，且 JPEG 固定 4:4:4。是否進入 G2 由研究主持人決定。
