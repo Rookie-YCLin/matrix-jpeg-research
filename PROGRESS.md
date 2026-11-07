@@ -76,3 +76,10 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 - 沿用既有數學驗收，另逐項檢查 M2 存檔與重跑的 CSV、投影和品質圖的繪圖資料、圖檔與 manifest。Q=80 仍核對 M1 相容性，分別比較同次環境重新編碼的資料以及已提交的兩份存檔。
 - 在 PR 的 Checks 查看逐項 PASS 或 FAIL，展開失敗步驟保留錯誤。修正後在原分支重跑並推送。使用 PR 範本記錄繁中驗收摘要。
 - [外部補充審查](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/1#issuecomment-6709916235) 確認 [Research CI](https://github.com/Rookie-YCLin/matrix-jpeg-research/actions/runs/42391388981) 技術驗收通過，並要求補記 M1 至 M2 的授權與現行審查門檻。本次僅同步文件，M2 仍待 PR 人工驗收。
+
+## 2026-11-08 M3 分析草稿
+
+- M2 已完成外部技術驗收，並經使用者批准將 [PR #1](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/1) 合併至 main，提交為 `02d462e419f58f852e2c0b7c2353880b9f0da726`。
+- 依 [Issue #2](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/2) 從最新 main 建立 `research/m3-analysis`，交付 [M3 分析與答辯草稿](reports/M3_ANALYSIS.md)。已逐圖核對，並以現有四份 CSV 交叉核對 PSNR、檔案大小、能量、尾端誤差、投影差值及文中引值。
+- 本機 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。原有實驗程式、測試與存檔均保留。
+- M3 交付後等待 PR 人工研究審查。M4 正式書面報告、引用核對與重現驗收留待批准。題目與教師的確認選項已列入草稿。
