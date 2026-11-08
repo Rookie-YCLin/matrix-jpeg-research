@@ -1,18 +1,18 @@
-# Codex 交接｜BER 優先，不自行開新候選
+# Codex 交接｜三步驟 BER–QF 專題
 
-## 研究目標
+## 唯一正式目標
+以 [guofei9987/blind_watermark](https://github.com/guofei9987/blind_watermark) 為基礎，修改 [bwm_core.py](https://github.com/guofei9987/blind_watermark/blob/master/blind_watermark/bwm_core.py) 內 SVD 嵌入或擷取演算法，降低**低 JPEG QF** 的 BER。上游 [att.py](https://github.com/guofei9987/blind_watermark/blob/master/blind_watermark/att.py) 未涵蓋本專題所需 JPEG 攻擊，須採用本倉庫可重現的 JPEG 編解碼測試。
 
-以 [guofei9987/blind_watermark](https://github.com/guofei9987/blind_watermark) 固定提交 `322c90dc02d45644692095b34d3a6b735b6edbd8` 為基礎，**改良 SVD 區塊的嵌入或擷取演算法，使 JPEG 壓縮後浮水印 BER 低於原版**。不得把 PNG PSNR、SVD 排序或 Frobenius 失真當作成功 KPI。請以 [正式規格](../PROJECT_SPEC.md) 為準。
+## 工作流程
+1. 先用固定 SHA 原版建立不同 QF 的 BER 基準（已有 W0／W0-D 存檔）。
+2. 提出一項有矩陣理論動機的 SVD 局部改良，事前固定比較條件；跟原版配對比較各 QF 的 BER。原版及改良版都要經過正確的 JPEG 實際編解碼與公開 bit 擷取。
+3. 如未改善，記錄結果並提出下一方案；如在預先固定低 QF 下得到可重現的 BER 降低，停止候選搜尋，整理成功方法給報告。
 
-## 現況（2026-11-08）
+## 目前已有證據
+- W0 [#13](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/13)、W0-D [#14](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/14)：4:4:4 QF10=12／96、QF20=78／96、QF30=0／96。
+- G2 [#17](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/17)、G3 [#18](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/18)、G4 [#20](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/20)、G5 [#21](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/21)／[#22](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/22) 是已封存探索；截至目前**沒有確認的低 QF BER 正向成果**。
+- 舊「禁止再產生候選」限制已被新的三步驟工作規格取代，但不代表可以未經核准直接開跑大量調參。
+- 正式交付只需要來源、JPEG 測試、BER–QF 比較與成功方法的矩陣理論說明，**無須 PSNR、無須逐一記載失敗候選**；內部紀錄仍保留實驗全貌。
 
-- W0 [#13](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/13)、W0-D [#14](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/14)：Q10 原版 12／96、Q20 78／96、Q30 0／96。
-- G2 [#17](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/17)、G3 [#18](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/18)、G4 [#20](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/20)、G5 前置 [#21](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/21) 與嵌入候選 [#22](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/22) 均已交付未合併的 Draft PR。主條件 Q10 無改善：G3 13／96、G4 17／96、G5 24／96。
-- G5 降低排序違反與提高 PNG PSNR，**不是** JPEG BER 改善，也未符合預先設定的品質匹配窗口。G5 改的是**嵌入**，不是只改擷取。
-- PR [#19](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/19) 為未完成正式報告審閱稿；不應把 G5 的數學正確性寫成抗 JPEG 成功。歷史 M0–M4 只作背景資料。
-
-## 下次工作唯一允許的研究前置
-
-先從封存 W0-D 檔案做**唯讀**失效診斷：D0／聚合分數與 K-means；D1／各位元第一、第二奇異值投票率；D2／PNG–JPEG 餘數位移。先用公開 bit API 逐位核對，真實 payload 僅供離線評估，不能引入盲式解碼。診斷結果須區分觀察、假說與因果。**未取得主持人新的實驗授權，不得提交 G6 或新的量化參數搜尋。**
-
-資料與重現方式見 [實驗索引](EXPERIMENT_INDEX.md)。獨立分支、保留 SHA／manifest／CSV／CI，任何合併與刪除研究證據均需研究主持人明確批准。
+## 行動與回報
+先向主持人回報所選低 QF 主條件、候選方法、修改檔案／資料範圍及預期驗證方式，未經同意不做新正式實驗。每階段都更新 GitHub PR／PROGRESS，提供 BER–QF 表格、固定輸出連結、阻礙與明確待決問題。不得合併 main 或刪除可重現證據。
