@@ -30,8 +30,8 @@ def encode(marked_png, target, quality, sampling):
     return w0.load_rgb(target)
 
 
-def decision_scores(pixels):
-    decoder = w0.new_watermark()
+def decision_scores(pixels, *, d2=20):
+    decoder = w0.configured_watermark(d2)
     decoder.wm_size = w0.BIT_COUNT
     raw = decoder.bwm_core.extract(img=w0.to_bgr(pixels), wm_shape=w0.BIT_COUNT)
     with warnings.catch_warnings(record=True) as caught:
