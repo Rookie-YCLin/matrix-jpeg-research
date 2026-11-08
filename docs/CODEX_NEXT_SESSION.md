@@ -1,4 +1,12 @@
-# Codex 交接｜三步驟 BER–QF 專題
+# Codex 交接｜新原圖與 QF=x 優先
+
+## 最新一次交接：唯一來源與 QF=x（2026-11-08）
+
+- 測試原圖改為 [上游指定測試圖](https://github.com/guofei9987/blind_watermark/blob/master/examples/pic/ori_img.jpeg)（blob SHA `ef48a056b3cab1d2c08723c014d8d515963f5a07`），**一張即可**。舊三圖 W0–G5 測試值僅為歷史，不可直接當新原圖的 baseline。
+- 下一步先凍結 QF 掃描範圍（提議 5–95、step 5）與最大值並列的處理規則；用原版在全部 QF 計算 BER，`x` 取原版 BER 最高的 QF。
+- 對改良 SVD 只比較相同 QF=x 的 BER；目標進步 >5%（10% 優秀），**百分點或相對百分比尚待主持人確認**。請同時列原始錯誤數、分母與兩種降幅。
+- 新原圖尚未執行正式實驗，也尚未知 x。每輪需回報；不得擅自當作已有正向結果。
+
 
 ## 唯一正式目標
 以 [guofei9987/blind_watermark](https://github.com/guofei9987/blind_watermark) 為基礎，修改 [bwm_core.py](https://github.com/guofei9987/blind_watermark/blob/master/blind_watermark/bwm_core.py) 內 SVD 嵌入或擷取演算法，降低**低 JPEG QF** 的 BER。上游 [att.py](https://github.com/guofei9987/blind_watermark/blob/master/blind_watermark/att.py) 未涵蓋本專題所需 JPEG 攻擊，須採用本倉庫可重現的 JPEG 編解碼測試。
