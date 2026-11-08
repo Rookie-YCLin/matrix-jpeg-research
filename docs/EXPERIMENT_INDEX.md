@@ -1,5 +1,14 @@
 # 實驗索引
 
+## G6｜已達標的 SVD QIM 步長改良
+
+- 固定 QF15 原版 **32/32** 錯，改良 d1=90、d2=20 **0/32** 錯；**相對 BER 降幅 100%**，符合事先設定的 ≥10% 優秀門檻。
+- 改良只改第一奇異值量化步長；上游 DWT／DCT／洗牌／K-means 不變。完整曲線測得 QF5 退步；不能宣稱所有 QF 改善。
+- [方法與數學說明](../reports/G6_SVD_QIM_QF15_SUCCESS.md) · [第一輪15候選CSV](../outputs/svd-qim-qf15-exploration/results.csv) · [完整驗證CSV](../outputs/svd-qim-qf15-selected/results.csv) · [驗證CI](https://github.com/Rookie-YCLin/matrix-jpeg-research/actions/runs/42463429539) · [PR #25](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/25)。
+
+---
+
+
 ## W1｜指定原圖之上游 BER–QF 基準
 
 - [PR #24](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/24) · [實際 GitHub Actions 執行](https://github.com/Rookie-YCLin/matrix-jpeg-research/actions/runs/42461739759) · [CSV](../outputs/ori-qf-scan/results.csv) · [manifest](../outputs/ori-qf-scan/manifest.json) · [實驗摘要](../outputs/ori-qf-scan/README.md)。

@@ -1,5 +1,13 @@
 # 改良 blind_watermark SVD 以提升低 QF JPEG 浮水印強韌性
 
+## 專題已達標：G6 SVD 量化改良（2026-11-08）
+
+- 將上游 `bwm_core.py` 的第一奇異值 QIM 步長 **d1: 36 → 90**，第二奇異值 d2=20、其他浮水印管線皆維持原版；屬 SVD 區塊內的改良。
+- 使用者事前固定的最壞原版 QF **x=15**：原版 **32/32 錯（BER 100%）**，G6 **0/32 錯（BER 0%）**，**相對 BER 降幅 100%**，超過 10% 優秀標準。
+- 完整 QF 掃描：QF10、15、20 改善；QF25～95 兩者均0錯；**QF5 由 12/32 變成 32/32，並非全低 QF 改善**。另用兩組未參與選參數的32-bit序列驗證 QF15 均0錯。
+- [成功方法、理論及限制](reports/G6_SVD_QIM_QF15_SUCCESS.md) · [實測 CSV](outputs/svd-qim-qf15-selected/results.csv) · [最小上游 patch](patches/bwm_core_svd_d1_90.patch) · [驗證 CI](https://github.com/Rookie-YCLin/matrix-jpeg-research/actions/runs/42463429539)。按已核准的研究規格，**已取得正向結果，停止新增候選搜尋**。
+
+
 ## 最新原版實測｜唯一指定原圖（W1）
 
 [W1 實測與重現](outputs/ori-qf-scan/README.md) · [19 個 QF 的 BER CSV](outputs/ori-qf-scan/results.csv) · [GitHub Actions](https://github.com/Rookie-YCLin/matrix-jpeg-research/actions/runs/42461739759)

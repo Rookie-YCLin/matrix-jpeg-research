@@ -1,5 +1,16 @@
 # 專案進度
 
+## G6 已達成正式 BER 目標（2026-11-08）
+
+- **SVD-only 方法**：第一奇異值量化步長 d1=36→90，第二奇異值 d2=20 不變；其他上游管線及真正盲式擷取規則不改動。
+- 固定 x=QF15：原版 32/32→G6 0/32；相對 BER 降幅 **100%**。正式成功標準 ≥5%，優秀 ≥10%，已達優秀。
+- 研究完整性：QF5 12/32→32/32（退步）；QF10 1/32→0/32；QF20 32/32→0/32；QF25–95 無變化（皆0錯）。
+- 另外兩組**未參與選擇 d1=90** 的32-bit payload，在QF15均由32錯→0錯；無攻擊PNG全數0錯。驗證 CI [run #42463429539](https://github.com/Rookie-YCLin/matrix-jpeg-research/actions/runs/42463429539)。
+- 詳見[成果報告](reports/G6_SVD_QIM_QF15_SUCCESS.md)、[完整驗證CSV](outputs/svd-qim-qf15-selected/results.csv)、[G6 PR #25](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/25)。依事先規格：**停止新候選，轉入報告整理與重現查核**。
+
+---
+
+
 ## W1 原版 BER–QF 掃描（2026-11-08）
 
 - 指定上游 ori_img.jpeg，固定 32-bit payload，QF=5、10、…、95，Pillow RGB JPEG 4:4:4；[GitHub Actions 實測](https://github.com/Rookie-YCLin/matrix-jpeg-research/actions/runs/42461739759) 兩個工作成功。
