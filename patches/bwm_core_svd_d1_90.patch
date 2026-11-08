@@ -1,0 +1,9 @@
+diff --git a/blind_watermark/bwm_core.py b/blind_watermark/bwm_core.py
+--- a/blind_watermark/bwm_core.py
++++ b/blind_watermark/bwm_core.py
+@@ -15,4 +15,4 @@ class WaterMarkCore:
+     def __init__(self, password_img=1, mode='common', processes=None):
+         self.block_shape = np.array([4, 4])
+         self.password_img = password_img
+-        self.d1, self.d2 = 36, 20  # d1/d2 越大鲁棒性越强,但输出图片的失真越大
++        self.d1, self.d2 = 90, 20  # wider QIM margin for the first SVD singular value
