@@ -1,19 +1,10 @@
-# 專案工作規範｜BER 優先
+# 專題代理規範｜SVD 改良以 JPEG BER 為唯一指標
 
-## 不可偏離的研究目的
+**最高研究目的**：根據 [guofei9987/blind_watermark](https://github.com/guofei9987/blind_watermark) 的 [bwm_core.py](https://github.com/guofei9987/blind_watermark/blob/master/blind_watermark/bwm_core.py)，自行改良 SVD 區塊的**嵌入或擷取**，降低低 JPEG QF 的浮水印 BER。
 
-**以 [guofei9987/blind_watermark](https://github.com/guofei9987/blind_watermark) 為基礎，改良其 SVD 浮水印嵌入或擷取方法，使浮水印經 JPEG 壓縮後，以更低 BER 被正確擷取。** 核心 KPI 是**同條件 JPEG BER 優於原版**；PSNR 只是預先固定的品質限制，排序、範數與理論證明是方法工具，皆不能充當達標。
-
-## 開工核對
-
-- 先讀 [正式規格](PROJECT_SPEC.md)、[實驗索引](docs/EXPERIMENT_INDEX.md)、[研究進度](PROGRESS.md) 與 [Codex 交接](docs/CODEX_NEXT_SESSION.md)。
-- 維持固定上游版本、DWT／DCT／洗牌／聚合／K-means 及公開 API。研究修改限定在 **SVD 區塊嵌入及／或擷取**；任何其他模組變更須主持人明確批准。
-- 不得用正確位元、原圖或未受攻擊 PNG 輔助真正的盲式擷取；可用於獨立診斷與事後評估。
-- W0-D Q10 12／96 是主基準；G2 18／96（d2=10）或 19／96（d2=30）、G3 13／96、G4 17／96、G5 24／96 均未達主要改善。G5 的 PNG PSNR 或保序成果不可代替 BER。
-- **候選搜尋已停止**，先評估唯讀 D0/D1/D2 診斷；不經研究主持人批准不得開啟新候選、調參、重跑新的正式實驗。
-
-## 證據與 Git 管理
-
-- 使用隔離環境、鎖定依賴；記錄原始輸入、版本、金鑰、payload、JPEG 編碼條件、CSV、manifest、SHA、測試及失敗紀錄。
-- 使用獨立分支與 PR；**不得直接修改 main、未經授權合併 PR、啟用 AI 自動審查或刪除可重現證據**。
-- 專案精簡以「首頁研究主線清晰、交接文件不再過時」為先。既有歷史資料、輸出、負結果、原始授權及 PR 保留。若提議刪檔，需逐項證明與目前主線無關、無測試或追溯依賴，並由主持人審核。
+1. **先重現原版**：上游 [att.py](https://github.com/guofei9987/blind_watermark/blob/master/blind_watermark/att.py) 未含本專題所需 JPEG 壓縮測試；另建 JPEG 攻擊、QF 掃描、原版 bit 擷取與 BER 評估。實驗固定上游 SHA，逐圖逐 QF 保留 CSV／manifest／來源／環境／seed。
+2. **只用 BER 衡量正式性能**：不要求 PSNR；不能把排序、Frobenius 範數或數學證明當作抗 JPEG 成果。新增方法須保留可解釋的矩陣理論依據。
+3. **反覆迭代到正向結果**：本規格**取代過去「G5 後禁止所有候選」的指示**。在既有研究範圍內可構思新 SVD 候選，但每輪正式實作／重測／重大變更前向主持人報告設計並取得同意；不做無限參數搜尋或事後更換成功門檻。找到預先界定且可重現的 BER 改善即停止候選搜尋。
+4. **正式報告聚焦成功方法**：不強迫逐一描述失敗試驗；但內部必須保留全部已做實驗（含負結果），不得偽造、篡改或用選擇性呈現造成不實結論。
+5. **專案管理**：每次使用 [專題倉庫](https://github.com/Rookie-YCLin/matrix-jpeg-research)，核對 [正式規格](PROJECT_SPEC.md)、[實驗索引](docs/EXPERIMENT_INDEX.md)、[交接](docs/CODEX_NEXT_SESSION.md) 與 [PROGRESS](PROGRESS.md)。獨立分支＋Draft PR，不直接修改 main；依需要新增、修訂、移除*經確認無依賴的冗餘*內容，不能自行刪除實驗原始資料、上游授權或歷史 PR。任何合併須主持人明確批准。
+6. **主動回報與請示**：每輪回報目前階段、完成事項、各 QF BER、阻礙、下一步及待決事項。遇到比較標準、設計方向、非 SVD 模組、破壞性刪檔等不確定事項要向主持人提問，而不是自行決定；不宣稱可以無人觸發地背景執行。
