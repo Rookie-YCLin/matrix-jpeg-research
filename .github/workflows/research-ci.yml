@@ -79,3 +79,36 @@ jobs:
           path: ${{ runner.temp }}/ori-qf-scan
           if-no-files-found: warn
           retention-days: 30
+
+  svd-qim-qf15-exploration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Install fixed upstream SVD
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install opencv-python==4.13.0.92 PyWavelets==1.10.0 setuptools==84.2.1
+          python -m pip install --no-build-isolation 'blind_watermark @ git+https://github.com/guofei9987/blind_watermark.git@322c90dc02d45644692095b34d3a6b735b6edbd8'
+          python -m pip check
+      - name: Pre-registered QF15 SVD-only trials and secondary QF checks
+        run: |
+          python -m experiments.svd_qim_sweep --output-dir "$RUNNER_TEMP/qim-exploration"
+          cat "$RUNNER_TEMP/qim-exploration/results.csv"
+          cat "$RUNNER_TEMP/qim-exploration/manifest.json"
+      - name: Archive all candidates and attack images
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qf15-svd-qim-all-candidates
+          path: ${{ runner.temp }}/qim-exploration
+          if-no-files-found: warn
+          retention-days: 30
