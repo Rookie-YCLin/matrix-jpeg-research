@@ -38,7 +38,7 @@ python -m watermark_baseline.compare_runs outputs/run-w0-d-review outputs/run-w0
 
 ## G2｜待批准
 
-[Issue #16](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/16) 為唯一入口。預計分支 `codex/g2-d2-paired`。提交、PR、CSV、manifest、CI 與實驗重跑命令待交付後補入。建議主比較為 Q10／4:4:4，Q20 作高壓診斷，Q30 作低錯誤對照。PSNR 門檻須在看 G2 結果前核定。三張影像、單一 payload，每條件 96 位元。
+[Issue #16](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/16) 為唯一入口。建議沿用本機分支 `codex/g2-d2-comparison`。提交、PR、CSV、manifest、CI 與實驗重跑命令待交付後補入。建議主比較為 Q10／4:4:4，Q20 作高壓診斷，Q30 作低錯誤對照。PSNR 門檻須在看 G2 結果前核定。三張影像、單一 payload，每條件 96 位元。
 
 ## R1｜歷史方向
 

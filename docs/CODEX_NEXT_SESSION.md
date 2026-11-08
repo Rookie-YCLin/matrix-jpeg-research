@@ -1,11 +1,11 @@
 # Codex 交接｜Issue #16
 
-唯一 G2 工作入口為 [Issue #16](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/16)。先確認主持人已驗收 W0、確認 W0-D 證據、核准比較設計並在該 Issue 明確放行。核對 [正式規格](../PROJECT_SPEC.md)、[實驗索引](EXPERIMENT_INDEX.md) 和 `PROGRESS.md`。開工前從乾淨工作樹確認最新 main 含已驗收的 W0 與 W0-D。
+唯一 G2 工作入口為 [Issue #16](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/16)。先確認主持人已驗收 W0、確認 W0-D 證據、核准比較設計並在該 Issue 明確放行。核對 [正式規格](../PROJECT_SPEC.md)、[實驗索引](EXPERIMENT_INDEX.md) 和 `PROGRESS.md`。目前本機已有 codex/g2-d2-comparison 與未提交的工作。先保留並核對其基底、內容、執行條件與驗收門檻，獲准後才接續，避免另起一套。下列 git switch -c 只適用於分支不存在且工作樹乾淨的環境，並須確認最新 main 已含驗收的 W0 與 W0-D。
 
 ```powershell
 git fetch origin
 git status --short
-git switch -c codex/g2-d2-paired origin/main
+git switch -c codex/g2-d2-comparison origin/main
 py -3.13 -m venv .venv-g2
 $python = '.\.venv-g2\Scripts\python.exe'
 & $python -m pip install -r requirements-w0.txt
