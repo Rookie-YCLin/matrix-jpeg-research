@@ -1,0 +1,32 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.14, pytest-9.2.0, pluggy-1.7.0 -- <repo>\.venv-w0-clean\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: <repo>
+plugins: platformdirs-4.14.5
+collecting ... collected 23 items
+
+tests/test_comparison.py::test_signed_projection_matches_frobenius_inner_product PASSED [  4%]
+tests/test_comparison.py::test_comparison_recomputes_measurements_from_each_jpeg[fresh] PASSED [  8%]
+tests/test_comparison.py::test_comparison_plots_use_csv_columns[fresh] PASSED [ 13%]
+tests/test_comparison.py::test_comparison_recomputes_measurements_from_each_jpeg[archived] PASSED [ 17%]
+tests/test_comparison.py::test_comparison_plots_use_csv_columns[archived] PASSED [ 21%]
+tests/test_experiment.py::test_output_manifest_and_images PASSED         [ 26%]
+tests/test_experiment.py::test_jpeg_metrics_and_spectra_use_decoded_pixels PASSED [ 30%]
+tests/test_svd.py::test_rectangular_rank_one_sum[matrix0] PASSED         [ 34%]
+tests/test_svd.py::test_rectangular_rank_one_sum[matrix1] PASSED         [ 39%]
+tests/test_svd.py::test_zero_matrix PASSED                               [ 43%]
+tests/test_svd.py::test_out_of_range_rank[-1] PASSED                     [ 47%]
+tests/test_svd.py::test_out_of_range_rank[3] PASSED                      [ 52%]
+tests/test_svd.py::test_validation_rejects_inconsistent_factors PASSED   [ 56%]
+tests/test_watermark_baseline.py::test_fixed_payload_order_and_public_decoder PASSED [ 60%]
+tests/test_watermark_baseline.py::test_rgb_bgr_and_metrics PASSED        [ 65%]
+tests/test_watermark_baseline.py::test_png_failure_stops_all_jpeg PASSED [ 69%]
+tests/test_watermark_baseline.py::test_each_attack_reopens_same_png PASSED [ 73%]
+tests/test_watermark_baseline.py::test_archived_results PASSED           [ 78%]
+tests/test_watermark_mechanism.py::test_modulus_boundary_and_circular_wrap PASSED [ 82%]
+tests/test_watermark_mechanism.py::test_archive_counts_match_block_rows PASSED [ 86%]
+tests/test_watermark_stress.py::test_each_quality_and_sampling_reopens_same_marked_png PASSED [ 91%]
+tests/test_watermark_stress.py::test_separate_scores_recover_public_bit_order_without_payload PASSED [ 95%]
+tests/test_watermark_stress.py::test_archive_metrics_and_diagnostics PASSED [100%]
+
+============================= 23 passed in 16.11s =============================
