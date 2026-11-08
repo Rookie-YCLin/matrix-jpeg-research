@@ -4,7 +4,7 @@ on:
   workflow_run:
     workflows: [Research CI]
     types: [completed]
-  # Pre-merge smoke runs only from this trusted branch's own push.
+  # Pre-merge validation runs only from this trusted branch's own push.
   push:
     branches: [codex/research-ai-review]
 
@@ -49,11 +49,12 @@ jobs:
         id: prepare
         env:
           GH_TOKEN: ${{ github.token }}
+          REVIEW_PILOT: ${{ vars.RESEARCH_AI_REVIEW_PILOT }}
         run: python .github/research-review/review.py prepare
 
   model:
     needs: prepare
-    if: needs.prepare.outputs.mode == 'live' && needs.prepare.outputs.reason == '""'
+    if: (needs.prepare.outputs.mode == 'live' || needs.prepare.outputs.mode == 'pilot') && needs.prepare.outputs.reason == '""'
     runs-on: ubuntu-latest
     timeout-minutes: 6
     permissions: {}

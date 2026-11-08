@@ -13,7 +13,7 @@ OWNER = "Rookie-YCLin"
 SMOKE_BRANCH = "codex/research-ai-review"
 ROOT = Path(__file__).resolve().parents[2]
 SHA = re.compile(r"[0-9a-f]{40}")
-MARKER = re.compile(r"^<!-- research-ai-review:(live|smoke):([0-9a-f]{40}) -->")
+MARKER = re.compile(r"^<!-- research-ai-review:(live|smoke|pilot):([0-9a-f]{40}) -->")
 ISSUE = re.compile(r"^(?:Research-Issue:\s*|對應\s*)#([1-9][0-9]{0,8})(?:[。.\s]|$)", re.M)
 SCHEMA = {
     "type": "object",
@@ -72,7 +72,8 @@ def target(event_name, event):
     if event_name == "push":
         if event.get("ref") != f"refs/heads/{SMOKE_BRANCH}" or event.get("deleted"):
             return None
-        branch, head, mode = SMOKE_BRANCH, event["after"], "smoke"
+        branch, head = SMOKE_BRANCH, event["after"]
+        mode = "pilot" if os.getenv("REVIEW_PILOT") == "true" else "smoke"
     else:
         run = event["workflow_run"]
         if (run["event"] != "pull_request"
@@ -82,7 +83,7 @@ def target(event_name, event):
                 or run["run_attempt"] != 1):
             return None
         branch, head, mode = run["head_branch"], run["head_sha"], "live"
-    if mode == "smoke" and event["sender"]["login"] != OWNER:
+    if event_name == "push" and event["sender"]["login"] != OWNER:
         return None
     if not isinstance(branch, str) or not SHA.fullmatch(head):
         return None
@@ -210,6 +211,14 @@ def prepare():
     if mode == "smoke":
         reason = "受控無金鑰測試，未呼叫模型。"
         prompt = ""
+    elif mode == "pilot":
+        reason = ""
+        prompt = json.dumps({
+            "scope": "Synthetic pilot only. Check whether this BER calculation is correct.",
+            "head": head,
+            "files": [{"filename": "pilot_ber.py", "patch": "@@ -0,0 +1,3 @@\n+wrong_bits = 1\n+total_bits = 32\n+ber = wrong_bits / 3"}],
+            "note": "The synthetic file and result are fixtures, not research evidence.",
+        })
     else:
         try:
             detail = api(f"pulls/{number}")
@@ -255,7 +264,8 @@ def publish():
             if reason or os.environ["MODEL_RESULT"] != "success":
                 raise ValueError("Review unavailable")
             report = validate(json.loads(os.environ["MODEL_MESSAGE"]))
-            source = "OpenAI Codex GitHub Action"
+            source = ("OpenAI Codex GitHub Action 合成驗收案例" if mode == "pilot"
+                      else "OpenAI Codex GitHub Action")
         except (ValueError, TypeError):
             report = blocked(reason or "模型未完成或輸出無效，請查閱執行紀錄與審查環境設定。")
     api(f"issues/comments/{reservation}", method="PATCH",

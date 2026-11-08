@@ -12,6 +12,11 @@ Research CI 結束後，預設分支上的可信工作流程查找相同倉庫�
 
 GPT-5.4 mini 標準價格每百萬輸入／輸出 token 為 USD 0.75／4.50。例每次累計 20,000 輸入、2,000 輸出約 USD 0.024，三次約 USD 0.072。Codex Action 可能多次呼叫，這是用量情境，並非費用上限。停用 repository variable 可中止後續審查。環境金鑰與有 PR 評論權的可信作業需分離。參考 [官方價格](https://developers.openai.com/api/docs/models/gpt-5.4-mini)。
 
+
+### 合併前正式模型驗收
+
+主持人可先只允許 `codex/research-ai-review` 部署至 `research-ai-review`，加入環境 Secret 並批准模型費用，再將 repository variable `RESEARCH_AI_REVIEW_PILOT` 設為 `true`。保持正式開關停用，由主持人推送新提交至 Draft PR #15 的分支。驗收預期是模型對明示的合成測例回報 NEEDS_CHANGES，定位 `pilot_ber.py:3` 並指出 1 個錯誤位元／32 個總位元應為 1/32。該案例只驗證真實模型呼叫與報告格式。測試後關閉 pilot 開關，將環境部署限制改回僅 main。正式上線前再以正式 Issue 的受控 PR 驗收研究審查。
+
 ## 第二階段設計（未啟用）
 
 第一階段實際模型審查獲主持人驗收並明確批准後，才考慮新增修正執行器。從 GitHub API 讀取可信 bot 評論，驗證工作流程、PR、完整 SHA、Issue、審查格式與 `NEEDS_CHANGES`；禁止從評論抽取或執行命令。主持人核准的 Issue 檔案範圍須使用明列允許清單，排除 main、歷史資料、工作流程及保護分支。評論的自然語言只作建議，Codex 逐項對照原始證據產生 patch，先以唯讀身分驗證，隔離執行測試。通過後由獨立發布者重新核對 PR 頭部 SHA、範圍、測試和輪次，再推送至原實驗分支。自動發送提交的身分需由主持人另行核准，並驗證後續 CI 及獨立審查會觸發。現行階段只允許主持人觸發；未來自動提交若獲准，須對專用身分另建明確信任規則。
