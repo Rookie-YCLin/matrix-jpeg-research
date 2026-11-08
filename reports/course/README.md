@@ -12,4 +12,4 @@
 
     python reports/course/build_report.py --figures <figures> --output <report.docx> --math-xsl <Office MML2OMML.XSL>
 
-公式以可編輯的 Word 公式物件寫入。以 Word 開啟、重新分頁並匯出 PDF，再以 pdfinfo、pdffonts 及 pdftoppm 核對紙張、字型及每頁。PDF 與 DOCX 皆由同一來源生成。此次 Word 匯出為 16 頁，包含封面、摘要、13 頁正文及參考資料；標楷體、Times New Roman 和公式用 Cambria Math 均嵌入。此次環境未安裝 LibreOffice，視覺查核採 Word 的實際排版結果。
+公式以可編輯的 Word 公式物件寫入。以 Word 開啟、重新分頁並匯出 PDF，再以 pdfinfo、pdffonts 及 pdftoppm 核對紙張、字型及每頁。PDF 與 DOCX 皆由同一來源生成。此次 Word 匯出為 18 頁，包含封面、摘要、15 頁正文及參考資料；標楷體、Times New Roman 和公式用 Cambria Math 均嵌入。此次環境未安裝 LibreOffice，視覺查核採 Word 的實際排版結果。

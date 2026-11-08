@@ -103,7 +103,7 @@ def main():
     ax.set_axis_off()
     for y, labels in (
         (.74, ["RGB input", "Haar DWT\nlow band", "4×4 DCT\npermute", "SVD → QIM", "Inverse path\nmarked PNG"]),
-        (.25, ["JPEG decode", "Same block\ntransform", "Sorted SVD", "Modulo votes\n3:1 fusion", "Average → K-means\nrestore bit order"]),
+        (.25, ["JPEG decode", "Same block\ntransform", "Sorted SVD", "Modulo votes\n3:1 fusion", "Mean + K-means\nRestore order"]),
     ):
         for i, label in enumerate(labels):
             x = .10 + .20*i
