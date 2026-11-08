@@ -1,0 +1,77 @@
+{
+  "command": [
+    "python",
+    "-m",
+    "experiments.svd_qim_psnr",
+    "--output-dir",
+    "outputs\\svd-qim-psnr-qf15"
+  ],
+  "source_url": "https://raw.githubusercontent.com/guofei9987/blind_watermark/322c90dc02d45644692095b34d3a6b735b6edbd8/examples/pic/ori_img.jpeg",
+  "source_blob": "ef48a056b3cab1d2c08723c014d8d515963f5a07",
+  "source_sha256": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+  "source_shape_rgb": [
+    1108,
+    738,
+    3
+  ],
+  "reference": "Pillow RGB uint8 decode of ori_img.jpeg",
+  "mse": "Mean squared float64 difference over all H\u00d7W\u00d73 entries",
+  "peak": 255,
+  "upstream": {
+    "url": "https://github.com/guofei9987/blind_watermark.git",
+    "vcs_info": {
+      "commit_id": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "requested_revision": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "vcs": "git"
+    }
+  },
+  "arms": {
+    "upstream": [
+      36,
+      20
+    ],
+    "svd_step_90": [
+      90,
+      20
+    ]
+  },
+  "payload": "10110010111001000101101011010001",
+  "keys": {
+    "password_img": 1,
+    "password_wm": 1
+  },
+  "mode": "common",
+  "fast_mode": false,
+  "block_shape": [
+    4,
+    4
+  ],
+  "jpeg": {
+    "encoder": "Pillow",
+    "quality": 15,
+    "subsampling": 0,
+    "optimize": false,
+    "progressive": false
+  },
+  "python": "3.13.14",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "blind_watermark": "0.4.4",
+    "numpy": "2.4.6",
+    "opencv-python": "4.13.0.92",
+    "PyWavelets": "1.10.0",
+    "Pillow": "12.3.0"
+  },
+  "opencv": "4.13.0",
+  "pillow_jpeg": "8.0",
+  "pillow_libjpeg_turbo": "3.1.4.1",
+  "archived_ber_csv_sha256": "ebac7c5ad8d026dada167f62799ee36e1c0c913feedb12e4a0797344c2021ba0",
+  "files_sha256": {
+    "ori_img.jpeg": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+    "results.csv": "5730d723d0ad1605f3d61a23b1b43a791749dab04b7ddda8239b80bc8b299a37",
+    "svd_step_90_marked.png": "81d3bbe193b70ea94487e0a79b19865e800eaaaa16078e71022e25e0edddf069",
+    "svd_step_90_qf15.jpg": "444aeffe34e10bfb141c7b9391c4800d38cc5f30c8bcc9bf8b74076a5ca94f83",
+    "upstream_marked.png": "2653e4395dc69ec25c22d7eb3411785d9d772acb721a6e68b68c470d481e6d3d",
+    "upstream_qf15.jpg": "394044b652b111bedc9c229d6430b02641e7b4707ffb1b026e6df8f7dd8e13a4"
+  }
+}
