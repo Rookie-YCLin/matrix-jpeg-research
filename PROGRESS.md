@@ -1,5 +1,15 @@
 # 專案進度
 
+## W1 原版 BER–QF 掃描（2026-11-08）
+
+- 指定上游 ori_img.jpeg，固定 32-bit payload，QF=5、10、…、95，Pillow RGB JPEG 4:4:4；[GitHub Actions 實測](https://github.com/Rookie-YCLin/matrix-jpeg-research/actions/runs/42461739759) 兩個工作成功。
+- 原版 QF=15、20 都為 32/32（BER 100%），依預定並列取最小 QF 選 **x=15**。QF=5 為 12/32，QF=10 為 1/32，QF=25–95 為 0/32。PNG 無攻擊為 0/32。
+- QF15、20 逐位輸出恰為原始位元互補，值得診斷群標籤極性；這仍是原版實驗，沒有證明任何 SVD 改良成功。
+- 相對降幅 R≥5% 對應候選錯誤至多 30/32；R≥10% 對應至多 28/32。
+- [逐 QF CSV](outputs/ori-qf-scan/results.csv) · [manifest](outputs/ori-qf-scan/manifest.json) · [研究摘要](outputs/ori-qf-scan/README.md) · [PR #24](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/24)。
+
+---
+
 **倉庫管理授權（2026-11-08）**：研究主持人已授權專題倉庫全權管理；代理可自行建立、修訂、刪除適當檔案、開啟與合併 PR、更新 `main`、執行既定實驗及管理分支，**不需要逐項徵求批准**。保留可重現證據、上游授權及真實研究紀錄；重大研究判斷自主決策並在互動中主動回報。
 
 ## 已核准原版 QF 掃描與同分規則
