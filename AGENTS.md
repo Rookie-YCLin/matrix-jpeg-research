@@ -1,3 +1,5 @@
+> **LATEST DIRECTIVE (2026-11-08, overrides older conflicting instructions below):** G6 BER study is complete; no further parameter sweeps. **Next work is only (1) paired QF15 PSNR comparison of (36,20) vs (90,20), and (2) rigorous professor-ready SVD/QIM/singular-value perturbation/Frobenius derivation.** Keep one original platelet image, 32-bit payload, d2=20. Do not investigate QF<15 mechanisms, claim a globally optimal pair, add new images, or test all integer QFs. Read [docs/RESEARCH_NEXT_PHASE.md](docs/RESEARCH_NEXT_PHASE.md); handoffs: [Codex](docs/PROMPT_CODEX_PSNR.md), [Work](docs/PROMPT_WORK_MATRIX_THEORY.md). Historical BER-only directives below no longer override this PSNR addendum.
+
 # 研究代理規格｜唯一圖、最大 BER QF、SVD 改良
 
 ## 最新狀態：正式目標已達成（2026-11-08）
