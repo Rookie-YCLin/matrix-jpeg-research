@@ -1,0 +1,180 @@
+{
+  "status": "complete",
+  "command": [
+    "python",
+    "-m",
+    "watermark_baseline.stress",
+    "--output-dir",
+    "outputs\\run-w0-d-repeat"
+  ],
+  "baseline_commit": "f5a47fc1ba40cc35f5794648b4440cb1fed782d1",
+  "baseline_manifest_sha256": "2b2f3be7a14044d7b3b5a241df91db23907a97774c643a4fb66565163df06cd3",
+  "inputs": {
+    "revision": "ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8",
+    "release": "scikit-image v0.26.0",
+    "license_reference": "https://scikit-image.org/docs/0.26.x/api/skimage.data.html",
+    "preprocessing": "None. Original distributed PNG bytes.",
+    "images": [
+      {
+        "id": "astronaut",
+        "file": "astronaut.png",
+        "sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+        "size": [
+          512,
+          512
+        ],
+        "mode": "RGB",
+        "bit_depth": 8,
+        "license": "NASA (public domain)",
+        "texture": "portrait, smooth and high-contrast areas",
+        "source": "https://raw.githubusercontent.com/scikit-image/scikit-image/ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8/src/skimage/data/astronaut.png"
+      },
+      {
+        "id": "chelsea",
+        "file": "chelsea.png",
+        "sha256": "596aa1e7cb875eb79f437e310381d26b338a81c2da23439704a73c4651e8c4bb",
+        "size": [
+          451,
+          300
+        ],
+        "mode": "RGB",
+        "bit_depth": 8,
+        "license": "Stefan van der Walt (CC0)",
+        "texture": "fur and diagonal edges",
+        "source": "https://raw.githubusercontent.com/scikit-image/scikit-image/ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8/src/skimage/data/chelsea.png"
+      },
+      {
+        "id": "coffee",
+        "file": "coffee.png",
+        "sha256": "cc02f8ca188b167c775a7101b5d767d1e71792cf762c33d6fa15a4599b5a8de7",
+        "size": [
+          600,
+          400
+        ],
+        "mode": "RGB",
+        "bit_depth": 8,
+        "license": "Rachel Michetti (CC0), courtesy of Pikolo Espresso Bar",
+        "texture": "smooth porcelain and wood grain",
+        "source": "https://raw.githubusercontent.com/scikit-image/scikit-image/ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8/src/skimage/data/coffee.png"
+      }
+    ]
+  },
+  "marked_pngs": {
+    "astronaut_marked.png": "86efaf5877a4b6e5ffbd882429bcf13b6dc4b7cdf9b9faf481ec5f93f41a151f",
+    "chelsea_marked.png": "27d047fb7fac64f9c14c35c0c29b7b0d3edef36a15d3fd3d1294f175a27500d5",
+    "coffee_marked.png": "542ce726b445e940da8ef56d847008653fd047c574c300bb7ddd10b1f32fc59a"
+  },
+  "upstream": {
+    "url": "https://github.com/guofei9987/blind_watermark.git",
+    "vcs_info": {
+      "commit_id": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "requested_revision": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "vcs": "git"
+    }
+  },
+  "python": "3.13.14",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "blind_watermark": "0.4.4",
+    "opencv-python": "4.13.0.92",
+    "PyWavelets": "1.10.0",
+    "numpy": "2.4.6",
+    "Pillow": "12.3.0",
+    "pytest": "9.2.0"
+  },
+  "opencv": "4.13.0",
+  "pillow_jpeg": "8.0",
+  "pillow_libjpeg_turbo": "3.1.4.1",
+  "payload": "10110010111001000101101011010001",
+  "keys": {
+    "password_img": 1,
+    "password_wm": 1
+  },
+  "mode": "common",
+  "fast_mode": false,
+  "d1": 36,
+  "d2": 20,
+  "block_shape": [
+    4,
+    4
+  ],
+  "decoder": "WaterMark.extract(mode=bit), upstream 1D k-means + bit unshuffle",
+  "color": "Pillow RGB uint8 -> OpenCV BGR uint8 -> upstream float32 YUV",
+  "psnr": {
+    "peak": 255,
+    "dtype": "float64",
+    "reference": "original RGB"
+  },
+  "blocks_per_channel": {
+    "astronaut": 4096,
+    "chelsea": 2072,
+    "coffee": 3750
+  },
+  "jpeg": {
+    "encoder": "Pillow RGB",
+    "optimize": false,
+    "progressive": false,
+    "conditions": [
+      {
+        "group": "A",
+        "quality": 10,
+        "subsampling": "4:4:4",
+        "pillow_subsampling": 0
+      },
+      {
+        "group": "A",
+        "quality": 20,
+        "subsampling": "4:4:4",
+        "pillow_subsampling": 0
+      },
+      {
+        "group": "A",
+        "quality": 30,
+        "subsampling": "4:4:4",
+        "pillow_subsampling": 0
+      },
+      {
+        "group": "B",
+        "quality": 40,
+        "subsampling": "4:2:0",
+        "pillow_subsampling": 2
+      },
+      {
+        "group": "B",
+        "quality": 60,
+        "subsampling": "4:2:0",
+        "pillow_subsampling": 2
+      },
+      {
+        "group": "B",
+        "quality": 80,
+        "subsampling": "4:2:0",
+        "pillow_subsampling": 2
+      }
+    ]
+  },
+  "scores": "Separate upstream core.extract + one_dim_kmeans + extract_decrypt. Midpoint of final cluster means, stored only if it reproduces labels. Gap = minimum high score minus maximum low score.",
+  "files": {
+    "astronaut_A_q10.jpg": "d422aab5373fee34ea2c2dcb31498c20f7fdacc8c13d804d1607fa48d930146b",
+    "astronaut_A_q20.jpg": "1e02ad4180774c0304cc7b84f1aaa7a9ae22c83d612b61b47d825ca794245d2f",
+    "astronaut_A_q30.jpg": "fcbb3e84ba4e238a675931b1bf46561168d294f2a46e9277082de52dd835a42f",
+    "astronaut_B_q40.jpg": "3284a813cc7600b111aef1db1491108addccd57d4c0c93d6dadb6570eb610e7a",
+    "astronaut_B_q60.jpg": "49671dad2a6da6ff395aecd6a2c89b5c6a5a7ef2c2febb7ca0d608a1be53fc2e",
+    "astronaut_B_q80.jpg": "63d9c02610f50159a54514e029a0ca3fd8b0286f43f1d5a6e7e595e95a4b42ec",
+    "chelsea_A_q10.jpg": "9a86c07e4aa417b8bad68cb278e8a995cc059bb220ce2ccd577257a1b45e9be5",
+    "chelsea_A_q20.jpg": "a2a67f0c961aa630c412528eb5809e9a0e551235da4b105f23ea632190c7684f",
+    "chelsea_A_q30.jpg": "167e4487267cdbd0ffe4dff484f8ebcf3a3283d0eb8099c979baa16e56250860",
+    "chelsea_B_q40.jpg": "60b70a3f93926b434ea8bbf983fdaafcbf5566888d764629cc33e084e1c39b83",
+    "chelsea_B_q60.jpg": "508fde8ca9142f0276f21b7e43aa2e8b7ff8b39247cbe103846fc2325220b3d0",
+    "chelsea_B_q80.jpg": "c5774380afdd151993aa85f02e4978cb2d9a514a592e4fb797e22420794781e1",
+    "coffee_A_q10.jpg": "a1d0fe493663ff655e1e491edb9b87702a7c4a22f474e0c22a56c124c86c4ef1",
+    "coffee_A_q20.jpg": "31ece02c368042ba94e7adb3431267405fa8403b4ee2a535e53f2395ad36fd9b",
+    "coffee_A_q30.jpg": "beafd6dbcd8c86309dd475b6d1ac71e1b256af97f88c7c410d3a268a730cc658",
+    "coffee_B_q40.jpg": "1a39dbb411a19e8e8049f710905ef5c19ba9e07d31a5867803a28c4ff205e934",
+    "coffee_B_q60.jpg": "c4613c4cc694a5c3990e8afafff8f6e81cee56e2ad629ad79fc9023220f20c9f",
+    "coffee_B_q80.jpg": "22972a0a6d794b700999fdfe48a858370cbd9680d830d741e2ffdef225bd82ce",
+    "decision_scores.csv": "fc719eaeb114186fa3ab08af38096634b546af4898343abeb2c6bc1aee10f5b4",
+    "opencv-build.txt": "8a55f551e40cf84d0fa7e2509bb9544da66782a8cbc017d7ce27a9de0ef9c1ac",
+    "results.csv": "84498abbc31c581183f4374e8510c362e68b7b65aea7db148c4be56a9ea9163d"
+  }
+}
