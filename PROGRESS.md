@@ -105,3 +105,9 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 - Q10、4:4:4 合計 12/96，Q20、4:4:4 為 78/96。其他四組各 0/96。Chelsea 在 Q10 零錯誤但有一位距中點約 0.000156。Coffee 在 Q20 全位元反轉。錯誤位置、PSNR、JPEG 大小及候選條件見 [診斷結論](watermark_baseline/STRESS.md)。
 - 完整 pytest 21 項通過。兩次新目錄的 21 個索引檔案 SHA-256 全數一致，見 [比對紀錄](outputs/w0-d-replay-comparison.json)。CI 另以 runner 自身 codec 重跑。
 - 待審查 Q10 是否列為後續主要候選，Q20 是否單列為高壓失效案例。
+
+## G3｜SVD 奇異值軟判決
+
+- 從 W0-D PR #14 的固定提交建立獨立分支。量測前凍結公式，僅在改良擷取器實例替換區塊奇異值判決。兩組共用 12 個封存影像及其 PSNR，原版結果與歷史一致。
+- Q10 的合計錯誤由 12/96 增為 13/96，未達主要目標。Q20 由 78/96 降為 77/96，coffee 仍全反。PNG 與 Q30 均維持 0/96。
+- 兩次獨立執行的五個索引檔案 SHA-256 一致。完整 pytest 為 25 項通過。交付[逐位結果與圖](outputs/run-g3)、[重跑紀錄](outputs/g3-replay-comparison.json)及[報告摘要](watermark_baseline/G3.md)，停止擴張實驗。

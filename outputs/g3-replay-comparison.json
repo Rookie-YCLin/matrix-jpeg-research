@@ -1,0 +1,8 @@
+{
+  "first": "outputs\\run-g3",
+  "second": "outputs\\run-g3-repeat",
+  "pass": true,
+  "files_checked": 5,
+  "changed_manifest_fields": [],
+  "changed_files": []
+}
