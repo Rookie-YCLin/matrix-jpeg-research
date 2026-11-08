@@ -47,8 +47,16 @@ def new_watermark():
     return watermark
 
 
-def embed(rgb, target):
+def configured_watermark(d2):
+    if d2 not in (10, 20, 30):
+        raise ValueError(f"Unsupported d2: {d2}")
     watermark = new_watermark()
+    watermark.bwm_core.d2 = d2
+    return watermark
+
+
+def embed(rgb, target, *, d2=20):
+    watermark = configured_watermark(d2)
     watermark.read_img(img=to_bgr(rgb))
     height, width = watermark.bwm_core.ca_block_shape[:2]
     if height * width <= BIT_COUNT:
@@ -60,11 +68,11 @@ def embed(rgb, target):
     return int(height * width)
 
 
-def extract(rgb):
+def extract(rgb, *, d2=20):
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
         bits = np.asarray(
-            new_watermark().extract(embed_img=to_bgr(rgb), wm_shape=BIT_COUNT, mode="bit")
+            configured_watermark(d2).extract(embed_img=to_bgr(rgb), wm_shape=BIT_COUNT, mode="bit")
         )
     if bits.shape != (BIT_COUNT,) or not np.isin(bits, [0, 1]).all():
         raise ValueError(f"Invalid upstream bit result: {bits!r}")
@@ -93,12 +101,12 @@ def encode_attack(marked_png, target, quality):
     return load_rgb(target)
 
 
-def measure(image_id, original, marked_psnr, pixels, path, quality=None):
-    recovered, notices = extract(pixels)
+def measure(image_id, original, marked_psnr, pixels, path, quality=None, *, d2=20):
+    recovered, notices = extract(pixels, d2=d2)
     positions, ber = compare_bits(PAYLOAD, recovered)
     return {
         "image_id": image_id, "attack": "none" if quality is None else "jpeg",
-        "quality": quality, "d1": 36, "d2": 20, "original_bits": PAYLOAD,
+        "quality": quality, "d1": 36, "d2": d2, "original_bits": PAYLOAD,
         "extracted_bits": recovered, "error_positions_1based": json.dumps(positions),
         "error_count": len(positions), "total_bits": BIT_COUNT, "ber": ber,
         "psnr_marked_db": marked_psnr,

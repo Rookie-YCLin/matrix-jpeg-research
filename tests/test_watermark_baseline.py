@@ -59,7 +59,7 @@ def test_png_failure_stops_all_jpeg(tmp_path, monkeypatch):
         pytest.fail("JPEG ran despite failed PNG gate")
 
     monkeypatch.setattr(w0, "embed", embed)
-    monkeypatch.setattr(w0, "extract", lambda _: ("0" * 32, []))
+    monkeypatch.setattr(w0, "extract", lambda _, *, d2: ("0" * 32, []))
     monkeypatch.setattr(w0, "encode_attack", attack)
     out = tmp_path / "blocked"
     assert not w0.run(out)

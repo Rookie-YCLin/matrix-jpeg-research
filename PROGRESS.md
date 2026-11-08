@@ -105,3 +105,10 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 - Q10、4:4:4 合計 12/96，Q20、4:4:4 為 78/96。其他四組各 0/96。Chelsea 在 Q10 零錯誤但有一位距中點約 0.000156。Coffee 在 Q20 全位元反轉。錯誤位置、PSNR、JPEG 大小及候選條件見 [診斷結論](watermark_baseline/STRESS.md)。
 - 完整 pytest 21 項通過。兩次新目錄的 21 個索引檔案 SHA-256 全數一致，見 [比對紀錄](outputs/w0-d-replay-comparison.json)。CI 另以 runner 自身 codec 重跑。
 - 待審查 Q10 是否列為後續主要候選，Q20 是否單列為高壓失效案例。
+
+## G2｜第二奇異值嵌入強度
+
+- 基底為 W0-D PR #14 的 `168e5070cacbdeeaefab58ed469dd7e90db4aa3f`，承接 W0 PR #13。比較 d2=10、20、30，三張圖各自獨立嵌入及編碼 Q10、Q20、Q30，皆為 4:4:4。
+- 所有無攻擊 PNG 與 Q30 皆零錯誤。主要條件 Q10 的錯誤數依 d2 為 18、12、19（各 96 位元）。d2=10 三圖皆符合 PNG PSNR ±1.0 dB，Q10 仍逐圖多錯 2 位。Q20 的 astronaut 少錯 4 位，屬失效案例的局部改善。
+- d2=20 與兩份歷史基準的 12 項對應結果在 Windows 上逐位、PSNR 和 SHA-256 一致。兩份新目錄的 41 個索引檔案完全相同。完整 pytest 為 26 通過、0 失敗、0 跳過。
+- 逐位 CSV、配對差異、分數、圖與 manifest 位於 [正式輸出](outputs/run-g2)，重跑存於 [第二份輸出](outputs/run-g2-repeat)。報告摘要與限制見 [G2 文件](watermark_baseline/G2.md)。完成後停止擴張實驗，交由主持人審查與後續報告使用。
