@@ -1,5 +1,14 @@
 # 專案進度
 
+## 現行決策：JPEG 後 BER 是唯一主要研究成效（2026-11-08）
+
+- **正式目標**：以 [guofei9987/blind_watermark](https://github.com/guofei9987/blind_watermark) 為基礎，改良 **SVD 嵌入或擷取方法**，使 JPEG 壓縮後浮水印 BER 低於原版。正式範圍見 [PROJECT_SPEC.md](PROJECT_SPEC.md)；不是以 PSNR 或保序取代 BER。
+- 固定 W0-D Q10／4:4:4 **12／96** 為主要基準；G2–G5 已觀察結果皆未改善主要 Q10。G5 Q10 24／96，PNG PSNR 改善但不符合事前品質匹配窗口，不能宣稱抗壓改善。
+- **方法候選暫停**。先利用既有圖檔作 D0／D1／D2 唯讀失效診斷；任何新實驗、擴充範圍或合併另須主持人批准。
+- 主線研究文件現行版本以 [README](README.md)、[PROJECT_SPEC](PROJECT_SPEC.md)、[AGENTS](AGENTS.md) 及 [Codex 交接](docs/CODEX_NEXT_SESSION.md) 為準。**本檔以下舊進度是按時間保存的歷史紀錄，不構成當前研究指令。**
+
+---
+
 ## 現行研究主線與 P0 同步（2026-11-08）
 
 - 正式主線為 JPEG 黑盒攻擊下的 SVD 區塊擷取演算法。[PR #9](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/9) 同步規格、首頁及交接，待主持人批准合併。
