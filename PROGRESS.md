@@ -1,5 +1,9 @@
 # 專案進度
 
+## G6 矩陣理論與答辯（2026-11-08）
+
+- 已依 Bernstein 與固定上游程式完成 [專題正文](reports/SVD_QIM_MATRIX_THEORY.md) 和 [答辯摘要](reports/SVD_QIM_DEFENSE_BRIEF.md)。已核對封存 BER 及獨立 PSNR PR #29 的配對證據。局部容錯界與實測結果分開陳述。
+
 ## G6 已達成正式 BER 目標（2026-11-08）
 
 - **SVD-only 方法**：第一奇異值量化步長 d1=36→90，第二奇異值 d2=20 不變；其他上游管線及真正盲式擷取規則不改動。
