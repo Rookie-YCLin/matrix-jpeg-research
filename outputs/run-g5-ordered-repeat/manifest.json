@@ -1,0 +1,226 @@
+{
+  "status": "complete",
+  "protocol_commit": "e7288807c917fe8a1b1aa59dd42b482c84c70a12",
+  "command": [
+    "python",
+    "-m",
+    "watermark_baseline.ordered_trial",
+    "--output-dir",
+    "outputs\\run-g5-ordered-repeat"
+  ],
+  "upstream": {
+    "url": "https://github.com/guofei9987/blind_watermark.git",
+    "vcs_info": {
+      "commit_id": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "requested_revision": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "vcs": "git"
+    }
+  },
+  "python": "3.13.14",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "blind_watermark": "0.4.4",
+    "opencv-python": "4.13.0.92",
+    "PyWavelets": "1.10.0",
+    "numpy": "2.4.6",
+    "Pillow": "12.3.0",
+    "pytest": "9.2.0"
+  },
+  "opencv": "4.13.0",
+  "pillow_jpeg": "8.0",
+  "pillow_libjpeg_turbo": "3.1.4.1",
+  "baseline_manifest_sha256": "2b2f3be7a14044d7b3b5a241df91db23907a97774c643a4fb66565163df06cd3",
+  "stress_manifest_sha256": "6ae88428a147467a7dc6d6025966fe7f994632013ecf0f61ffeed04ecad4c238",
+  "inputs": {
+    "revision": "ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8",
+    "release": "scikit-image v0.26.0",
+    "license_reference": "https://scikit-image.org/docs/0.26.x/api/skimage.data.html",
+    "preprocessing": "None. Original distributed PNG bytes.",
+    "images": [
+      {
+        "id": "astronaut",
+        "file": "astronaut.png",
+        "sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+        "size": [
+          512,
+          512
+        ],
+        "mode": "RGB",
+        "bit_depth": 8,
+        "license": "NASA (public domain)",
+        "texture": "portrait, smooth and high-contrast areas",
+        "source": "https://raw.githubusercontent.com/scikit-image/scikit-image/ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8/src/skimage/data/astronaut.png"
+      },
+      {
+        "id": "chelsea",
+        "file": "chelsea.png",
+        "sha256": "596aa1e7cb875eb79f437e310381d26b338a81c2da23439704a73c4651e8c4bb",
+        "size": [
+          451,
+          300
+        ],
+        "mode": "RGB",
+        "bit_depth": 8,
+        "license": "Stefan van der Walt (CC0)",
+        "texture": "fur and diagonal edges",
+        "source": "https://raw.githubusercontent.com/scikit-image/scikit-image/ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8/src/skimage/data/chelsea.png"
+      },
+      {
+        "id": "coffee",
+        "file": "coffee.png",
+        "sha256": "cc02f8ca188b167c775a7101b5d767d1e71792cf762c33d6fa15a4599b5a8de7",
+        "size": [
+          600,
+          400
+        ],
+        "mode": "RGB",
+        "bit_depth": 8,
+        "license": "Rachel Michetti (CC0), courtesy of Pikolo Espresso Bar",
+        "texture": "smooth porcelain and wood grain",
+        "source": "https://raw.githubusercontent.com/scikit-image/scikit-image/ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8/src/skimage/data/coffee.png"
+      }
+    ]
+  },
+  "payload": "10110010111001000101101011010001",
+  "keys": {
+    "password_img": 1,
+    "password_wm": 1
+  },
+  "mode": "common",
+  "fast_mode": false,
+  "d1": 36,
+  "d2": 20,
+  "block_shape": [
+    4,
+    4
+  ],
+  "decoder": "WaterMark.extract(mode=bit), upstream 1D k-means + bit unshuffle",
+  "color": "Pillow RGB uint8 -> OpenCV BGR uint8 -> upstream float32 YUV",
+  "psnr": {
+    "peak": 255,
+    "dtype": "float64",
+    "reference": "original RGB"
+  },
+  "jpeg": {
+    "qualities": [
+      10,
+      20,
+      30
+    ],
+    "primary_quality": 10,
+    "encoder": "Pillow RGB",
+    "subsampling": 0,
+    "optimize": false,
+    "progressive": false
+  },
+  "png_psnr_limits_db": [
+    0.5,
+    1.0
+  ],
+  "phase": 0,
+  "baseline_checks": [
+    {
+      "file": "astronaut_original.png",
+      "reference": "outputs/run-w0/astronaut_marked.png",
+      "bit_and_psnr_match": true,
+      "same_bytes": true
+    },
+    {
+      "file": "astronaut_original_q10.jpg",
+      "reference": "outputs/run-w0-d/astronaut_A_q10.jpg",
+      "bit_and_psnr_match": true,
+      "same_bytes": true
+    },
+    {
+      "file": "astronaut_original_q20.jpg",
+      "reference": "outputs/run-w0-d/astronaut_A_q20.jpg",
+      "bit_and_psnr_match": true,
+      "same_bytes": true
+    },
+    {
+      "file": "astronaut_original_q30.jpg",
+      "reference": "outputs/run-w0-d/astronaut_A_q30.jpg",
+      "bit_and_psnr_match": true,
+      "same_bytes": true
+    },
+    {
+      "file": "chelsea_original.png",
+      "reference": "outputs/run-w0/chelsea_marked.png",
+      "bit_and_psnr_match": true,
+      "same_bytes": true
+    },
+    {
+      "file": "chelsea_original_q10.jpg",
+      "reference": "outputs/run-w0-d/chelsea_A_q10.jpg",
+      "bit_and_psnr_match": true,
+      "same_bytes": true
+    },
+    {
+      "file": "chelsea_original_q20.jpg",
+      "reference": "outputs/run-w0-d/chelsea_A_q20.jpg",
+      "bit_and_psnr_match": true,
+      "same_bytes": true
+    },
+    {
+      "file": "chelsea_original_q30.jpg",
+      "reference": "outputs/run-w0-d/chelsea_A_q30.jpg",
+      "bit_and_psnr_match": true,
+      "same_bytes": true
+    },
+    {
+      "file": "coffee_original.png",
+      "reference": "outputs/run-w0/coffee_marked.png",
+      "bit_and_psnr_match": true,
+      "same_bytes": true
+    },
+    {
+      "file": "coffee_original_q10.jpg",
+      "reference": "outputs/run-w0-d/coffee_A_q10.jpg",
+      "bit_and_psnr_match": true,
+      "same_bytes": true
+    },
+    {
+      "file": "coffee_original_q20.jpg",
+      "reference": "outputs/run-w0-d/coffee_A_q20.jpg",
+      "bit_and_psnr_match": true,
+      "same_bytes": true
+    },
+    {
+      "file": "coffee_original_q30.jpg",
+      "reference": "outputs/run-w0-d/coffee_A_q30.jpg",
+      "bit_and_psnr_match": true,
+      "same_bytes": true
+    }
+  ],
+  "no_attack_failures": [],
+  "files": {
+    "astronaut_ordered.png": "37065878292e8df5debf93d6e2ed8e030b8f34a0eccb81db85b0dd9285f51563",
+    "astronaut_ordered_q10.jpg": "4ac9f22edc46077743f450fce2927fbf38bdb798a1b121fc021d206654ac1128",
+    "astronaut_ordered_q20.jpg": "3f481fe386d135bafa2c2c7672981865b82a9af2a08c0f69482014fa92e152e9",
+    "astronaut_ordered_q30.jpg": "74902e4dc5e6893d10d10a71763c68607ef3e94dd29d5fa3f167fdcbde0b9e0b",
+    "astronaut_original.png": "86efaf5877a4b6e5ffbd882429bcf13b6dc4b7cdf9b9faf481ec5f93f41a151f",
+    "astronaut_original_q10.jpg": "d422aab5373fee34ea2c2dcb31498c20f7fdacc8c13d804d1607fa48d930146b",
+    "astronaut_original_q20.jpg": "1e02ad4180774c0304cc7b84f1aaa7a9ae22c83d612b61b47d825ca794245d2f",
+    "astronaut_original_q30.jpg": "fcbb3e84ba4e238a675931b1bf46561168d294f2a46e9277082de52dd835a42f",
+    "chelsea_ordered.png": "460acdc2e321c33b935ee080101b25b95c529478c239d7d774f988d870ad4cdb",
+    "chelsea_ordered_q10.jpg": "35f4162c31fae33fdc30290b76e0eace0b64166687f329c97260b080247b9e8f",
+    "chelsea_ordered_q20.jpg": "2da018246af8b7e5436fb56d0b7e141cfb41bf9da3515fa27a28df11928d120c",
+    "chelsea_ordered_q30.jpg": "3666a1f03e457ddfae9242a58b01b0b2a2bb802eb9b85c29828df9828c06c4bb",
+    "chelsea_original.png": "27d047fb7fac64f9c14c35c0c29b7b0d3edef36a15d3fd3d1294f175a27500d5",
+    "chelsea_original_q10.jpg": "9a86c07e4aa417b8bad68cb278e8a995cc059bb220ce2ccd577257a1b45e9be5",
+    "chelsea_original_q20.jpg": "a2a67f0c961aa630c412528eb5809e9a0e551235da4b105f23ea632190c7684f",
+    "chelsea_original_q30.jpg": "167e4487267cdbd0ffe4dff484f8ebcf3a3283d0eb8099c979baa16e56250860",
+    "coffee_ordered.png": "55b989e1121d2138c64525f10fd3a612cdb12fb96058a0263f8edd59a13a6134",
+    "coffee_ordered_q10.jpg": "e74570bd5cd790b5a3f4520bb4a0f5a4fb7e82baea6b322218ceadb430b69752",
+    "coffee_ordered_q20.jpg": "a6dfd8d85bbddb1ab9eff8fb29926a8f9d52e7abb5ea4813fa72fcd40d097ba4",
+    "coffee_ordered_q30.jpg": "a4634b68059abfdd8c12874e2308a1dc4ae0c33b21424b74db1710b4133dc262",
+    "coffee_original.png": "542ce726b445e940da8ef56d847008653fd047c574c300bb7ddd10b1f32fc59a",
+    "coffee_original_q10.jpg": "a1d0fe493663ff655e1e491edb9b87702a7c4a22f474e0c22a56c124c86c4ef1",
+    "coffee_original_q20.jpg": "31ece02c368042ba94e7adb3431267405fa8403b4ee2a535e53f2395ad36fd9b",
+    "coffee_original_q30.jpg": "beafd6dbcd8c86309dd475b6d1ac71e1b256af97f88c7c410d3a268a730cc658",
+    "opencv-build.txt": "8a55f551e40cf84d0fa7e2509bb9544da66782a8cbc017d7ce27a9de0ef9c1ac",
+    "ordering.csv": "af020ee380ad7ba584974fc93c3977af984ec5b17bc9d80f5a03071f038ffc65",
+    "paired.csv": "83b313adf925a444b085390796dbb7ececa0253083cd6c94c10efe5aeb1e54dd",
+    "results.csv": "c088104f10ccbcfc04b242783180b86b069b2e7291d575c795251f3f5cbb0c34"
+  }
+}

@@ -2,7 +2,7 @@
 from types import MethodType
 
 import numpy as np
-from blind_watermark.bwm_core import dct, idct, svd
+from blind_watermark import bwm_core as upstream
 
 from . import __main__ as w0
 
@@ -39,8 +39,8 @@ def ordered_pair(s, bit):
 
 def ordered_block(core, arg):
     block, shuffler, index = arg
-    matrix = dct(block).flatten()[shuffler].reshape(core.block_shape)
-    u, s, vh = svd(matrix)
+    matrix = upstream.dct(block).flatten()[shuffler].reshape(core.block_shape)
+    u, s, vh = upstream.svd(matrix)
     bit = int(core.wm_bit[index % core.wm_size])
     pair = ordered_pair(s, bit)
     s[:2] = pair
@@ -48,7 +48,7 @@ def ordered_block(core, arg):
         raise ValueError("Upstream dtype cannot represent the selected bit lattice")
     flat = np.dot(u, np.dot(np.diag(s), vh)).flatten()
     flat[shuffler] = flat.copy()
-    return idct(flat.reshape(core.block_shape))
+    return upstream.idct(flat.reshape(core.block_shape))
 
 
 def new_embedder():
