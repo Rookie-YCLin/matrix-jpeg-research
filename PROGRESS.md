@@ -1,5 +1,15 @@
 # 專案進度
 
+## 最新使用者核定：一張指定圖片、QF=x 為原版最高 BER（2026-11-08）
+
+- 固定來源：[上游指定測試圖](https://github.com/guofei9987/blind_watermark/blob/master/examples/pic/ori_img.jpeg)，Git blob SHA `ef48a056b3cab1d2c08723c014d8d515963f5a07`；僅這張圖片作正式比較，過往三圖是歷史探索。
+- 先掃描原版 **QF 為 5 的倍數**的 BER（建議 5、10、…、95，區間待確認），最高 BER 對應的 QF 設為 `x` 並凍結。同分處理規則需先明定，尚未知道 x。
+- 候選在固定 QF=x 達 **>5% BER 改善**可接受，>10% 表現優秀。「相對 BER 降低或 BER 百分點」尚未確認，需向主持人確認後才可自動判斷成功。
+- 本輪只有新研究規格、**沒有新 BER 實驗或新成功結果**。以前 W0-D QF10 12/96 不可當新指定圖基準。
+- 繼續以 Draft PR 管理版本，開跑新正式實驗前確認以上尚未決定的參數。
+
+---
+
 ## 最新專題規格（2026-11-08）｜三步驟、BER–QF 唯一正式性能評估
 
 - **正式研究目的**：以 [guofei9987/blind_watermark](https://github.com/guofei9987/blind_watermark) 為基礎，修改 `bwm_core.py` 的 SVD 嵌入及／或擷取方法，提高低 JPEG QF 下的浮水印強韌性；**性能只比較各 JPEG QF 的 BER，不要求 PSNR**。
