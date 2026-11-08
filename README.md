@@ -1,3 +1,5 @@
+> **2026-11-08 最新研究交接：** G6 單參數 d1=36→90 已完成且封存 BER 實測；後續 **只補 PSNR（QF15 影像品質 trade-off）與有脈絡的矩陣理論推導**。固定 d2=20、同一張圖片與 32-bit payload；不搜尋新步長、不研究 QF<15 機制、不追求全域最優。詳見 [最新工作規格](docs/RESEARCH_NEXT_PHASE.md)、[Codex PSNR 提示詞](docs/PROMPT_CODEX_PSNR.md)、[Work 理論提示詞](docs/PROMPT_WORK_MATRIX_THEORY.md)。**較下方「不需要 PSNR」敘述為舊階段規格，已由本段取代。**
+
 # 改良 blind_watermark SVD 以提升低 QF JPEG 浮水印強韌性
 
 ## 專題已達標：G6 SVD 量化改良（2026-11-08）
