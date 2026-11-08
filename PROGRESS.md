@@ -1,5 +1,9 @@
 # 專案進度
 
+## 2026-11-08 浮水印報告前半部
+
+- 已完成緒論、基礎、原版演算法及 G3 軟判決方法審閱稿，結果章待實測。[報告 PDF](reports/WATERMARK_REPORT.pdf) · [排版與來源核對](reports/WATERMARK_REPORT_REVIEW.md)
+
 ## 2026-11-07
 
 - 研究計畫第二版已核准。M0 與 M1 開始執行。
