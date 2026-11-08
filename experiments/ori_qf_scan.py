@@ -31,7 +31,7 @@ JPEG = {"subsampling": 0, "optimize": False, "progressive": False}
 
 
 def git_blob_sha(payload: bytes) -> str:
-    return sha1(f"blob {len(payload)}\\0".encode("ascii") + payload).hexdigest()
+    return sha1(f"blob {len(payload)}".encode("ascii") + bytes([0]) + payload).hexdigest()
 
 
 def relative_reduction(base_errors: int, candidate_errors: int) -> float | None:
