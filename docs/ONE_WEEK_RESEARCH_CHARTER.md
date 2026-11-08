@@ -1,9 +1,12 @@
 # 專題章程｜單圖 JPEG BER
 
+**主持人已核定（2026-11-08）**：完整掃描 **QF=5、10、15、…、95（19 點）**；原版 BER 最大值若有多個 QF 並列，**取其中最小 QF**，將該值固定為 `x`，再測試 SVD 候選。相對 BER 降幅 `R=(BER_base(x)-BER_new(x))/BER_base(x)×100%`，**R≥5% 達標，R≥10% 優秀**。這些已非待決設定。
+
+
 ## 最新凍結前規格：單圖、原版最大 BER QF
 
 - 唯一原圖：[上游指定測試圖](https://github.com/guofei9987/blind_watermark/blob/master/examples/pic/ori_img.jpeg)，blob SHA `ef48a056b3cab1d2c08723c014d8d515963f5a07`。
-- QF 使用 5 的倍數；先確認掃描區間（建議 5–95 每 5），測原版 BER–QF 曲線，最高 BER 的 QF 定義為 `x`。並列最高時 tie-break 須事先決定。
+- QF 使用 5 的倍數；先確認掃描區間（已核准 5–95 每 5），測原版 BER–QF 曲線，最高 BER 的 QF 定義為 `x`。並列最高時取最小 QF（已核准）。
 - 改良後與原版都在同一 QF=x 比 BER。**相對 BER 降幅** `R=(BER_base-BER_new)/BER_base×100%`，**R ≥ 5%** 即接受、**R ≥ 10%** 屬優秀（主持人已確認選 A，非絕對百分點）；報每組錯誤數／分母，不能捏造顯著性。
 - 以前三圖基準與 G2–G5 為歷史資料，不當成新原圖的測試結果。新一輪原版 QF 掃描還沒完成。
 
