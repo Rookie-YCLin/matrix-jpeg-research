@@ -1,10 +1,9 @@
 # 專案進度
 
-## 現行主線與 G2 交接（2026-11-08）
+## 現行研究主線與 P0 同步（2026-11-08）
 
-- [Issue #8](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8) 恢復盲浮水印主線。W0 與 W0-D 分別交付於 [PR #13](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/13) 與 [PR #14](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/14)，固定提交的 Research CI 已通過，兩者待人工研究驗收。
-- [實驗索引](docs/EXPERIMENT_INDEX.md) 保存證據與重跑方式。[Issue #16](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/16) 是唯一 G2 工作入口，待主持人批准。此次僅整理文件，未啟動 G2。核對期間發現本機 G2 分支已有未提交的實驗檔案，待主持人核對來源和設計後再納入。
-- 既有 M0–M4、[PR #7](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7)、[PR #12](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/12) 及 [PR #15](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/15) 保留。AI 審查暫不啟用。
+- 正式主線為 JPEG 黑盒攻擊下的 SVD 區塊擷取演算法。[PR #9](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/9) 同步規格、首頁及交接，待主持人批准合併。
+- [W0 #13](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/13)、[W0-D #14](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/14) 與 [G2 #17](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/17) 已交付待驗收。[G3 #18](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/18) 已交付區塊軟判決實測，主要 Q10 未達改善目標。固定證據及重跑方式見[實驗索引](docs/EXPERIMENT_INDEX.md)。
 
 ## 2026-11-07
 

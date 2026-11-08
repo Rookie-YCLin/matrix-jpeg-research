@@ -1,12 +1,12 @@
-# DWT–DCT–SVD 盲式浮水印抗 JPEG 研究
+# 盲式浮水印的 JPEG 抗壓縮與 SVD 區塊演算法
 
-研究問題是在相近的含浮水印影像品質下，只調整 SVD 第二奇異值的嵌入步長 d2，能否降低 JPEG 攻擊後的 BER。上游固定為 `guofei9987/blind_watermark` 的 `322c90dc02d45644692095b34d3a6b735b6edbd8`。研究保留原版盲擷取，JPEG 作黑盒攻擊。[上游核心程式](https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/blind_watermark/bwm_core.py) · [研究決策](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8)
+以 `guofei9987/blind_watermark` 固定提交 `322c90dc02d45644692095b34d3a6b735b6edbd8` 為基礎。在相同含水印影像與 JPEG 黑盒攻擊下，只修改 SVD 區塊的擷取判決，檢驗是否能降低逐位 BER。保留原版嵌入及其餘擷取流程。[上游核心程式](https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/blind_watermark/bwm_core.py) · [研究決策](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8)
 
-| 階段 | 進度 |
+| 階段 | 交付與定位 |
 |---|---|
-| W0 | 已交付、待人工驗收。三張圖、固定 payload，無攻擊與各 JPEG Q40/60/80/95 均觀察到 0/96。 [PR #13](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/13) |
-| W0-D | 已交付、待人工驗收。4:4:4 的 Q10、Q20、Q30 分別為 12/96、78/96、0/96。 [PR #14](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/14) |
-| G2 | 待主持人批准，未執行。唯一工作入口為 [Issue #16](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/16)。 |
-| 歷史 | PDF 與 R1 保留，R1 不作浮水印證據。 [PR #7](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7) · [PR #12](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/12) |
+| W0 | 原版基準已交付，待人工驗收。 [PR #13](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/13) |
+| W0-D | JPEG 壓力與判決分數診斷已交付，待人工驗收。 [PR #14](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/14) |
+| G2 | d2 單因子探索已交付，待人工驗收。主要 Q10 未觀察到相近品質下的 BER 改善。 [PR #17](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/17) |
+| G3 | 正式演算法階段。區塊軟判決的實測已交付，待人工驗收。主要 Q10 由 12/96 變為 13/96，未達改善目標。 [PR #18](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/18) |
 
-[正式規格](PROJECT_SPEC.md) · [實驗索引](docs/EXPERIMENT_INDEX.md) · [三日章程](docs/ONE_WEEK_RESEARCH_CHARTER.md) · [Codex 交接](docs/CODEX_NEXT_SESSION.md)
+[正式規格](PROJECT_SPEC.md) · [實驗索引](docs/EXPERIMENT_INDEX.md) · [研究章程](docs/ONE_WEEK_RESEARCH_CHARTER.md) · [Codex 交接](docs/CODEX_NEXT_SESSION.md)

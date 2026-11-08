@@ -36,9 +36,16 @@ python -m watermark_baseline.stress --output-dir outputs/run-w0-d-review-repeat
 python -m watermark_baseline.compare_runs outputs/run-w0-d-review outputs/run-w0-d-review-repeat
 ```
 
-## G2｜待批准
+## G2｜已交付的 d2 參數探索
 
-[Issue #16](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/16) 為唯一入口。建議沿用本機分支 `codex/g2-d2-comparison`。提交、PR、CSV、manifest、CI 與實驗重跑命令待交付後補入。建議主比較為 Q10／4:4:4，Q20 作高壓診斷，Q30 作低錯誤對照。PSNR 門檻須在看 G2 結果前核定。三張影像、單一 payload，每條件 96 位元。
+- 提交 `cb8b5d89c3548a504d6d40f57857537c4f20c06c` · [PR #17](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/17) · [CI](https://github.com/Rookie-YCLin/matrix-jpeg-research/actions/runs/42451892505) · [逐位 CSV](https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/cb8b5d89c3548a504d6d40f57857537c4f20c06c/outputs/run-g2/results.csv) · [配對 CSV](https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/cb8b5d89c3548a504d6d40f57857537c4f20c06c/outputs/run-g2/paired.csv) · [manifest](https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/cb8b5d89c3548a504d6d40f57857537c4f20c06c/outputs/run-g2/manifest.json) · [限制與重跑](https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/cb8b5d89c3548a504d6d40f57857537c4f20c06c/watermark_baseline/G2.md)
+- 主要 Q10 未觀察到相近品質下的改善。採用交付實驗的 1.0 dB 操作門檻，與 Issue #16 草擬的 0.5 dB 建議分開，人工驗收時核對事前凍結紀錄。
+
+## G3｜已交付的 SVD 區塊軟判決
+
+- 提交 `e5ac1d82282bd20d708f2337ec4642a67bfbc3cd` · [PR #18](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/18) · [CI](https://github.com/Rookie-YCLin/matrix-jpeg-research/actions/runs/42453089827) · [逐位 CSV](https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/e5ac1d82282bd20d708f2337ec4642a67bfbc3cd/outputs/run-g3/results.csv) · [manifest](https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/e5ac1d82282bd20d708f2337ec4642a67bfbc3cd/outputs/run-g3/manifest.json) · [限制與重跑](https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/e5ac1d82282bd20d708f2337ec4642a67bfbc3cd/watermark_baseline/G3.md)
+- 同一批 W0/W0-D 封存影像。主要 Q10 由 12/96 變為 13/96，未達改善目標。實測已交付，研究驗收仍待主持人確認。
+
 
 ## R1｜歷史方向
 

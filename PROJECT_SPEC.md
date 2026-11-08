@@ -1,23 +1,17 @@
-# SVD 奇異值嵌入參數對盲浮水印 JPEG 攻擊後 BER 的影響
+# 盲式浮水印的 JPEG 抗壓縮與 SVD 區塊演算法改良
 
 ## 研究問題與範圍
 
-在相近的含浮水印影像品質下，調整奇異值嵌入參數或一項簡單嵌入改良，能否降低 JPEG 攻擊後的盲浮水印 BER？主要研究對象固定為 `guofei9987/blind_watermark` 提交 `322c90dc02d45644692095b34d3a6b735b6edbd8` 的 [bwm_core.py](https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/blind_watermark/bwm_core.py)。另核對 [公開 bit 介面](https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/blind_watermark/blind_watermark.py) 和 [MIT 授權](https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/LICENSE)。上游既有 DWT、分塊 DCT、係數洗牌、色彩轉換與重複嵌入照原程式保留。JPEG 僅作黑盒編解碼攻擊，不分析其 DCT、量化表或頻譜。
+以 `guofei9987/blind_watermark` 提交 `322c90dc02d45644692095b34d3a6b735b6edbd8` 為基礎，測試 JPEG 壓縮攻擊，只修改 SVD 區塊的擷取判決，檢驗是否能提升浮水印擷取強韌性。上游 DWT、分塊 DCT、係數洗牌、色彩轉換及重複嵌入皆沿用。JPEG 只作黑盒攻擊。[上游核心程式](https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/blind_watermark/bwm_core.py) · [公開擷取介面](https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/blind_watermark/blind_watermark.py) · [MIT 授權](https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/LICENSE)
 
-## 上游規則與待驗證假說
+## 原版規則
 
-使用 `fast_mode=False`、4×4 區塊及原版 common 路徑。令 b 為該塊嵌入位元，兩個奇異值各以步長 dⱼ 映射為 dⱼ(⌊sⱼ/dⱼ⌋ + 1/4 + b/2)，原版 d1=36、d2=20。提取時以 sⱼ mod dⱼ > dⱼ/2 判位，兩票按 3:1 融合。跨三通道及重複區塊平均後，公開 `mode="bit"` 走上游一維 k-means，再依原規則還原位元順序。這些是程式行為。改變 d2 是否降低 BER、是否仍有相近 PSNR，都須由配對實測判定。
+原版 common 使用 4×4 區塊及 `fast_mode=False`。對位元 b，以 dⱼ(⌊sⱼ/dⱼ⌋ + 1/4 + b/2) 修改前兩個奇異值，d1=36、d2=20。擷取以 rⱼ=(sⱼ mod dⱼ)/dⱼ，當 rⱼ>1/2 判為 1。兩票按 3:1 融合，跨三通道及重複區塊取平均，再由公開 bit 介面執行一維 k-means 與位元順序還原。
 
-## 第一階段 W0／G1
+## 已交付的實驗階段
 
-依 [Issue #10](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/10) 凍結固定 RGB 影像、32-bit payload、密鑰、原版參數及編解碼設定。先驗證無攻擊 PNG，再從同一含浮水印 PNG 獨立編碼 JPEG Q40、60、80、95。報告逐影像、逐條件的錯誤位元數、總位元數、BER 與 PSNR，保存逐位結果、設定、版本、來源、雜湊和重跑證據。主要 BER 統一採用原版 bit 擷取。固定閾值可另列診斷結果。
+- W0 是原版基準，W0-D 是固定含水印 PNG 上的 JPEG 壓力與分數診斷。G2 只探索 d2=10、20、30，在主要 Q10 條件未觀察到相近品質下的 BER 改善。各階段固定證據見[實驗索引](docs/EXPERIMENT_INDEX.md)。
+- G3 是區塊演算法研究。在擷取端以 g(r)=(1−sin(2πr))/2 取代個別奇異值的硬判決，保留 3:1 權重、平均、分群和位元還原。兩個擷取器讀取同一批封存無攻擊 PNG 和 JPEG 解碼像素，保留原版嵌入與 d1=36、d2=20。原始位元僅作事後 BER 計算。
+- G3 實測已交付，待人工研究驗收。主要 Q10 的原版及軟判決為 12/96、13/96，未達改善目標。Q20 的局部變化及 Q30 對照應按預定用途分開解讀。結論限於三圖、單一 payload 與固定編碼條件。[G3 PR #18](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/18)
 
-## 第二階段 G2
-
-W0 與 W0-D 已交付待人工驗收，見 [實驗索引](docs/EXPERIMENT_INDEX.md)。[Issue #16](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/16) 是唯一 G2 工作入口，須經主持人明確批准才可開工。
-
-W0／G1 無攻擊基準成功、可重現並通過研究審查後，另開議題和 PR，只比較 d2=10、20、30，d1 固定 36，嵌入端與擷取端同步設定。固定影像、payload、密鑰、格式、編解碼器與擷取策略。逐影像及 Q 比較 BER 與含浮水印影像 PSNR 的權衡，事前定義「相近 PSNR」的判準再看 G2 結果。若沒有可比的影像品質或 BER 未降，如實呈現。其他嵌入改良須另立比較，有限樣本不支撐普遍改善主張。
-
-## 歷史基線
-
-[原版規格](https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/ede4ce330b2e21790cacf3bb6fed879e8b79ec67/PROJECT_SPEC.md)、既有程式、13 項測試、M2 輸出與報告保留供重現。[PR #7](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7) 與 [PR #12](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/12) 分別保存 PDF 與 R1 的程式、測試和資料。R1 已交付待審，R2 暫緩。
+保留 [舊全影像研究規格](https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/ede4ce330b2e21790cacf3bb6fed879e8b79ec67/PROJECT_SPEC.md)、歷史程式與實驗資料。
