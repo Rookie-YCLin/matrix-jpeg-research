@@ -2,7 +2,7 @@
 
 ## 2026-11-08 浮水印報告前半部
 
-- 已完成緒論、基礎、原版演算法及 G3 軟判決方法審閱稿，結果章依本次範圍保留待填。[報告 PDF](reports/WATERMARK_REPORT.pdf) · [排版與來源核對](reports/WATERMARK_REPORT_REVIEW.md)
+- 保留緒論、基礎、原版演算法與配對實驗方法，主文聚焦 SVD 區塊改良及 JPEG 抗壓縮驗證。第四、第五章待 G5 診斷與最終候選實測。[報告 PDF](reports/WATERMARK_REPORT.pdf) · [排版與來源核對](reports/WATERMARK_REPORT_REVIEW.md)
 
 ## 2026-11-07
 
