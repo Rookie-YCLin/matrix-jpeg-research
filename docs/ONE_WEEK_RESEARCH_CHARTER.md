@@ -1,4 +1,12 @@
-# 專題執行章程｜原版基準 → SVD 改良 → 正向結果
+# 專題章程｜單圖 JPEG BER
+
+## 最新凍結前規格：單圖、原版最大 BER QF
+
+- 唯一原圖：[上游指定測試圖](https://github.com/guofei9987/blind_watermark/blob/master/examples/pic/ori_img.jpeg)，blob SHA `ef48a056b3cab1d2c08723c014d8d515963f5a07`。
+- QF 使用 5 的倍數；先確認掃描區間（建議 5–95 每 5），測原版 BER–QF 曲線，最高 BER 的 QF 定義為 `x`。並列最高時 tie-break 須事先決定。
+- 改良後與原版都在同一 QF=x 比 BER。改善 **>5%** 即接受，**>10%** 屬優秀；「百分比 vs 百分點」待主持人確認。報每組錯誤數／分母，不能捏造顯著性。
+- 以前三圖基準與 G2–G5 為歷史資料，不當成新原圖的測試結果。新一輪原版 QF 掃描還沒完成。
+
 
 以 [guofei9987/blind_watermark](https://github.com/guofei9987/blind_watermark) 固定版為 Source Code，目標是**改善低 JPEG Quality Factor 下的浮水印 BER**。正式評估指標只有不同 QF 的 BER；不要求 PSNR。
 
