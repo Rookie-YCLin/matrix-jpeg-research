@@ -145,3 +145,8 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 - 交付 [正式報告](reports/FINAL_REPORT.md)、[答辯稿](reports/DEFENSE_NOTES.md)及[最終核對紀錄](reports/FINAL_CHECKLIST.md)。已核對公式、四份 M2 CSV 引值、文獻、五張圖與相對路徑。
 - 在另一個 Windows 隔離環境重跑 M2 至新暫存目錄。兩份 CSV 有浮點末位差異，已通過數值容差核對，差異詳見最終核對紀錄。本機 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。
 - M4 待外部研究審查及使用者批准合併。正式題目、繳交格式與封面資料仍待確認。
+
+## G6｜單圖 QF15 PSNR 對照
+
+- 原版與 G6 的 QF15 BER 為 32/32 與 0/32，PNG 均為 0/32。G6 相對原版的 PNG 與 QF15 PSNR 分別為 −6.600、−1.671 dB。兩次獨立執行的六個索引檔案一致。
+- [報告、重跑方式及限制](reports/SVD_QIM_PSNR_TRADEOFF.md) · [量測與 manifest](outputs/svd-qim-psnr-qf15)。範圍限兩組固定步長、原 payload、唯一影像及 QF15。
