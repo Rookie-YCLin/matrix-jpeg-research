@@ -1,0 +1,242 @@
+\documentclass[12pt,a4paper,onecolumn]{article}
+\usepackage[margin=27mm]{geometry}
+\usepackage{fontspec,xeCJK,amsmath,amssymb,booktabs}
+\usepackage[hidelinks]{hyperref}
+\setmainfont[Path=C:/Windows/Fonts/,BoldFont=timesbd.ttf,ItalicFont=timesi.ttf]{times.ttf}
+\setmonofont[Path=C:/Windows/Fonts/]{times.ttf}
+\setCJKmainfont[Path=C:/Windows/Fonts/,BoldFont=kaiu.ttf]{kaiu.ttf}
+\renewcommand{\normalsize}{\fontsize{12bp}{19bp}\selectfont}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{4bp}
+\setlength{\emergencystretch}{2em}
+\widowpenalty=10000
+\clubpenalty=10000
+\renewcommand{\contentsname}{目錄}
+\renewcommand{\refname}{參考資料}
+\hypersetup{pdftitle={基於 SVD 區塊改良之盲式數位浮水印抗 JPEG 壓縮能力研究},pdfauthor={林易辰}}
+\begin{document}
+\normalsize
+\begin{titlepage}
+\centering
+\vspace*{15mm}
+{\Large 矩陣理論及應用\quad 期末專題\par}
+\vspace{10mm}
+{\LARGE 基於 SVD 區塊改良之盲式數位浮水印\\[3mm]抗 JPEG 壓縮能力研究\par}
+\vspace{8mm}
+{\large 內容審閱稿\quad 最終方法與結果待定\par}
+\vspace{8mm}
+\begin{tabular}{ll}
+作者 & 林易辰\\
+學號 & B143012007\\
+學校／系級 & ［待填］\\
+授課教師 & ［待填］\\
+繳交日期 & ［待填］
+\end{tabular}
+
+\vspace{10mm}
+\begin{minipage}{0.91\textwidth}
+\section*{摘要}
+同一張含浮水印影像經 JPEG 壓縮後，外觀看起來仍可能相似，擷取的浮水印位元卻可能出錯。本專題以 \texttt{blind\_watermark} 的 DWT–DCT–SVD 盲擷取流程為對象，說明原版如何將位元寫入區塊的前兩個奇異值，以及如何以餘數門檻讀回。本研究以 SVD 區塊為改良範圍，在預定的 JPEG 攻擊條件下配對比較原版與候選，量測逐位錯誤率及影像品質。最終候選與實測結論待驗證後填入。
+
+\noindent\textbf{關鍵字}\quad 盲式數位浮水印、JPEG、奇異值分解、區塊改良、位元錯誤率
+\end{minipage}
+\end{titlepage}
+\setcounter{page}{2}
+
+\section{緒論}
+
+\subsection{研究動機}
+將照片寄出或上傳後，平台可能重新儲存為 JPEG。觀看者仍可辨認原來的照片，但每個像素的值不一定與上傳前相同。若照片裡另有一段用來識別來源的浮水印，判斷浮水印是否保留下來，需要重新讀取並比對位元。單憑視覺相似度，無法知道其中有幾位被讀錯。
+
+本研究使用開放原始碼 \texttt{blind\_watermark} 的固定版本 \cite{core,interface}。原版以矩陣分解取得區塊的奇異值，藉由改變奇異值的餘數寫入位元。擷取時只看餘數落在哪一側，便把該奇異值的判斷化成 0 或 1。假如兩個餘數都落在同一側，其中一個緊鄰分界，另一個靠近嵌入時的理想位置，原版仍給出相同的判斷值。此外，嵌入端修改前兩個奇異值之後，擷取端重算的排序也可能改變。本文從區塊內的判決和排序出發，界定可驗證的改良問題。
+
+\subsection{研究問題與範圍}
+只修改 \texttt{blind\_watermark} 的 SVD 區塊，能否在可比的影像品質下，降低 JPEG 壓縮後的盲擷取位元錯誤率？研究以固定版本的原版實作為基準，JPEG 作黑盒攻擊。各組比較固定輸入影像、訊息、密鑰及攻擊設定，並分別量測擷取錯誤和影像失真。
+
+W0 建立原版重現流程，W0-D 提供固定攻擊影像與判決診斷 \cite{w0,w0d}。最終候選由前置診斷與驗證決定。正文以選定方法和可核對的配對證據為主。
+
+\section{數位浮水印、JPEG 與 SVD 基礎}
+
+\subsection{嵌入與盲擷取}
+數位浮水印將短訊息寫入影像。本文把訊息表示為一串 0 和 1。設原圖為 \(I\)，訊息為 \(b=(b_1,\ldots,b_L)\)，嵌入後的影像為 \(I_w\)。JPEG 編解碼後得到 \(\widehat I_{w,Q}\)，其中 \(Q\) 是編碼器的品質設定。擷取器由受測影像、訊息長度、固定參數及密鑰取得估計位元 \(\widehat b\)。原圖及正確位元留在評估端，所以擷取屬於盲擷取。
+
+\[
+ (I,b)\ \longrightarrow\ I_w
+ \ \xrightarrow{\text{JPEG 編解碼}}\ \widehat I_{w,Q}
+ \ \xrightarrow{\text{盲擷取}}\ \widehat b .
+\]
+無攻擊對照直接由存檔的 \(I_w\) 擷取。它用來檢查寫入、儲存、重讀及擷取的整條流程。若這一步已失敗，需先檢查基準，才能解讀 JPEG 攻擊下的差異。
+
+盲擷取只限制擷取器使用的資訊，並不代表任何人都能讀回訊息，或能抵抗任意改圖。本研究將密鑰視為重現係數重排及位元順序的設定，重點是 JPEG 後的擷取可靠度。正確位元可用於計分及事後診斷，不能用來翻轉分群標籤、挑選閾值，或修正單次擷取輸出。
+
+\subsection{JPEG 為何可能改變判決}
+本研究的 JPEG 是有損影像編碼。編碼器將影像轉為可壓縮表示，量化會捨去部分精度，解碼後的像素因此可能改變 \cite{jpeg}。JPEG 品質設定可用來建立不同攻擊條件，實驗仍須記錄實際的編碼器、色度取樣及其他設定。本文把 JPEG 視為黑盒，只控制輸入和編解碼條件，並讀回實際解碼影像。
+
+浮水印程式本身也使用 DCT，但用途不同。它先在小區塊內整理資料，再從變換後的矩陣取得奇異值以讀寫浮水印。JPEG 改變影像像素後，擷取器重算的區塊矩陣及其奇異值可能改變。若餘數跨過判決邊界，部分區塊的票可能變成另一個位元。
+
+在常見的有損 DCT 型 JPEG 中，彩色編碼器通常先轉為亮度與色度表示，必要時降低色度取樣率。各分量以 \(8\times8\) 區塊執行 DCT，將係數除以對應量化步長並取整數，最後用熵編碼儲存。解碼時可還原量化後的係數索引，再經反量化、逆 DCT 和色彩轉換重建像素。若某係數除以步長後被取整為 0，解碼器無法僅由這個 0 推回原係數。這是有損過程的直觀例子。熵編碼可無損地讀回量化後的符號，影像精度的捨去已在較早的步驟發生 \cite{jpeg}。
+
+本研究用的 \(Q\) 是 Pillow 傳給 JPEG 編碼器的品質選項 \cite{pillow}。Q10、Q20、Q30 是三組設定值，不能直接讀作保留 10\%、20\%、30\% 的影像資訊。即使兩個編碼器提供相同的 \(Q\)，設定與實際像素也可能不同。固定 4:4:4 代表這組比較不降低色度取樣率，影像仍可能因量化而失真。研究只使用實際編解碼結果，無須從 JPEG 內部係數推測 BER。
+
+\subsection{位元與影像品質怎麼量}
+位元錯誤率（bit error rate，BER）是逐一比較位置所得的比例。以 \(\mathbf 1[\cdot]\) 表示條件成立時取 1，否則取 0，則
+\[
+ \mathrm{BER}=\frac{1}{L}\sum_{i=1}^{L}\mathbf 1[\widehat b_i\ne b_i].
+\]
+例如讀回 32 位而其中 2 位錯誤，BER 為 \(2/32=6.25\%\)。計算前先確認長度和位元順序，報告時同時保留錯誤數與總位元數。
+
+影像品質以峰值訊雜比（peak signal-to-noise ratio，PSNR）描述。對同尺寸的 8 位元 RGB 影像 \(X,Y\)，令 \(N\) 為三色通道的樣本總數，則
+\[
+ \mathrm{MSE}(X,Y)=\frac{1}{N}\sum_{j=1}^{N}(X_j-Y_j)^2,\qquad
+ \mathrm{PSNR}(X,Y)=10\log_{10}\frac{255^2}{\mathrm{MSE}(X,Y)}.
+\]
+均方誤差為零時，PSNR 記為 \(+\infty\)。\(\mathrm{PSNR}(I,I_w)\) 描述嵌入失真，\(\mathrm{PSNR}(I,\widehat I_{w,Q})\) 描述嵌入與 JPEG 的合併失真。兩者用不同欄位記錄。若兩種擷取器共用同一份受測影像，同條件的兩組 PSNR 相同。
+
+實作先將像素轉為浮點數再相減，以免 8 位元無號整數的減法溢位。PSNR 只比較指定的兩張圖，也無法反映錯誤分布的位置或人眼對紋理的敏感度。若候選只更換擷取規則，原版與候選的影像 PSNR 可以完全相同，擷取 BER 卻不同。報告將兩者並列，保留各自的判讀用途。
+
+同一影像及條件下，若 32 位中多錯 1 位，BER 增加 \(1/32=3.125\) 個百分點。三張圖等長時，可加總錯誤數再除以 96，仍須同時呈現逐圖結果，以免不同影像的進退互相抵銷。零觀察錯誤只描述該次測試，不能推出任意影像上的零 BER。
+
+\subsection{奇異值分解基礎}
+
+\subsubsection{一個區塊如何寫成矩陣成分}
+用 \(B\) 表示一個送進 SVD 的實數 \(4\times4\) 矩陣。其奇異值分解可寫成
+\[
+ B=U\Sigma V^{\mathsf T}
+  =\sum_{j=1}^{4}\sigma_j u_jv_j^{\mathsf T},\qquad
+ \sigma_1\ge \sigma_2\ge \sigma_3\ge \sigma_4\ge0.
+\]
+\(U\) 與 \(V\) 的直行向量（columns）各自正交歸一，\(\Sigma\) 的對角元素是奇異值。以 \(B^{\mathsf T}B\) 來看，\(\sigma_j\) 是其特徵值的非負平方根。外積 \(u_jv_j^{\mathsf T}\) 給出一個秩一成分的形狀，\(\sigma_j\) 控制該成分的大小。
+
+以 \(B=\operatorname{diag}(5,2)\) 為小型例子。兩個方向分別對應左上角與右下角。把第一奇異值由 5 改為 6，便在第一個方向上增加 1，而第二方向保持原值。實際區塊的方向通常並非座標軸，這個改量會分布在矩陣的多個位置。
+
+\subsubsection{修改奇異值如何改變區塊}
+保留 \(U,V\)，將前兩項改為 \(\sigma'_1,\sigma'_2\) 時，重建的矩陣 \(B'\) 與 \(B\) 相差
+\[
+ B'-B=(\sigma'_1-\sigma_1)u_1v_1^{\mathsf T}
+     +(\sigma'_2-\sigma_2)u_2v_2^{\mathsf T}.
+\]
+兩個外積的 Frobenius 內積為
+\((u_1^{\mathsf T}u_2)(v_1^{\mathsf T}v_2)=0\)，各自平方範數為 1。因此
+\[
+ \|B'-B\|_F^2=(\sigma'_1-\sigma_1)^2+(\sigma'_2-\sigma_2)^2.
+\]
+這是固定方向下的區塊矩陣等式。經過逆變換、像素量化、裁切及 JPEG 後，整張圖的失真和位元錯誤率仍應從實際影像計算。
+
+\section{原版 DWT–DCT–SVD 演算法與實驗方法}
+
+\subsection{三種矩陣工具的分工}
+Haar DWT 先將每個色彩通道分成一個近似子頻帶與三個細節子頻帶。以一個 \(2\times2\) 像素小區域為例，近似係數對應四個值的加總並經正規化，細節係數則取不同方向的差。原版在近似子頻帶內選取完整的 \(4\times4\) 區塊，其餘細節子頻帶保留供逆轉換。遇到奇數尺寸，程式先補邊，再於逆轉換後裁回原尺寸。
+
+DCT 描述這個 \(4\times4\) 區塊內的空間變化。設區塊為 \(X\)，用正交 DCT 矩陣 \(C\) 表示二維轉換，則 \(Y=CXC^{\mathsf T}\)，逆轉換為 \(X=C^{\mathsf T}YC\)。原版接著依密鑰重排 \(Y\) 的 16 個元素並重整為矩陣 \(B\)。DCT 的正交轉換與係數重排各自保持平方和，但重排可能改變矩陣的奇異值，故擷取端必須在相同順序重建 \(B\) 才能沿用嵌入規則。
+
+SVD 最後將 \(B\) 拆成外積方向與奇異值。程式用奇異值承載訊息，再沿用原本的方向重建。這三步分別處理子頻帶、區塊內的頻率表示與矩陣方向，JPEG 的外部編解碼則發生在浮水印影像寫出之後。
+
+\subsection{從彩色影像到嵌入區塊}
+原版 common 模式將影像轉成 YUV 三通道，對每個通道做 Haar 離散小波轉換（DWT），取低頻近似部分，再切成 \(4\times4\) 區塊。各塊做離散餘弦轉換（DCT），把 16 個係數展開並按密鑰產生的順序重排，還原成 \(4\times4\) 矩陣後做 SVD。位元會在通道和區塊間重複寫入，以便在擷取時合併多次觀察 \cite{core}。
+
+程式把前兩個奇異值寫成 \texttt{s[0]}、\texttt{s[1]}。本文用 \(j=1,2\) 對應，原版步長為 \(d_1=36,\ d_2=20\)。令要寫入該塊的位元為 \(b\in\{0,1\}\)，則
+\[
+ \sigma'_j=d_j\left(\left\lfloor\frac{\sigma_j}{d_j}\right\rfloor
+                  +\frac14+\frac{b}{2}\right),\qquad j=1,2.
+\]
+整數部分保留原本所在的步長區間，小數位置則由位元決定。寫入 0 時理想餘數比例為 \(1/4\)，寫入 1 時為 \(3/4\)。例如 \(\sigma_1=50\)、\(d_1=36\)，寫入 0 得到 45，寫入 1 得到 63，餘數分別為 9 和 27。改值後重建區塊，依序還原係數順序、執行逆 DCT 和逆 DWT，最後還原彩色影像。
+
+\subsection{原版擷取如何把區塊判斷合成一位}
+擷取端重做相同區塊處理及係數重排。以 \(s_j\) 表示受測影像重算的第 \(j\) 個奇異值，令
+\[
+ r_j=\frac{s_j\bmod d_j}{d_j}\in[0,1),\qquad
+ h(r_j)=\mathbf 1[r_j>1/2].
+\]
+因此恰等於 \(1/2\) 時判為 0。原版把兩個硬判決以 \(3:1\) 合成區塊分數 \((3h(r_1)+h(r_2))/4\)。這個分數只可能取 \(0,\ 1/4,\ 3/4,\ 1\)。
+
+對應同一訊息位置的區塊分數，跨重複位置與三通道取平均。公開的 \texttt{mode="bit"} 接著對整串平均分數做一維兩群 k-means，把高分群判為 1，再依密鑰還原位元順序 \cite{core,interface}。所以 \(1/2\) 是單個奇異值的餘數門檻。最後的位元判決由所有平均分數共同決定。
+
+\paragraph{平均與分群的分工}
+用 \(a_{c,k}\) 表示第 \(c\) 色彩通道、第 \(k\) 個區塊的融合分數。若區塊索引從 0 起算，訊息位置 \(i\) 的分數是所有 \(k\bmod L=i\) 且跨三通道的 \(a_{c,k}\) 的平均。同一訊息位元會有多個區塊觀察，但每個訊息位置最後只輸出一個位元。係數重排和訊息位元洗牌由不同設定控制，擷取端先重現係數重排，分群後再還原訊息順序。
+
+原版一維 k-means 以最小和最大分數初始化兩群中心，用中心中點切群，更新兩群平均後重複。程式在中點變化小於 \(10^{-6}\) 時停止，最多 300 次，以嚴格大於最後門檻的分數標為 1 \cite{core,interface}。這個門檻由整串分數決定。若高分群其實對應較多原始 0，原版仍依高分標 1。若分數退化而出現空群，也應保留警告與實際輸出，避免把分群失效誤判為穩健。
+
+\subsection{奇異值排序與浮水印擷取的關係}
+\label{sec:ordering}
+標準寫法將奇異值以非負、由大到小排列。原版先得到 \(\sigma_1\ge \sigma_2\ge \sigma_3\ge \sigma_4\)，再用不同步長各自量化前兩項。重建的對角值記為 \(q_1,q_2,\sigma_3,\sigma_4\)。兩項各自符合位元的餘數規則，並不保證 \(q_1\ge q_2\ge \sigma_3\)。令 \(\delta_j=q_j-\sigma_j\)，則前兩項換序、第二項落到第三項以下，分別等價於
+\[
+ \delta_2-\delta_1>\sigma_1-\sigma_2,\qquad
+ -\delta_2>\sigma_2-\sigma_3.
+\]
+兩式說明原始間距較小時，量化改動可能使兩個位置交叉。等號表示數值相同，個別奇異方向未必唯一。
+
+\paragraph{重做 SVD 會看到什麼}
+對 \(B'=U\operatorname{diag}(q_1,q_2,\sigma_3,\sigma_4)V^{\mathsf T}\)，
+\[
+ (B')^{\mathsf T}B'
+  =V\operatorname{diag}(q_1^2,q_2^2,\sigma_3^2,\sigma_4^2)V^{\mathsf T}.
+\]
+所以重新 SVD 回傳的是這些對角值的絕對值按降序排列。原版零相位下的量化值非負，因而可直接看數值如何換位。這是理想區塊重分解的性質，尚未考慮浮點誤差、逆變換、儲存及 JPEG。
+
+例如嵌入位元 0、採原版 \(d_1=36,d_2=20\)，取前三個奇異值 \((22,21,4)\)。原版公式產生 \((9,25,4)\)。重新 SVD 後前三項是 \((25,9,4)\)，原本由 \(d_2\) 編碼的 25 進入第一項，卻被擷取器以 \(d_1\) 判讀。因 \(25\bmod36=25>18\)，第一票讀成 1。另一個例子是 \((40,19,18)\) 量化成 \((45,5,18)\)，重排後第二項變成未嵌入的 18，以 \(d_2\) 判讀也會讀成 1。這兩個算例展示索引如何影響局部票，並未計算整張圖的 BER。
+
+\paragraph{封存診斷與保序問題}
+PR \#21 在三張原版影像上記錄 \(29{,}754\) 個通道區塊。原版量化後有 57 個區塊前兩項換序，另有 \(2{,}027\) 個區塊第二項落到原第三項以下。統計的對象是嵌入區塊的對角值。診斷還在逆 DCT 後重做 DCT、重排及 SVD，核對重分解與預期排序的一致性，並重現封存 PNG 像素。這些是原版診斷，未測量保序候選的 JPEG BER \cite{ordering}。
+
+保序量化提出一個可檢驗的條件：選擇各自仍符合位元餘數規則的 \(q_1,q_2\)，同時滿足 \(q_1\ge q_2\ge \sigma_3\)。這能在理想重建矩陣中使兩個值留在預定索引。若為了滿足排序必須選更遠的量化值，區塊平方改動可能增加，影像 PSNR 須另外量測。JPEG 後的奇異值和餘數仍可能變動，最後分群也可能判錯。因此保序提供一項明確的設計依據，效益須由候選與原版的配對實測判斷。
+
+\subsection{實驗材料與配對方式}
+上游鎖定 \nolinkurl{322c90dc02d45644692095b34d3a6b735b6edbd8}。使用 W0 的 \texttt{astronaut}（512×512）、\texttt{chelsea}（451×300）、\texttt{coffee}（600×400）三張 8 位元 RGB 影像；尺寸以寬×高表示。固定訊息為 \texttt{10110010111001000101101011010001}。W0 使用 \texttt{password\_img=1} 與 \texttt{password\_wm=1}，並將三張原圖的來源、授權和 SHA-256 列於輸入清單 \cite{inputs,w0}。
+原版基準保留含水印 PNG 和檔案雜湊。W0-D 從每張含水印 PNG 獨立編碼 JPEG，提供 Q10、Q20、Q30 的 4:4:4 封存條件 \cite{w0d}。這些檔案可供比較與診斷。最終候選的完整測試條件須在正式評估前固定，並記錄各條件用途、編碼器版本、品質及色度取樣。
+
+每張影像先作無攻擊 PNG 對照。若候選只修改擷取，原版與候選讀取同一份 PNG 和 JPEG 解碼像素。若候選修改區塊嵌入，兩組從同一原圖出發，使用同一訊息、密鑰及 JPEG 設定，各自從含水印 PNG 獨立編碼。擷取過程只使用受測影像及預先固定的設定。原圖用於計算 PSNR，正確位元用於事後評估。
+
+\paragraph{固定攻擊與候選比較}
+比較包含無攻擊 PNG 與 JPEG Q10、Q20、Q30。三組 JPEG 使用同一 Pillow RGB 編碼路徑、4:4:4、\texttt{optimize=False} 及 \texttt{progressive=False}。W0-D 封存環境記錄 Pillow 12.3.0、libjpeg-turbo 3.1.4.1 \cite{w0d}。正式驗證記錄當次實際版本。若需跨環境重跑，保留位元組及像素差異，不把不同編碼器的數據混作同一配對。同一張圖的各組 \(Q\) 均由同一對應 PNG 獨立編碼，避免把前一次壓縮的誤差帶入下一組。
+
+\subsection{結果如何比較}
+逐影像、逐條件保存擷取位元、錯誤數、總位元數及兩種 PSNR。以
+\[
+ \Delta\mathrm{BER}=\mathrm{BER}_{\mathrm{candidate}}-\mathrm{BER}_{\mathrm{original}}
+\]
+表示配對差值。負值代表該條件的錯誤率下降。若兩組的含水印影像不同，先依事前固定的品質判準比較嵌入 PSNR，再判讀 BER。三張圖使用同一段 32 位元訊息時，每個條件合計 96 位元。結果只適用於實測樣本與編碼設定。
+
+\subsection{留存資料與重現步驟}
+每組測試以影像 ID、方法、攻擊條件及位元位置對應資料。CSV 保存原始位元、擷取位元、錯誤數、總位元數與 PSNR，配對差值以未四捨五入的原始數值計算。manifest 記錄輸入及產出雜湊、上游與本研究提交、Python、NumPy、OpenCV、PyWavelets、Pillow 與 JPEG codec 版本，以及參數和執行命令。用雜湊確認檔案來源，再從 CSV 獨立重算錯誤數，可分別檢查資料是否相同及計分是否正確。
+
+原版基準與壓力診斷的程式和輸出已存於各自固定提交。重現時從對應提交開獨立工作目錄，在 Python 3.13 環境執行以下安裝與檢查。兩組輸出均指定新目錄，壓力診斷仍讀取封存 W0 manifest。第二次重跑另用新目錄，再逐檔比對雜湊或像素。跨環境的差異連同版本一起保存 \cite{w0pr,w0d}。
+
+\begin{flushleft}
+\texttt{python -m pip install -r requirements-w0.txt}\\
+\texttt{python -m pip install --no-build-isolation -r watermark\_baseline/upstream.txt}\\
+\texttt{python -m pip check}\\
+\texttt{python -m watermark\_baseline --output-dir outputs/run-w0-review}\\
+\texttt{python -m watermark\_baseline.stress --output-dir outputs/run-w0-d-review}
+\end{flushleft}
+
+上述兩條實驗命令各在對應的固定提交執行。最終候選的提交、執行命令與重跑證據會在正式結果中補列。
+
+\section{SVD 區塊改良方法}
+本章保留待定。待 G5 前置診斷及最終候選確定後，說明改動的區塊步驟、選擇依據、盲擷取所需條件，以及與原版的差異。
+
+\section{實驗結果與結論}
+本章保留待填。最終報告依預定測試條件完整呈現原版與候選的 BER、PSNR、差值與限制。直接影響方法選擇、比較公平性或結論的負面證據一併交代。若實測未支持改善，結論依實際觀察撰寫。
+
+\begin{thebibliography}{9}
+\bibitem{core}
+Guofei，\texttt{blind\_watermark}，固定提交的
+\href{https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/blind_watermark/bwm_core.py}{\texttt{bwm\_core.py}}。
+\bibitem{interface}
+Guofei，\texttt{blind\_watermark}，同一提交的
+\href{https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/blind_watermark/blind_watermark.py}{公開擷取介面}。
+\bibitem{jpeg}
+ITU-T，\href{https://www.itu.int/rec/T-REC-T.81/en}{Recommendation T.81，JPEG 編碼標準}。
+\bibitem{w0}
+專題倉庫，\href{https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/f5a47fc1ba40cc35f5794648b4440cb1fed782d1/outputs/run-w0/manifest.json}{W0 基準 manifest}。
+\bibitem{w0d}
+專題倉庫，\href{https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/168e5070cacbdeeaefab58ed469dd7e90db4aa3f/watermark_baseline/STRESS.md}{W0-D JPEG 壓力診斷}。
+\bibitem{pillow}
+Pillow，\href{https://pillow.readthedocs.io/en/stable/handbook/image-file-formats.html\#jpeg}{JPEG 檔案格式及儲存選項}。
+\bibitem{inputs}
+專題倉庫，\href{https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/f5a47fc1ba40cc35f5794648b4440cb1fed782d1/data/w0/inputs.json}{W0 影像來源、授權與 SHA-256}。
+\bibitem{w0pr}
+專題倉庫，\href{https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/13}{W0 基準實驗與重現命令}。
+\bibitem{ordering}
+專題倉庫，\href{https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/9a08fcdfba64a51a8034f3b82abbf2c5e817a014/watermark_baseline/MECHANISM.md}{PR \#21 固定提交的 SVD 排序與 JPEG 餘數診斷}。
+\end{thebibliography}
+\end{document}

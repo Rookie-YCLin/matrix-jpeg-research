@@ -95,3 +95,7 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 - 交付 [正式報告](reports/FINAL_REPORT.md)、[答辯稿](reports/DEFENSE_NOTES.md)及[最終核對紀錄](reports/FINAL_CHECKLIST.md)。已核對公式、四份 M2 CSV 引值、文獻、五張圖與相對路徑。
 - 在另一個 Windows 隔離環境重跑 M2 至新暫存目錄。兩份 CSV 有浮點末位差異，已通過數值容差核對，差異詳見最終核對紀錄。本機 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。
 - M4 待外部研究審查及使用者批准合併。正式題目、繳交格式與封面資料仍待確認。
+
+## 2026-11-08 浮水印報告前半部
+
+- 保留緒論、基礎、原版演算法與配對實驗方法，主文聚焦 SVD 區塊改良及 JPEG 抗壓縮驗證。已按固定上游與 PR #21 補強理論、排序診斷及配對實驗設計，九頁 PDF 已逐頁核對。第四、第五章待 G5 正式實測。[報告 PDF](reports/WATERMARK_REPORT.pdf) · [排版與來源核對](reports/WATERMARK_REPORT_REVIEW.md)
