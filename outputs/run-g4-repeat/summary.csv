@@ -1,0 +1,9 @@
+condition,method,error_count,total_bits,ber
+PNG,hard,0,96,0.0
+PNG,first,0,96,0.0
+Q10,hard,12,96,0.125
+Q10,first,17,96,0.17708333333333334
+Q20,hard,78,96,0.8125
+Q20,first,81,96,0.84375
+Q30,hard,0,96,0.0
+Q30,first,0,96,0.0
