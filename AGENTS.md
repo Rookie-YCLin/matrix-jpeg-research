@@ -1,6 +1,19 @@
-# 專案工作規範
+# 專案工作規範｜BER 優先
 
-- 開工先讀 [正式規格](PROJECT_SPEC.md)、[Codex 交接](docs/CODEX_NEXT_SESSION.md)、[實驗索引](docs/EXPERIMENT_INDEX.md) 和 `PROGRESS.md`，核對程式、測試、輸出與 [Issue #8](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8) 的正式方向。
-- 現行研究只修改 `blind_watermark` 的 SVD 區塊演算法，JPEG 作黑盒攻擊。W0、W0-D 與 G2 是已交付的基準、診斷與參數探索。G3 的候選方法及實測見 [PR #18](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/18)，待人工驗收；未授權前不得另開候選或重跑調參。
-- 使用 Python 3.13 隔離環境和鎖定依賴。保存來源、雜湊、版本、命令、CSV 與驗證證據。圖表源自實際 CSV，每個里程碑更新 `PROGRESS.md`。測試失敗須保留日誌、診斷並重跑。
-- 保留已驗證的程式、資料、測試、歷史 PR 及 Research CI。使用獨立分支和新輸出目錄。禁止直接修改 main、自動合併或啟用 AI 自動審查。合併須經研究主持人批准。
+## 不可偏離的研究目的
+
+**以 [guofei9987/blind_watermark](https://github.com/guofei9987/blind_watermark) 為基礎，改良其 SVD 浮水印嵌入或擷取方法，使浮水印經 JPEG 壓縮後，以更低 BER 被正確擷取。** 核心 KPI 是**同條件 JPEG BER 優於原版**；PSNR 只是預先固定的品質限制，排序、範數與理論證明是方法工具，皆不能充當達標。
+
+## 開工核對
+
+- 先讀 [正式規格](PROJECT_SPEC.md)、[實驗索引](docs/EXPERIMENT_INDEX.md)、[研究進度](PROGRESS.md) 與 [Codex 交接](docs/CODEX_NEXT_SESSION.md)。
+- 維持固定上游版本、DWT／DCT／洗牌／聚合／K-means 及公開 API。研究修改限定在 **SVD 區塊嵌入及／或擷取**；任何其他模組變更須主持人明確批准。
+- 不得用正確位元、原圖或未受攻擊 PNG 輔助真正的盲式擷取；可用於獨立診斷與事後評估。
+- W0-D Q10 12／96 是主基準；G2 18／96（d2=10）或 19／96（d2=30）、G3 13／96、G4 17／96、G5 24／96 均未達主要改善。G5 的 PNG PSNR 或保序成果不可代替 BER。
+- **候選搜尋已停止**，先評估唯讀 D0/D1/D2 診斷；不經研究主持人批准不得開啟新候選、調參、重跑新的正式實驗。
+
+## 證據與 Git 管理
+
+- 使用隔離環境、鎖定依賴；記錄原始輸入、版本、金鑰、payload、JPEG 編碼條件、CSV、manifest、SHA、測試及失敗紀錄。
+- 使用獨立分支與 PR；**不得直接修改 main、未經授權合併 PR、啟用 AI 自動審查或刪除可重現證據**。
+- 專案精簡以「首頁研究主線清晰、交接文件不再過時」為先。既有歷史資料、輸出、負結果、原始授權及 PR 保留。若提議刪檔，需逐項證明與目前主線無關、無測試或追溯依賴，並由主持人審核。
