@@ -1,0 +1,319 @@
+"""Produce the editable course report from the canonical theory and verified figures."""
+import argparse
+from pathlib import Path
+import re
+
+from docx import Document
+from docx.enum.style import WD_STYLE_TYPE
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK
+from docx.enum.section import WD_SECTION_START
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
+from docx.shared import Cm, Pt, RGBColor
+from lxml import etree
+from latex2mathml.converter import convert
+
+ROOT = Path(__file__).resolve().parents[2]
+TITLE = "SVD-QIM 量化步長對 JPEG 浮水印強韌性與影像品質之影響"
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--figures", type=Path, required=True)
+parser.add_argument("--output", type=Path, required=True)
+parser.add_argument("--math-xsl", type=Path, required=True)
+args = parser.parse_args()
+transform = etree.XSLT(etree.parse(str(args.math_xsl)))
+d = Document()
+d.core_properties.title = TITLE
+d.core_properties.author = "林易辰"
+d.core_properties.subject = "國立中山大學 電機工程學系 矩陣理論及應用"
+
+
+def element(tag, **values):
+    item = OxmlElement(tag)
+    for k, v in values.items():
+        item.set(qn("w:" + k), str(v))
+    return item
+
+
+def format_section(sec):
+    sec.page_width, sec.page_height = Cm(21), Cm(29.7)
+    sec.left_margin = sec.right_margin = Cm(3)
+    sec.top_margin = sec.bottom_margin = Cm(2.54)
+    sec.footer_distance = Cm(1.5)
+
+
+def numbered(sec, fmt, start):
+    sec.footer.is_linked_to_previous = False
+    sec._sectPr.append(element("w:pgNumType", fmt=fmt, start=start))
+    p = sec.footer.paragraphs[0]
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p._p.append(element("w:fldSimple", instr="PAGE"))
+
+
+format_section(d.sections[0])
+for st in d.styles:
+    if st.type == WD_STYLE_TYPE.PARAGRAPH:
+        st.font.name = "Times New Roman"
+        st.font.size = Pt(12)
+        st.font.color.rgb = RGBColor(0, 0, 0)
+        fonts = st.element.get_or_add_rPr().rFonts
+        for key in ("asciiTheme", "hAnsiTheme", "eastAsiaTheme", "cstheme"):
+            fonts.attrib.pop(qn("w:"+key), None)
+        fonts.set(qn("w:eastAsia"), "DFKai-SB")
+        fonts.set(qn("w:cs"), "Times New Roman")
+normal = d.styles["Normal"].paragraph_format
+normal.line_spacing = 1.5
+normal.space_after = Pt(7)
+normal.first_line_indent = Pt(24)
+for name, size in (("Title", 23), ("Heading 1", 17), ("Heading 2", 14), ("Heading 3", 12)):
+    st = d.styles[name]
+    st.font.size = Pt(size)
+    st.font.bold = True
+    st.paragraph_format.first_line_indent = Pt(0)
+    st.paragraph_format.space_before = Pt(12)
+    st.paragraph_format.space_after = Pt(7)
+    st.paragraph_format.keep_with_next = True
+    props = st.element.get_or_add_pPr()
+    border = props.find(qn("w:pBdr"))
+    if border is not None:
+        props.remove(border)
+for name in ("Figure", "Figure Caption", "Formula", "Table Text", "Cover Text"):
+    st = d.styles.add_style(name, WD_STYLE_TYPE.PARAGRAPH)
+    st.base_style = d.styles["Normal"]
+    st.paragraph_format.first_line_indent = Pt(0)
+    st.paragraph_format.space_after = Pt(5)
+d.styles["Figure"].paragraph_format.keep_with_next = True
+d.styles["Formula"].paragraph_format.space_before = Pt(4)
+d.styles["Table Text"].paragraph_format.line_spacing = 1.12
+d.styles["Table Text"].paragraph_format.space_after = Pt(4)
+d.styles["Figure Caption"].font.size = Pt(11)
+
+
+def math(p, tex):
+    # This source uses a TeX declaration followed by a single character.
+    tex = re.sub(r"\\mathsf\s+T", r"\\mathsf{T}", tex)
+    tex = re.sub(r"\\\|(.+?)\\\|", lambda m: r"{\Vert " + m.group(1) + r"\Vert}", tex)
+    node = transform(etree.fromstring(convert(tex).encode())).getroot()
+    p._p.append(node)
+
+
+def rich(p, value):
+    value = re.sub(r"\[([^\]]+)\]\[[^\]]+\]", r"\1", value)
+    for token in re.split(r"(\$[^$]+\$|\*\*[^*]+\*\*|§[^§]+§)", value):
+        if not token:
+            continue
+        if token.startswith("$") and token.endswith("$"):
+            math(p, token[1:-1])
+        elif token.startswith("**") and token.endswith("**"):
+            p.add_run(token[2:-2]).bold = True
+        elif token.startswith("§") and token.endswith("§"):
+            p.add_run(token[1:-1])
+        else:
+            p.add_run(token)
+    return p
+
+
+def paragraph(s, style=None):
+    return rich(d.add_paragraph(style=style), s)
+
+
+def center(s, style="Cover Text", before=0):
+    p = paragraph(s, style)
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.paragraph_format.space_before = Pt(before)
+    return p
+
+
+def fig(name, caption, width=14.8):
+    p = d.add_paragraph(style="Figure")
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.add_run().add_picture(str(args.figures / f"{name}.png"), width=Cm(width))
+    paragraph(caption, "Figure Caption")
+
+
+def table(data):
+    t = d.add_table(rows=0, cols=len(data[0]))
+    t.style = "Table Grid"
+    for i, values in enumerate(data):
+        row = t.add_row()
+        row._tr.get_or_add_trPr().append(element("w:cantSplit"))
+        if i == 0:
+            row._tr.get_or_add_trPr().append(element("w:tblHeader"))
+        for cell, value in zip(row.cells, values):
+            p = cell.paragraphs[0]
+            p.style = "Table Text"
+            rich(p, value)
+            p.paragraph_format.keep_with_next = i < len(data) - 1
+            if i == 0:
+                cell._tc.get_or_add_tcPr().append(element("w:shd", fill="E8EEF4"))
+                for run in p.runs:
+                    run.bold = True
+    d.add_paragraph().paragraph_format.space_after = Pt(0)
+
+
+def markdown(value):
+    lines = value.strip().splitlines()
+    i = 0
+    while i < len(lines):
+        line = lines[i].strip()
+        if not line:
+            i += 1
+        elif line == "$$":
+            i += 1
+            group = []
+            while lines[i].strip() != "$$":
+                group.append(lines[i])
+                i += 1
+            p = d.add_paragraph(style="Formula")
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            math(p, " ".join(group))
+            i += 1
+        elif line.startswith("|"):
+            group = []
+            while i < len(lines) and lines[i].strip().startswith("|"):
+                row = [cell.strip() for cell in lines[i].strip().strip("|").split("|")]
+                if not all(re.fullmatch(r"[: -]+", x) for x in row):
+                    group.append(row)
+                i += 1
+            table(group)
+        elif line.startswith("### "):
+            d.add_heading(line[4:], level=2)
+            i += 1
+        else:
+            paragraph(line)
+            i += 1
+
+
+source = (ROOT / "reports/SVD_QIM_MATRIX_THEORY.md").read_text(encoding="utf-8").replace(chr(96), "§")
+canonical = (ROOT / "reports/G6_FINAL_PROJECT_REPORT.md").read_text(encoding="utf-8")
+
+
+def extract(start, end):
+    return source.split(start, 1)[1].split(end, 1)[0].strip()
+
+
+def chapter(title):
+    d.add_heading(title, 1)
+
+
+center("國立中山大學　電機工程學系", before=52)
+center("矩陣理論及應用　期末專題", before=12)
+center(TITLE, "Title", 54)
+center("林易辰　B143012007", before=46)
+center("2026 年 11 月", before=12)
+
+front = d.add_section(WD_SECTION_START.NEW_PAGE)
+format_section(front)
+numbered(front, "lowerRoman", 1)
+chapter("摘要")
+abstract = canonical.split("## 摘要", 1)[1].split("## 一、", 1)[0].strip()
+markdown(abstract)
+d.add_heading("閱讀順序", 2)
+for line in ("一　研究問題與配對設計", "二　從影像到區塊奇異值", "三　QIM 格點、排序與容錯", "四　從矩陣改量到影像 PSNR", "五　實測結果與研究限制", "六　結論與可重現性"):
+    paragraph(line, "Cover Text")
+
+body = d.add_section(WD_SECTION_START.NEW_PAGE)
+format_section(body)
+numbered(body, "decimal", 1)
+chapter("一　研究問題與配對設計")
+paragraph("先看同一個血小板區域。經過 JPEG 後，我們仍能辨認影像，卻無法單憑肉眼知道裡面的 32 位元訊息能否讀回。影像相似度量的是像素，位元錯誤率量的是解碼結果。兩者回答不同問題，應在同一攻擊條件下並列。")
+fig("paired_crop", "圖 1　同位置裁切。左為原始 JPEG 解碼 RGB，中為原版 QF15，右為 G6 QF15。三圖使用相同裁切座標與顯示尺度。資料來源：合併的 PSNR 實驗與重生影像。")
+markdown(extract("## 一、研究問題與比較基準", "## 二、"))
+d.add_heading("把品質因子當作攻擊設定", 2)
+paragraph("JPEG 以區塊轉換和量化降低精度，解碼像素因此可能改變。本研究把編解碼器當作黑盒，固定實作與色度取樣，再讀取實際輸出。QF 是傳給 Pillow 的品質設定，數字不表示保留多少百分比的訊息。")
+fig("quality", "圖 2　原版同一含水印 PNG 在 QF5、15、50、95 各自編碼後的同位置裁切。QF95 為固定設定重生示例，檔案位元組與封存不同。此圖只用於辨識視覺差異，BER 仍以封存 CSV 為準。")
+paragraph("主條件從原版掃描先選出。QF15 與 QF20 並列最高 BER，依預定規則取較小的 QF15。後續兩組均由各自的含水印 PNG 直接產生每個 JPEG 檔，避免把前一次壓縮累積到下一個測點。")
+
+d.add_heading("配對設計如何隔離步長的影響", 2)
+table([
+    ["比較項目", "固定方式", "理由"],
+    ["輸入和訊息", "同一張解碼 RGB、同一 32 位元序列、兩把金鑰皆為 1", "避免圖像內容及訊息排列同時改變"],
+    ["嵌入與擷取", "兩端同步使用各組步長；第二步長皆為 20", "使同一個索引在兩端使用同一餘數尺度"],
+    ["JPEG 攻擊", "各組由自己的 PNG 獨立編碼；同一 Pillow 設定", "避免二次編碼或色度取樣混入比較"],
+    ["評分", "先完成盲擷取，之後逐位核對；PSNR 共用原圖參照", "隔離解碼與評分，讓兩組像素品質可比較"],
+])
+paragraph("同一來源並不表示兩個版本嵌入後的像素相同。G6 在寫入時已改變步長，因此各組必須由自己的含水印 PNG 產生攻擊檔。兩個版本的攻擊檔也不能互換使用，因為擷取端應沿用該版本的步長。")
+chapter("二　從影像到區塊奇異值")
+fig("flow", "圖 3　原版嵌入與擷取流程示意。上排由原圖產生含水印 PNG，下排從受測影像讀回位元。JPEG 攻擊位於兩排之間。來源：固定版上游核心程式與 bit 介面。")
+paragraph("在原版流程中，影像先轉入三個色彩通道，每個通道做 Haar DWT，取近似子頻帶的完整區塊。DCT 提供區塊內的頻率表示，係數重排由金鑰決定。SVD 最後將重新整形後的矩陣分解，讓嵌入端能在固定方向上只改兩個大小。擷取端重做同一流程，才有可能讀到相同位置所承載的訊息。")
+markdown(extract("### 2.1 SVD 與嵌入矩陣", "### 2.2"))
+d.add_heading("先用小矩陣看方向與大小", 2)
+paragraph("以對角元素為 5 與 2 的二階矩陣為例。兩個秩一方向分別只在左上和右下有非零值，奇異值就是這兩個方向的大小。若改成 6 與 2，重建只在第一方向增加 1。一般影像區塊的奇異向量不與座標軸對齊，同樣大小的改量會分散到區塊元素。")
+
+d.add_heading("三種分解各處理哪個問題", 2)
+paragraph("Haar DWT 的近似係數可以先想成相鄰像素的加權總和，細節係數則保留方向上的差。原版選擇近似子頻帶的完整區塊，把其他細節留給逆轉換。DCT 接手的是每個 4×4 區塊，將區塊元素改寫成各種振盪樣式的係數。此步保持整個區塊的平方和，卻重新組織了座標。")
+paragraph("排列 16 個 DCT 係數仍保持平方和，但把同一組數重排成不同的矩陣，奇異值通常會變。因此嵌入與擷取必須用同一排列。SVD 解決的是排列完成後如何把矩陣表示成一組彼此正交的秩一方向，以及各方向所乘的大小。這也是原版可以只更新兩個對角元素，然後用原來方向重建的原因。")
+chapter("三　QIM 格點、排序與容錯")
+markdown(extract("### 2.2 量化格點與局部裕度", "## 三、"))
+fig("qim", "圖 4　QIM 餘數格點示意。區間端點週期相接，最近判決邊界距理想格點為 d/4。上下兩排採相同橫軸尺度。")
+d.add_heading("從兩張區塊票到一個訊息位元", 2)
+table([
+    ["第一票", "第二票", "融合分數"],
+    ["0", "0", "0"],
+    ["0", "1", "1/4"],
+    ["1", "0", "3/4"],
+    ["1", "1", "1"],
+])
+paragraph("例如第一票讀成 0、第二票讀成 1，區塊分數仍只有 1/4。跨區塊及通道平均之後，這個分數只是整個訊息位置的一個貢獻。原版一維 K-means 再以兩群平均值反覆調整分界，最後才還原訊息位元次序。因此局部裕度、分群分界和最終 BER 分屬三個層次。")
+d.add_heading("同一區塊的擾動界", 2)
+markdown(extract("## 三、JPEG 有效擾動與理想局部充分條件", "## 四、"))
+
+chapter("四　從矩陣改量到影像 PSNR")
+markdown(extract("## 四、從區塊修改量到整圖 PSNR", "### 4.3"))
+d.add_heading("用兩組像素比較分辨失真來源", 2)
+paragraph("第一個比較固定原始解碼像素，量測兩個版本各自的含水印 PNG。第二個比較仍固定同一原始解碼像素，改用兩個版本各自的 QF15 解碼影像。這樣能分開觀察嵌入後與攻擊後的像素品質，也避免把不同原圖或不同比較階段混在一起。")
+
+d.add_heading("將 PSNR 差換回 MSE 比值", 2)
+paragraph("若想知道 −1.671 dB 在平方誤差尺度上表示什麼，可以對 PSNR 差取反後除以 10，再作 10 的次方。這個換算的前提是同一參照和峰值，且兩組 MSE 都大於零。對本次 QF15 CSV，114.211263 除以 77.730415 約為 1.469，所以 G6 的最終 RGB 均方誤差約為原版的 1.47 倍。此比值描述像素差，不能直接換算成人眼感受到的畫質差。")
+chapter("五　實測結果與研究限制")
+fig("ber", "圖 5　正式 32 位元訊息的 BER–QF 曲線。各標記為實際測點，折線只輔助閱讀。來源：G6 逐位 BER CSV。")
+markdown(extract("## 五、已驗證 BER 與研究限制", "## 六、"))
+fig("paired", "圖 6　原始解碼 RGB、原版 QF15 與 G6 QF15 全圖。來源：固定配對實驗重生影像，QF15 兩組 JPEG 雜湊與封存一致。")
+d.add_heading("QF15 的配對畫質與可靠度", 2)
+fig("psnr", "圖 7　嵌入 PNG 與 QF15 JPEG 的配對 PSNR。各棒使用同一原始解碼 RGB 參照。來源：合併的 PSNR CSV。")
+markdown(extract("### 4.3 QF15 配對畫質實測", "## 五、"))
+d.add_heading("從證據能回答到哪裡", 2)
+table([
+    ["問題", "可以支持的說法"],
+    ["理想格點離邊界多遠？", "在排序與索引相容前提下，第一票理想裕度由 9 增至 22.5。"],
+    ["整個解碼器一定能成功嗎？", "不能由區塊界推出。三通道、跨區塊平均和分群仍影響輸出。"],
+    ["品質代價是多少？", "本圖主條件的最終 JPEG PSNR 差為 −1.671 dB；未測主觀可見度。"],
+    ["QF15 全反相有何解釋？", "封存位元證明原版輸出逐位互補，機制尚未證實。"],
+    ["結果能普遍成立嗎？", "單圖、有限步長候選與離散 QF 實測，QF5 還出現退步。"],
+])
+
+d.add_heading("讀圖時不能跨過的界線", 2)
+paragraph("曲線上的 19 個標記才是實際測點。相鄰測點用折線相連，不代表中間品質設定經過測試，也不代表 BER 隨 QF 單調變化。在 QF25 至 95 的既定測點，兩組皆為零錯誤。這部分能說明 G6 維持了已觀察的結果，無法拿來增加 QF15 的改善幅度。")
+paragraph("兩組額外訊息的用途是確認候選選定後，換一組 32 位元內容是否仍能重現 QF15 的觀察。它們與主訊息共用同一圖、相同金鑰和編碼條件，且其中一組是主訊息的逐位互補。因此三組訊息不能當成三張獨立影像，也不應用來估計跨影像的統計置信度。")
+paragraph("原版在 QF15 讀到的 32 位元全部與真值互補。若事後依真值翻轉輸出，當然會降低這個案例的錯誤數，但這個操作使用了盲式擷取不具備的資訊。本研究直接評分原版公開 bit 介面，沒有校正標籤方向。")
+d.add_heading("用位元與像素兩條證據回答主問題", 2)
+paragraph("在 QF15，原版的分母與候選的分母都是 32。原版每個位置都錯，G6 每個位置都對，所以差值為 −100 個百分點。相對降幅則以原版 BER 為分母，這次也剛好是 100%。兩個數字的單位和意義不同。若原版 BER 已為零，相對降幅無法定義，此時應直接說兩組觀察到的錯誤數相同。")
+paragraph("PSNR 的分母來自整張影像的三個通道。就算兩個版本的圖都能辨認，G6 仍可能有較大的平方差。圖 6 的全圖用來確認比較的是同一內容，圖 1 的裁切用來察看同一區域。兩圖沒有量化主觀可見度。數字比較仍以全圖 CSV 為準，不能拿局部裁切估計全圖 PSNR。")
+paragraph("這次比較可用兩個問題收束：若目標是在指定 QF15 讀回訊息，這個固定案例支持採用 G6；若目標同時要求維持原版的像素品質，則必須納入實測的 1.671 dB 差距。兩項證據應並列，沒有一個只靠 BER 就能回答的單一畫質判準。")
+chapter("六　結論與可重現性")
+markdown(extract("## 六、結論", "## 來源與重現"))
+d.add_heading("重跑順序與稽核", 2)
+paragraph("以封存 commit 86cf6e2 為依據，使用 Python 3.13、固定 blind_watermark 上游 SHA 與各 manifest 所列版本。從倉庫根目錄執行下列程式，所有輸出目錄須事前不存在。將新結果與封存 CSV 逐列比對，並比對來源影像和 JPEG 雜湊。")
+for line in (
+    "python -m experiments.svd_qim_validation --output-dir <ber>",
+    "python -m experiments.svd_qim_psnr --output-dir <paired>",
+    "python reports/course/build_figures.py --paired <paired> --output <figures>",
+):
+    paragraph(line, "Cover Text")
+paragraph("圖表來源依證據分流。BER 與 PSNR 直接讀取已合併 CSV；影像面板取自可重生檔案並以 manifest 查核；格點與流程圖屬數學與程式示意。畫面裁切採同位置，未做對比度拉伸。影像品質設定與 PNG／JPEG 封存差異詳見圖源紀錄。")
+d.add_heading("從 CSV 重算論文中的數字", 2)
+paragraph("BER 檔的 expected_bits 與 extracted_bits 必須各有 32 個位置。逐位比較得到錯誤位置清單，錯誤數等於清單長度。先對主訊息、原版與 G6、QF15 取出兩筆資料，再核對封存雜湊。這一層查核能區分擷取輸出是否相同，以及實際讀入的檔案是否相同。")
+paragraph("PSNR 檔先按階段與版本分組。以 CSV 的全精度 MSE 代回同一公式，分別重算四個 PSNR。先作同階段版本差，再將差值四捨五入至三位。兩個階段不能互相抵扣。歷史 BER CSV 與此次 PSNR 重生檔的 PNG 雜湊有差異，故嵌入後 PSNR 明確引用本次產物；QF15 JPEG 則有檔案雜湊及擷取位元兩項一致證據。")
+d.add_heading("矩陣推導的查核次序", 2)
+paragraph("先確認所用矩陣是 SVD 的 4×4 輸入，再確認量化值是否仍在對應索引。局部擾動界只在同位置、同通道、同變換域適用。若任何一項不符，不能引用局部判決裕度解釋該票正確。即使所有局部公式寫對，論文中 0/32 的主張仍由封存位元支持。這三層查核分別處理矩陣、區塊判決與完整訊息。")
+chapter("參考資料")
+for line in (
+    "1. Bernstein, D. S. (2009). Matrix Mathematics: Theory, Facts, and Formulas, 2nd ed. Princeton University Press. SVD pp. 301–303；Frobenius 與譜範數 pp. 547, 549；Proposition 9.6.8 p. 562。",
+    "2. Guofei9987, blind_watermark，固定提交 322c90dc02d45644692095b34d3a6b735b6edbd8。bwm_core.py 與 blind_watermark.py。",
+    "3. Rookie-YCLin, matrix-jpeg-research，固定提交 86cf6e2。reports/G6_FINAL_PROJECT_REPORT.md、reports/SVD_QIM_MATRIX_THEORY.md。",
+    "4. 同倉庫，outputs/svd-qim-qf15-selected/results.csv 與 manifest.json；outputs/svd-qim-psnr-qf15/results.csv 與 manifest.json。",
+    "5. 周孜燦，資料結構 Quick Review of C++，課堂講義。參考其由例子到定義的教學順序。",
+    "6. 國立中山大學研究生學位論文格式規範，第十四至十六點。參考正文紙張、字體、頁碼及圖源標註。",
+):
+    paragraph(line, "Cover Text")
+args.output.parent.mkdir(parents=True, exist_ok=True)
+d.save(args.output)
