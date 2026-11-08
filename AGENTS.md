@@ -1,10 +1,6 @@
 # 專案工作規範
 
-- 開工先讀 PROJECT_SPEC.md 與 PROGRESS.md，核對程式、測試與實際輸出。
-- M3 已完成研究驗收並經 PR #3 合併。M4 在獨立分支交付正式報告、答辯稿及最終核對紀錄。CI 通過後等待 PR 外部研究審查，取得使用者批准前，禁止合併至 main。
-- 使用 Python 3.13 隔離環境和鎖定依賴。原圖及解碼矩陣以 float64 分析，展示用影像另行量化。
-- 圖表必須源自實際計算輸出的 CSV。保留輸入來源、雜湊、版本、命令及驗證證據。
-- 測試失敗須記錄、診斷、修正及重跑。保留原驗收標準。每個里程碑更新 PROGRESS.md。
-- PR 開啟、重新開啟或分支更新時觸發 Research CI。在 PR 的 Checks 查看 Python、套件與 JPEG 函式庫版本，以及 `python -m pytest -v` 的逐項結果。依賴安裝失敗會在安裝步驟標為失敗，pytest 結果另列於執行摘要。
-- CI 在暫存目錄重跑 SVD 與 JPEG，並核對 M2 已提交的 CSV、圖表輸入及必要檔案。存檔數據依當次保存的解碼 PNG 核對，runner 重跑依其實際 JPEG 解碼像素核對。
-- 失敗時保留 Checks 日誌，在原 PR 分支修正後重跑相同命令並推送。使用 PR 範本提供繁中驗收摘要，包含變更、結果、測試、資料位置、限制與待審查事項。
+- 開工先讀 [正式規格](PROJECT_SPEC.md)、[Codex 交接](docs/CODEX_NEXT_SESSION.md)、[實驗索引](docs/EXPERIMENT_INDEX.md) 和 `PROGRESS.md`，核對程式、測試、輸出與 [Issue #8](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8) 的正式方向。
+- 現行研究只修改 `blind_watermark` 的 SVD 區塊演算法，JPEG 作黑盒攻擊。W0、W0-D 與 G2 是已交付的基準、診斷與參數探索。G3 的候選方法及實測見 [PR #18](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/18)，待人工驗收；未授權前不得另開候選或重跑調參。
+- 使用 Python 3.13 隔離環境和鎖定依賴。保存來源、雜湊、版本、命令、CSV 與驗證證據。圖表源自實際 CSV，每個里程碑更新 `PROGRESS.md`。測試失敗須保留日誌、診斷並重跑。
+- 保留已驗證的程式、資料、測試、歷史 PR 及 Research CI。使用獨立分支和新輸出目錄。禁止直接修改 main、自動合併或啟用 AI 自動審查。合併須經研究主持人批准。

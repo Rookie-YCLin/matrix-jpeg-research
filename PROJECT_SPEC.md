@@ -1,19 +1,17 @@
-# JPEG 壓縮對影像奇異值與秩一成分的影響
+# 盲式浮水印的 JPEG 抗壓縮與 SVD 區塊演算法改良
 
-電機系「矩陣理論及應用」期末專題。使用固定的 512×512、8 位元灰階 SciPy ascent。保留本機 PNG、來源與 SHA-256，實驗可離線重跑。使用 NumPy、Pillow、Matplotlib、Pytest，SciPy 和 Pooch 僅用於取圖。
+## 研究問題與範圍
 
-## M0 與 M1（第 1–2 天）
+以 `guofei9987/blind_watermark` 提交 `322c90dc02d45644692095b34d3a6b735b6edbd8` 為基礎，測試 JPEG 壓縮攻擊，只修改 SVD 區塊的擷取判決，檢驗是否能提升浮水印擷取強韌性。上游 DWT、分塊 DCT、係數洗牌、色彩轉換及重複嵌入皆沿用。JPEG 只作黑盒攻擊。[上游核心程式](https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/blind_watermark/bwm_core.py) · [公開擷取介面](https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/blind_watermark/blind_watermark.py) · [MIT 授權](https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/LICENSE)
 
-M0 建立 Python 3.13 隔離環境、鎖定依賴、管理文件及資料來源。M1 執行精簡 SVD，對原圖輸出 k=1、5、10、20、50、100 的 Rank-k 重建 PNG，並獨立做一次 Pillow JPEG Q=80 編碼和重新解碼。比較原圖與實際解碼圖的頻譜、累積平方能量與各自的低秩誤差。另輸出相對原圖的 JPEG MSE、PSNR 與實際 JPEG 檔案長度。Q 是編碼品質設定。
+## 原版規則
 
-對有限實矩陣 A，令 p=min(m,n)。精簡 SVD 的左右奇異向量各自正交歸一，奇異值非負且非遞增。A_k 為前 k 項 σ_i u_i v_iᵀ 的和，σ_i>0 時該項秩為一。對整數 0≤k≤p，A_k 達到秩至多 k 的最小 Frobenius 誤差。由秩一方向在 Frobenius 內積下正交歸一，平方殘差等於捨棄奇異值平方和。截斷點遇到相同奇異值時，最優矩陣可能有多個。
+原版 common 使用 4×4 區塊及 `fast_mode=False`。對位元 b，以 dⱼ(⌊sⱼ/dⱼ⌋ + 1/4 + b/2) 修改前兩個奇異值，d1=36、d2=20。擷取以 rⱼ=(sⱼ mod dⱼ)/dⱼ，當 rⱼ>1/2 判為 1。兩票按 3:1 融合，跨三通道及重複區塊取平均，再由公開 bit 介面執行一維 k-means 與位元順序還原。
 
-數學運算使用 float64，僅展示 PNG 才四捨五入與裁切。檢查尺寸、排序、非負、正交性、完整重建、k=0 與 k=p，並對原圖和解碼圖各自以平方 Frobenius 範數正規化後比對平方殘差（rtol=1e-8、atol=1e-12），以 1e-12 絕對容差檢查誤差非遞增。零矩陣另驗證零誤差。PSNR 使用 8 位元峰值 255，MSE=0 時為無限大。
+## 已交付的實驗階段
 
-JPEG 以 8×8 區塊 DCT 及係數量化說明有損來源。分析使用全影像 SVD。累積平方能量反映矩陣範數占比，PSNR 衡量像素誤差，個案結果限於本圖與編碼設定。
+- W0 是原版基準，W0-D 是固定含水印 PNG 上的 JPEG 壓力與分數診斷。G2 只探索 d2=10、20、30，在主要 Q10 條件未觀察到相近品質下的 BER 改善。各階段固定證據見[實驗索引](docs/EXPERIMENT_INDEX.md)。
+- G3 是區塊演算法研究。在擷取端以 g(r)=(1−sin(2πr))/2 取代個別奇異值的硬判決，保留 3:1 權重、平均、分群和位元還原。兩個擷取器讀取同一批封存無攻擊 PNG 和 JPEG 解碼像素，保留原版嵌入與 d1=36、d2=20。原始位元僅作事後 BER 計算。
+- G3 實測已交付，待人工研究驗收。主要 Q10 的原版及軟判決為 12/96、13/96，未達改善目標。Q20 的局部變化及 Q30 對照應按預定用途分開解讀。結論限於三圖、單一 payload 與固定編碼條件。[G3 PR #18](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/18)
 
-執行命令為 `python -m experiment --input data/ascent.png --output-dir outputs/run-001`，驗收命令為 `python -m pytest -q`。保存輸入 SHA-256、Python、套件、JPEG 函式庫版本、設定和驗證摘要。新環境重跑比對主要數值，跨環境編解碼差異須保留版本與差值。第一階段交付後須經人工驗收。
-
-## 後續（待驗收）
-
-第 3–4 天比較 Q=40、60、80、95，每次從同一原圖編碼。加入 c_i=u_iᵀ B v_i 與 c_i−σ_i，驗證 B=A 時 c_i≈σ_i，並與 Frobenius 內積交叉核對。c_i 是原始秩一方向的有號投影係數，與 B 的奇異值及資訊保留率分開解讀。重複奇異值對應方向須註明基底相依。核對圖表與 CSV、報告數值引用及 Q 和實際位元組數。第 5 天分析，第 6–7 天交付報告並重現驗證。排除浮水印、矩陣擾動理論、深度學習、GUI、Web App 與手寫 JPEG。
+保留 [舊全影像研究規格](https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/ede4ce330b2e21790cacf3bb6fed879e8b79ec67/PROJECT_SPEC.md)、歷史程式與實驗資料。

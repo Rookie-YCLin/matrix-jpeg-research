@@ -1,5 +1,10 @@
 # 專案進度
 
+## 現行研究主線與 P0 同步（2026-11-08）
+
+- 正式主線為 JPEG 黑盒攻擊下的 SVD 區塊擷取演算法。[PR #9](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/9) 同步規格、首頁及交接，待主持人批准合併。
+- [W0 #13](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/13)、[W0-D #14](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/14) 與 [G2 #17](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/17) 已交付待驗收。[G3 #18](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/18) 已交付區塊軟判決實測，主要 Q10 未達改善目標。固定證據及重跑方式見[實驗索引](docs/EXPERIMENT_INDEX.md)。
+
 ## 2026-11-07
 
 - 研究計畫第二版已核准。M0 與 M1 開始執行。
