@@ -90,3 +90,9 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 - 交付 [正式報告](reports/FINAL_REPORT.md)、[答辯稿](reports/DEFENSE_NOTES.md)及[最終核對紀錄](reports/FINAL_CHECKLIST.md)。已核對公式、四份 M2 CSV 引值、文獻、五張圖與相對路徑。
 - 在另一個 Windows 隔離環境重跑 M2 至新暫存目錄。兩份 CSV 有浮點末位差異，已通過數值容差核對，差異詳見最終核對紀錄。本機 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。
 - M4 待外部研究審查及使用者批准合併。正式題目、繳交格式與封面資料仍待確認。
+
+## 2026-11-08 獨立 AI 研究審查流程
+
+- [Draft PR #15](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/15) 交付審查規則、權限隔離與結構驗證。GitHub 無金鑰試跑核對觸發、權限及 SHA 綁定。模型模式待主持人授權及驗收。
+- 初次本機測試發現 CI 事件不需要讀取 sender 欄位。調整為僅 smoke 驗證 sender 後重跑，六項契約測試全數通過。
+- 自動修正只交付設計。W0、R1、PDF 與歷史數據保留。

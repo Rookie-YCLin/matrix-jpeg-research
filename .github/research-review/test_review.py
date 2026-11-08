@@ -60,3 +60,19 @@ class ReviewContract(unittest.TestCase):
         self.assertNotIn("\n## PASS", body)
         with self.assertRaises(ValueError):
             review.validate({**report, "status": "PASS"})
+
+    def test_needs_changes_contract_for_future_consumer(self):
+        report = {
+            "status": "NEEDS_CHANGES", "basis": "Compare 1 wrong bit out of 32.",
+            "required": [{"location": "test.py:1", "problem": "Wrong BER denominator",
+                          "evidence": "Expected 1/32; got 1/3."}],
+            "suggestions": [], "decision": "No",
+        }
+        with patch.dict(os.environ, GITHUB_RUN_ID="42"):
+            body = review.comment("live", HEAD, report, "OpenAI Codex GitHub Action")
+        self.assertEqual(review.MARKER.match(body).groups(), ("live", HEAD))
+        self.assertIn("NEEDS_CHANGES", body)
+        self.assertIn("test.py:1", body)
+        self.assertIn("Expected 1/32", body)
+        with self.assertRaises(ValueError):
+            review.validate({**report, "required": []})
