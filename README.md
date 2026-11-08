@@ -1,4 +1,13 @@
-# 以改良 SVD 浮水印演算法提升 JPEG 抗壓縮能力
+# 改良 blind_watermark SVD 以提升低 QF JPEG 浮水印強韌性
+
+## 最新固定測試規格：一張指定原圖、最大原版 BER 的 QF（2026-11-08）
+
+- **唯一測試來源**：[上游指定測試圖](https://github.com/guofei9987/blind_watermark/blob/master/examples/pic/ori_img.jpeg)（`examples/pic/ori_img.jpeg`；已核對 Git blob SHA `ef48a056b3cab1d2c08723c014d8d515963f5a07`）。先封存原始檔及 SHA-256，再依原版實際嵌入流程產生帶浮水印影像。
+- **QF 掃描**：先對原版測試 QF 為 5 倍數的 JPEG 壓縮條件；建議預設 `5,10,…,95`，此範圍須在測試前固定並由主持人核准。以實測 BER 最高的 QF 為 `x`；最高 BER 如有多個並列，須先固定同分選取規則，不得事後挑最有利的一個。
+- **主要驗收**：在相同 `QF=x`、同一原圖、同一 payload、同密鑰與編碼條件下，SVD 改良版 BER 必須小於原版；主持人接受 **5% 以上改善**，10% 以上為優秀目標。**「5%」是相對降低比例還是 5 個百分點，尚待主持人確認，不可自行認定。** 計數需換算到實際 watermark 位元數並報原版／改良版錯誤個數。
+- **規避偏差**：`x` 由原版結果確定後凍結，不能因候選結果而更換；反覆試候選可作本專題內部探索，但最終結論僅限此圖及指定測試條件，勿宣稱其他圖片普遍改善。
+- **歷史數據定位**：先前 W0–G5 的三張 skimage 圖與 QF10/20/30 結果是**歷史探索**，不能套用為新指定原圖的原版基準。需先完成新圖的原版 QF–BER 掃描才可決定 `x`。
+
 
 > **正式研究目標**：以 [guofei9987/blind_watermark](https://github.com/guofei9987/blind_watermark) 為 Source Code，修改其 **SVD 浮水印嵌入或擷取方法**，改善低 JPEG Quality Factor（QF，強壓縮）下的浮水印位元錯誤率（BER）。
 
