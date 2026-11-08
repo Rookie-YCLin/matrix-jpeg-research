@@ -1,5 +1,11 @@
 # 專案進度
 
+## 現行主線與 G2 交接（2026-11-08）
+
+- [Issue #8](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8) 恢復盲浮水印主線。W0 與 W0-D 分別交付於 [PR #13](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/13) 與 [PR #14](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/14)，固定提交的 Research CI 已通過，兩者待人工研究驗收。
+- [實驗索引](docs/EXPERIMENT_INDEX.md) 保存證據與重跑方式。[Issue #16](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/16) 是唯一 G2 工作入口，待主持人批准。此次僅整理文件，G2 未執行。
+- 既有 M0–M4、[PR #7](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7)、[PR #12](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/12) 及 [PR #15](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/15) 保留。AI 審查暫不啟用。
+
 ## 2026-11-07
 
 - 研究計畫第二版已核准。M0 與 M1 開始執行。
@@ -90,8 +96,3 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 - 交付 [正式報告](reports/FINAL_REPORT.md)、[答辯稿](reports/DEFENSE_NOTES.md)及[最終核對紀錄](reports/FINAL_CHECKLIST.md)。已核對公式、四份 M2 CSV 引值、文獻、五張圖與相對路徑。
 - 在另一個 Windows 隔離環境重跑 M2 至新暫存目錄。兩份 CSV 有浮點末位差異，已通過數值容差核對，差異詳見最終核對紀錄。本機 `python -m pytest -v` 為 13 通過、0 失敗、0 跳過。
 - M4 待外部研究審查及使用者批准合併。正式題目、繳交格式與封面資料仍待確認。
-
-## G0 最新決議｜恢復浮水印研究主線
-
-- 研究主持人核准以盲浮水印 SVD 奇異值嵌入與擷取為正式主線。[Issue #8](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/8) 保存決議，[Issue #10](https://github.com/Rookie-YCLin/matrix-jpeg-research/issues/10) 是原版 W0／G1 工作包。JPEG 作黑盒攻擊。
-- R1 已交付待審，[PR #12](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/12) 保存程式、測試及輸出。[PR #7](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7) 保留既有報告。此次為規格及交接更新，W0 與 G2 實測待執行。
