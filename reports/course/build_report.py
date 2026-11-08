@@ -1,9 +1,12 @@
 """Produce the editable course report from the canonical theory and verified figures."""
 import argparse
+import csv
+import json
 from pathlib import Path
 import re
 
 from docx import Document
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK
 from docx.enum.section import WD_SECTION_START
@@ -14,6 +17,8 @@ from lxml import etree
 from latex2mathml.converter import convert
 
 ROOT = Path(__file__).resolve().parents[2]
+PIN = "https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/86cf6e2e2a07c75ec179ad3448818ae3c4586fc8/"
+UPSTREAM = "https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/"
 TITLE = "SVD-QIM 量化步長對 JPEG 浮水印強韌性與影像品質之影響"
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--figures", type=Path, required=True)
@@ -94,6 +99,22 @@ def math(p, tex):
     tex = re.sub(r"\\\|(.+?)\\\|", lambda m: r"{\Vert " + m.group(1) + r"\Vert}", tex)
     node = transform(etree.fromstring(convert(tex).encode())).getroot()
     p._p.append(node)
+
+
+def reference(label, url):
+    p = d.add_paragraph(style="Cover Text")
+    link = element("w:hyperlink")
+    link.set(qn("r:id"), p.part.relate_to(url, RT.HYPERLINK, is_external=True))
+    run = element("w:r")
+    props = element("w:rPr")
+    props.append(element("w:color", val="254F73"))
+    props.append(element("w:u", val="single"))
+    run.append(props)
+    node = element("w:t")
+    node.text = label
+    run.append(node)
+    link.append(run)
+    p._p.append(link)
 
 
 def rich(p, value):
@@ -197,7 +218,7 @@ def chapter(title):
 
 center("國立中山大學　電機工程學系", before=52)
 center("矩陣理論及應用　期末專題", before=12)
-center(TITLE, "Title", 54)
+center("SVD-QIM 量化步長對 JPEG\n浮水印強韌性與影像品質之影響", "Title", 54)
 center("林易辰　B143012007", before=46)
 center("2026 年 11 月", before=12)
 
@@ -206,7 +227,8 @@ format_section(front)
 numbered(front, "lowerRoman", 1)
 chapter("摘要")
 abstract = canonical.split("## 摘要", 1)[1].split("## 一、", 1)[0].strip()
-markdown(abstract)
+markdown("\n".join(line for line in abstract.splitlines() if "關鍵字" not in line).replace("上游血小板圖片", "上游提供的血小板角色插畫"))
+paragraph("關鍵詞　奇異值分解、量化索引調變、盲式數位浮水印、JPEG、位元錯誤率、PSNR")
 d.add_heading("閱讀順序", 2)
 for line in ("一　研究問題與配對設計", "二　從影像到區塊奇異值", "三　QIM 格點、排序與容錯", "四　從矩陣改量到影像 PSNR", "五　實測結果與研究限制", "六　結論與可重現性"):
     paragraph(line, "Cover Text")
@@ -215,12 +237,22 @@ body = d.add_section(WD_SECTION_START.NEW_PAGE)
 format_section(body)
 numbered(body, "decimal", 1)
 chapter("一　研究問題與配對設計")
-paragraph("先看同一個血小板區域。經過 JPEG 後，我們仍能辨認影像，卻無法單憑肉眼知道裡面的 32 位元訊息能否讀回。影像相似度量的是像素，位元錯誤率量的是解碼結果。兩者回答不同問題，應在同一攻擊條件下並列。")
+paragraph("圖 1 取自上游提供的血小板角色插畫 [2]。經過 JPEG 後，我們仍能辨認影像，卻無法單憑肉眼知道裡面的 32 位元訊息能否讀回。影像相似度量的是像素，位元錯誤率量的是解碼結果。兩者回答不同問題，應在同一攻擊條件下並列。")
 fig("paired_crop", "圖 1　同位置裁切。左為原始 JPEG 解碼 RGB，中為原版 QF15，右為 G6 QF15。三圖使用相同裁切座標與顯示尺度。資料來源：合併的 PSNR 實驗與重生影像。")
 markdown(extract("## 一、研究問題與比較基準", "## 二、"))
+d.add_heading("研究貢獻與證據", 2)
+paragraph("上游已在 d₁、d₂ 的初始化註解提出工程直覺：增大量化步長可能提高強韌性，也可能增加輸出失真 [2]。本專題將這項直覺縮小為一個可檢驗的問題，只改第一奇異值步長，固定其他條件，再並列 BER 與 PSNR。")
+table([
+    ["證據層次", "本文用途"],
+    ["已知矩陣理論 [1]", "SVD、正交性、範數與奇異值擾動界。"],
+    ["條件式推導 [1, 2]", "對應索引及理想格點成立時，求單票裕度；以固定正交基底推導區塊改量。"],
+    ["受控實測 [3–6]", "同一圖、同一金鑰與 JPEG 設定下比較兩組參數。"],
+    ["研究限制", "局部裕度無法單獨決定整段 BER；取捨未證明普遍成立。"],
+])
+paragraph("插畫來源可追溯至固定上游提交 [2]，但未取得足以確認插畫公開再製權的資料。含插畫版本供課堂審閱。公開版可移除圖 1、2、6 或取得授權後再使用；若使用另有明確授權的教學圖，應標為示意，並保持本實驗的數據來源。")
 d.add_heading("把品質因子當作攻擊設定", 2)
 paragraph("JPEG 以區塊轉換和量化降低精度，解碼像素因此可能改變。本研究把編解碼器當作黑盒，固定實作與色度取樣，再讀取實際輸出。QF 是傳給 Pillow 的品質設定，數字不表示保留多少百分比的訊息。")
-fig("quality", "圖 2　原版同一含水印 PNG 在 QF5、15、50、95 各自編碼後的同位置裁切。QF95 為固定設定重生示例，檔案位元組與封存不同。此圖只用於辨識視覺差異，BER 仍以封存 CSV 為準。")
+fig("quality", "圖 2　原版同一含水印 PNG 在 QF5、15、50、95 各自編碼後的同位置裁切。QF95 為固定設定重生示例，檔案位元組與封存不同，差異原因未確認。此圖只用於辨識視覺差異，BER 仍以封存 CSV 為準。")
 paragraph("主條件從原版掃描先選出。QF15 與 QF20 並列最高 BER，依預定規則取較小的 QF15。後續兩組均由各自的含水印 PNG 直接產生每個 JPEG 檔，避免把前一次壓縮累積到下一個測點。")
 
 d.add_heading("配對設計如何隔離步長的影響", 2)
@@ -233,7 +265,7 @@ table([
 ])
 paragraph("同一來源並不表示兩個版本嵌入後的像素相同。G6 在寫入時已改變步長，因此各組必須由自己的含水印 PNG 產生攻擊檔。兩個版本的攻擊檔也不能互換使用，因為擷取端應沿用該版本的步長。")
 chapter("二　從影像到區塊奇異值")
-fig("flow", "圖 3　原版嵌入與擷取流程示意。上排由原圖產生含水印 PNG，下排從受測影像讀回位元。JPEG 攻擊位於兩排之間。來源：固定版上游核心程式與 bit 介面。")
+fig("flow", "圖 3　原版嵌入與擷取流程示意 [2]。上排由原圖產生含水印 PNG，下排從受測影像讀回位元。JPEG 攻擊位於兩排之間。來源：固定版上游核心程式與 bit 介面。")
 paragraph("在原版流程中，影像先轉入三個色彩通道，每個通道做 Haar DWT，取近似子頻帶的完整區塊。DCT 提供區塊內的頻率表示，係數重排由金鑰決定。SVD 最後將重新整形後的矩陣分解，讓嵌入端能在固定方向上只改兩個大小。擷取端重做同一流程，才有可能讀到相同位置所承載的訊息。")
 markdown(extract("### 2.1 SVD 與嵌入矩陣", "### 2.2"))
 d.add_heading("先用小矩陣看方向與大小", 2)
@@ -275,12 +307,19 @@ paragraph("第一個比較固定原始解碼像素，量測兩個版本各自的
 d.add_heading("將 PSNR 差換回 MSE 比值", 2)
 paragraph("若想知道 −1.671 dB 在平方誤差尺度上表示什麼，可以對 PSNR 差取反後除以 10，再作 10 的次方。這個換算的前提是同一參照和峰值，且兩組 MSE 都大於零。對本次 QF15 CSV，114.211263 除以 77.730415 約為 1.469，所以 G6 的最終 RGB 均方誤差約為原版的 1.47 倍。此比值描述像素差，不能直接換算成人眼感受到的畫質差。")
 chapter("五　實測結果與研究限制")
-fig("ber", "圖 5　正式 32 位元訊息的 BER–QF 曲線。各標記為實際測點，折線只輔助閱讀。來源：G6 逐位 BER CSV。")
+fig("ber", "圖 5　正式 32 位元訊息的 BER–QF 曲線。各標記為實際測點，折線只輔助閱讀。來源：正式逐位 BER CSV [4]。")
 markdown(extract("## 五、已驗證 BER 與研究限制", "## 六、"))
 fig("paired", "圖 6　原始解碼 RGB、原版 QF15 與 G6 QF15 全圖。來源：固定配對實驗重生影像，QF15 兩組 JPEG 雜湊與封存一致。")
 d.add_heading("QF15 的配對畫質與可靠度", 2)
-fig("psnr", "圖 7　嵌入 PNG 與 QF15 JPEG 的配對 PSNR。各棒使用同一原始解碼 RGB 參照。來源：合併的 PSNR CSV。")
-markdown(extract("### 4.3 QF15 配對畫質實測", "## 五、"))
+fig("psnr", "圖 7　嵌入 PNG 與 QF15 JPEG 的配對 PSNR。各棒使用同一原始解碼 RGB 參照。來源：配對 PSNR CSV [6]。")
+psnr_section = extract("### 4.3 QF15 配對畫質實測", "## 五、")
+for line in psnr_section.splitlines():
+    if line.lstrip().startswith("|"):
+        break
+    if line.strip() and not line.lstrip().startswith("#"):
+        lead = paragraph(line)
+        lead.paragraph_format.keep_with_next = True
+markdown(psnr_section[psnr_section.index("|"):])
 d.add_heading("從證據能回答到哪裡", 2)
 table([
     ["問題", "可以支持的說法"],
@@ -294,7 +333,23 @@ table([
 d.add_heading("讀圖時不能跨過的界線", 2)
 paragraph("曲線上的 19 個標記才是實際測點。相鄰測點用折線相連，不代表中間品質設定經過測試，也不代表 BER 隨 QF 單調變化。在 QF25 至 95 的既定測點，兩組皆為零錯誤。這部分能說明 G6 維持了已觀察的結果，無法拿來增加 QF15 的改善幅度。")
 paragraph("兩組額外訊息的用途是確認候選選定後，換一組 32 位元內容是否仍能重現 QF15 的觀察。它們與主訊息共用同一圖、相同金鑰和編碼條件，且其中一組是主訊息的逐位互補。因此三組訊息不能當成三張獨立影像，也不應用來估計跨影像的統計置信度。")
-paragraph("原版在 QF15 讀到的 32 位元全部與真值互補。若事後依真值翻轉輸出，當然會降低這個案例的錯誤數，但這個操作使用了盲式擷取不具備的資訊。本研究直接評分原版公開 bit 介面，沒有校正標籤方向。")
+d.add_heading("候選選擇與 QF15 分群診斷", 2)
+with (ROOT / "outputs/svd-qim-qf15-exploration/results.csv").open(encoding="utf-8", newline="") as f:
+    errors = {(int(r["d1"]), int(r["qf"])): r["errors"] for r in csv.DictReader(f) if r["d2"] == "20"}
+table([["(d₁, d₂)", "QF10", "QF15", "QF20", "QF25"]] +
+      [[f"({step}, 20)", *(errors[step, q] for q in (10, 15, 20, 25))] for step in (36, 60, 72, 90)])
+paragraph("表列原始探索 CSV 的錯誤數，各格分母為 32 [5]。60 與 72 在 QF15 均為零錯誤，但在 QF10 分別錯 32 與 29 位元。90 在表列四點皆為零，是有限候選中的工程選擇。此表沒有涵蓋所有參數，也未求得理論最優解。")
+paragraph("原版在 QF15 與 QF20 的輸出均逐位互補 [4]。區塊內先以 3:1 融合兩個奇異值的票，之後對同一訊息位置跨區塊與三通道平均。原版最後以一維 K-means 將高分群標為 1，再還原訊息位置 [2]。")
+diagnosis = json.loads((Path(__file__).parent / "qf15-diagnostic.json").read_text(encoding="utf-8"))
+diagnostic_rows = [["版本", "真值 0 分數", "真值 1 分數", "群中心", "閾值"]]
+for key, label in (("upstream", "原版"), ("svd_step_90", "G6")):
+    row = diagnosis["variants"][key]
+    interval = lambda tag: "–".join(f"{v:.4f}" for v in row["truth_group_ranges"][tag])
+    diagnostic_rows.append([label, interval("0"), interval("1"),
+                            " / ".join(f"{c:.4f}" for c in row["centers"]), f'{row["threshold"]:.4f}'])
+table(diagnostic_rows)
+paragraph("兩組 QF15 JPEG 均符合封存雜湊。診斷擷取未使用真值，完成後才按真值分組。原版真值 0 的分數全高於真值 1，顯示分群前的分數已呈反向；G6 分數呈同向。這可解釋 QF15 的最終標籤，但上游哪個前置步驟造成分數反向仍未證實，QF20 未做同一診斷。完整 32 分數、中心、閾值與逐位輸出另存 [7]。")
+
 d.add_heading("用位元與像素兩條證據回答主問題", 2)
 paragraph("在 QF15，原版的分母與候選的分母都是 32。原版每個位置都錯，G6 每個位置都對，所以差值為 −100 個百分點。相對降幅則以原版 BER 為分母，這次也剛好是 100%。兩個數字的單位和意義不同。若原版 BER 已為零，相對降幅無法定義，此時應直接說兩組觀察到的錯誤數相同。")
 paragraph("PSNR 的分母來自整張影像的三個通道。就算兩個版本的圖都能辨認，G6 仍可能有較大的平方差。圖 6 的全圖用來確認比較的是同一內容，圖 1 的裁切用來察看同一區域。兩圖沒有量化主觀可見度。數字比較仍以全圖 CSV 為準，不能拿局部裁切估計全圖 PSNR。")
@@ -307,28 +362,38 @@ chapter("六　結論與可重現性")
 markdown(extract("## 六、結論", "## 來源與重現"))
 d.add_heading("重跑順序與稽核", 2)
 paragraph("以封存 commit 86cf6e2 為依據，使用 Python 3.13、固定 blind_watermark 上游 SHA 與各 manifest 所列版本。從倉庫根目錄執行下列程式，所有輸出目錄須事前不存在。將新結果與封存 CSV 逐列比對，並比對來源影像和 JPEG 雜湊。")
+code = d.styles.add_style("Command", WD_STYLE_TYPE.PARAGRAPH)
+code.base_style = d.styles["Cover Text"]
+code.font.name = "Consolas"
+code.font.size = Pt(10)
 for line in (
     "python -m experiments.svd_qim_validation --output-dir <ber>",
     "python -m experiments.svd_qim_psnr --output-dir <paired>",
+    "python -m reports.course.diagnose_qf15 --paired <paired> --output <json>",
     "python reports/course/build_figures.py --paired <paired> --output <figures>",
 ):
-    paragraph(line, "Cover Text")
+    paragraph(line, "Command")
 paragraph("圖表來源依證據分流。BER 與 PSNR 直接讀取已合併 CSV；影像面板取自可重生檔案並以 manifest 查核；格點與流程圖屬數學與程式示意。畫面裁切採同位置，未做對比度拉伸。影像品質設定與 PNG／JPEG 封存差異詳見圖源紀錄。")
 d.add_heading("從 CSV 重算論文中的數字", 2)
 paragraph("BER 檔的 expected_bits 與 extracted_bits 必須各有 32 個位置。逐位比較得到錯誤位置清單，錯誤數等於清單長度。先對主訊息、原版與 G6、QF15 取出兩筆資料，再核對封存雜湊。這一層查核能區分擷取輸出是否相同，以及實際讀入的檔案是否相同。")
 paragraph("PSNR 檔先按階段與版本分組。以 CSV 的全精度 MSE 代回同一公式，分別重算四個 PSNR。先作同階段版本差，再將差值四捨五入至三位。兩個階段不能互相抵扣。歷史 BER CSV 與此次 PSNR 重生檔的 PNG 雜湊有差異，故嵌入後 PSNR 明確引用本次產物；QF15 JPEG 則有檔案雜湊及擷取位元兩項一致證據。")
-d.add_heading("矩陣推導的查核次序", 2)
-paragraph("先確認所用矩陣是 SVD 的 4×4 輸入，再確認量化值是否仍在對應索引。局部擾動界只在同位置、同通道、同變換域適用。若任何一項不符，不能引用局部判決裕度解釋該票正確。即使所有局部公式寫對，論文中 0/32 的主張仍由封存位元支持。這三層查核分別處理矩陣、區塊判決與完整訊息。")
-d.add_page_break()
-chapter("參考資料")
-for line in (
-    "1. Bernstein, D. S. (2009). Matrix Mathematics: Theory, Facts, and Formulas, 2nd ed. Princeton University Press. SVD pp. 301–303；Frobenius 與譜範數 pp. 547, 549；Proposition 9.6.8 p. 562。",
-    "2. Guofei9987, blind_watermark，固定提交 322c90dc02d45644692095b34d3a6b735b6edbd8。bwm_core.py 與 blind_watermark.py。",
-    "3. Rookie-YCLin, matrix-jpeg-research，固定提交 86cf6e2。reports/G6_FINAL_PROJECT_REPORT.md、reports/SVD_QIM_MATRIX_THEORY.md。",
-    "4. 同倉庫，outputs/svd-qim-qf15-selected/results.csv 與 manifest.json；outputs/svd-qim-psnr-qf15/results.csv 與 manifest.json。",
-    "5. 周孜燦，資料結構 Quick Review of C++，課堂講義。參考其由例子到定義的教學順序。",
-    "6. 國立中山大學研究生學位論文格式規範，第十四至十六點。參考正文紙張、字體、頁碼及圖源標註。",
-):
-    paragraph(line, "Cover Text")
+d.add_heading("參考資料", 1).paragraph_format.page_break_before = True
+reference("[1] Bernstein（2009），Matrix Mathematics，第 2 版", "https://press.princeton.edu/books/paperback/9780691140391/matrix-mathematics")
+paragraph("印刷頁 301–303（定義 5.6.1、定理 5.6.4）、547（式 9.2.5–9.2.7）、549（式 9.2.15）、562（命題 9.6.8、式 9.6.19）。", "Cover Text")
+reference("[2] 固定上游核心 bwm_core.py", UPSTREAM + "blind_watermark/bwm_core.py")
+reference("　公開 bit 介面與金鑰還原", UPSTREAM + "blind_watermark/blind_watermark.py")
+reference("　上游提供的血小板角色插畫", UPSTREAM + "examples/pic/ori_img.jpeg")
+reference("[3] d₁ 最小修改 patch", PIN + "patches/bwm_core_svd_d1_90.patch")
+for label, slug in (("[4] 正式 BER", "svd-qim-qf15-selected"), ("[5] 15 組候選", "svd-qim-qf15-exploration"), ("[6] 配對 PSNR", "svd-qim-psnr-qf15")):
+    reference(label + " CSV", PIN + f"outputs/{slug}/results.csv")
+    reference("　環境、JPEG 設定及雜湊 manifest", PIN + f"outputs/{slug}/manifest.json")
+v2 = "https://github.com/Rookie-YCLin/matrix-jpeg-research/blob/codex/g6-course-report-v2/"
+reference("[7] QF15 分群診斷完整資料", v2 + "reports/course/qf15-diagnostic.json")
+reference("　診斷程式", v2 + "reports/course/diagnose_qf15.py")
+reference("[8] BER 重現程式", PIN + "experiments/svd_qim_validation.py")
+reference("　PSNR 重現程式", PIN + "experiments/svd_qim_psnr.py")
+reference("　Research CI", "https://github.com/Rookie-YCLin/matrix-jpeg-research/actions")
+paragraph("[9] 周孜燦，資料結構 Quick Review of C++，課堂講義。用於安排例子與定義的教學順序。", "Cover Text")
+paragraph("[10] 國立中山大學研究生學位論文格式規範，第十四至十六點。參考紙張、字體、頁碼與圖源格式。", "Cover Text")
 args.output.parent.mkdir(parents=True, exist_ok=True)
 d.save(args.output)
