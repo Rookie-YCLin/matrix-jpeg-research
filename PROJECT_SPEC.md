@@ -1,3 +1,5 @@
+> **UPDATED SCOPE 2026-11-08:** Original BER objective has already been satisfied by G6 d1=90, d2=20. The only additional metric now requested is a narrow **paired PSNR comparison at QF15** (and optionally before JPEG) to discuss the BER/imperceptibility trade-off, alongside a mathematically rigorous SVD-QIM derivation. See [docs/RESEARCH_NEXT_PHASE.md](docs/RESEARCH_NEXT_PHASE.md). This overrides below historical text saying PSNR is unnecessary or candidate search should continue; other reproducibility, ethics, fixed-source and prior-result requirements remain in force.
+
 # 正式規格｜單圖 JPEG BER–QF 掃描與 SVD 改良
 
 **倉庫管理授權（2026-11-08）**：研究主持人已授權專題倉庫全權管理；代理可自行建立、修訂、刪除適當檔案、開啟與合併 PR、更新 `main`、執行既定實驗及管理分支，**不需要逐項徵求批准**。保留可重現證據、上游授權及真實研究紀錄；重大研究判斷自主決策並在互動中主動回報。
