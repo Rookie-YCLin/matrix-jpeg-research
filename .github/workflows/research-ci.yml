@@ -39,3 +39,5 @@ jobs:
           fi
       - name: Replay W0 with the runner codec
         run: python -m watermark_baseline --output-dir "$RUNNER_TEMP/w0-replay"
+      - name: Replay W0-D with the runner codec
+        run: python -m watermark_baseline.stress --output-dir "$RUNNER_TEMP/w0-d-replay"

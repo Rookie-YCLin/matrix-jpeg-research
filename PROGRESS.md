@@ -98,3 +98,10 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 - Python 3.13.14 隔離環境的 `pip check` 通過，原有 13 項與新增 5 項測試共 18 通過。兩次獨立輸出核對 17 個檔案，SHA-256 全數相同。逐位結果、manifest 與 OpenCV 建置資訊見 [正式輸出](outputs/run-w0)，另有 [重跑輸出](outputs/run-w0-repeat)、[比對結果](outputs/w0-replay-comparison.json) 及 [pytest 紀錄](outputs/pytest-w0.txt)。
 - 安裝及存檔失敗原因、修正與上游 PNG writer 提示見 [執行診斷](watermark_baseline/DIAGNOSTICS.md)。Research CI 沿用舊測試，另安裝 W0 鎖定依賴並於 runner 重跑 W0。
 - 待審查固定影像代表性與 BER 下限。每個品質只有三張圖、單一 payload 共 96 位元，且 JPEG 固定 4:4:4。是否進入 G2 由研究主持人決定。
+
+## W0-D JPEG 壓力診斷
+
+- 從 [W0 PR #13](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/13) 的固定提交建立診斷分支，直接使用 W0 存檔 PNG。六個條件共 18 組逐圖結果與 576 筆位元分數，保存於 [正式輸出](outputs/run-w0-d)。
+- Q10、4:4:4 合計 12/96，Q20、4:4:4 為 78/96。其他四組各 0/96。Chelsea 在 Q10 零錯誤但有一位距中點約 0.000156。Coffee 在 Q20 全位元反轉。錯誤位置、PSNR、JPEG 大小及候選條件見 [診斷結論](watermark_baseline/STRESS.md)。
+- 完整 pytest 21 項通過。兩次新目錄的 21 個索引檔案 SHA-256 全數一致，見 [比對紀錄](outputs/w0-d-replay-comparison.json)。CI 另以 runner 自身 codec 重跑。
+- 待審查 Q10 是否列為後續主要候選，Q20 是否單列為高壓失效案例。
