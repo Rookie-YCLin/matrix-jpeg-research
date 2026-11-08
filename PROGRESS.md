@@ -1,11 +1,14 @@
 # 專案進度
 
-## 現行決策：JPEG 後 BER 是唯一主要研究成效（2026-11-08）
+## 最新專題規格（2026-11-08）｜三步驟、BER–QF 唯一正式性能評估
 
-- **正式目標**：以 [guofei9987/blind_watermark](https://github.com/guofei9987/blind_watermark) 為基礎，改良 **SVD 嵌入或擷取方法**，使 JPEG 壓縮後浮水印 BER 低於原版。正式範圍見 [PROJECT_SPEC.md](PROJECT_SPEC.md)；不是以 PSNR 或保序取代 BER。
-- 固定 W0-D Q10／4:4:4 **12／96** 為主要基準；G2–G5 已觀察結果皆未改善主要 Q10。G5 Q10 24／96，PNG PSNR 改善但不符合事前品質匹配窗口，不能宣稱抗壓改善。
-- **方法候選暫停**。先利用既有圖檔作 D0／D1／D2 唯讀失效診斷；任何新實驗、擴充範圍或合併另須主持人批准。
-- 主線研究文件現行版本以 [README](README.md)、[PROJECT_SPEC](PROJECT_SPEC.md)、[AGENTS](AGENTS.md) 及 [Codex 交接](docs/CODEX_NEXT_SESSION.md) 為準。**本檔以下舊進度是按時間保存的歷史紀錄，不構成當前研究指令。**
+- **正式研究目的**：以 [guofei9987/blind_watermark](https://github.com/guofei9987/blind_watermark) 為基礎，修改 `bwm_core.py` 的 SVD 嵌入及／或擷取方法，提高低 JPEG QF 下的浮水印強韌性；**性能只比較各 JPEG QF 的 BER，不要求 PSNR**。
+- **步驟一／原版**：上游 `att.py` 沒有本專題所需 JPEG 攻擊，本倉庫 W0/W0-D 已建立獨立 JPEG BER 基準。固定三張圖與 32-bit payload，QF10 12/96、QF20 78/96、QF30 0/96（4:4:4）；應保留全套 QF 曲線及實際編碼參數。
+- **步驟二／SVD 修改**：早期 G2–G5 的測試已在各 PR 留存；現階段仍無確認的低 QF BER 改善。下一輪可自主提出新的 SVD 假說，但正式實作與實驗方案先經主持人同意，須用原版對照及可重現的 BER–QF 測試。
+- **步驟三／迭代**：若候選未改善則內部留存結果並設計下一候選；在事先界定的低 QF 條件下得到可重現的 BER 改善且能用矩陣理論說明，即停止候選搜尋，整理成功結果作正式報告。**不能保證一定找得到成功方法，也不能使用事後挑選的 QF 製造改善**。
+- **報告原則**：正式文件專注原版、成功方案、BER–QF 結果與矩陣理論，不必逐一寫失敗探索；GitHub 內部保留完整正負研究證據，禁止偽造或造成誤導的選擇性呈現。
+- **管理與回報**：每輪更新 GitHub 分支／Draft PR、規格／進度和 BER 表；定期於互動中回報階段、完成、問題、下步及待決事項；不擅自合併 main 或刪除研究證據。新的正式測試、重要設計與刪檔先請示。
+- **本段高於以下歷史工作敘述**；以下留存作可追溯的時間序列，不是新的工作禁令。正式規格以 [PROJECT_SPEC.md](PROJECT_SPEC.md) 和 [AGENTS.md](AGENTS.md) 為準。
 
 ---
 
