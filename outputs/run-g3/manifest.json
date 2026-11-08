@@ -1,0 +1,138 @@
+{
+  "status": "complete",
+  "command": [
+    "python",
+    "-m",
+    "watermark_baseline.g3",
+    "--output-dir",
+    "outputs\\run-g3"
+  ],
+  "formula_commit": "318eed431eca0d106805d0b1fa05dc5110272ea8",
+  "formula": "g(r)=(1-sin(2*pi*r))/2; v=(3*g(r0)+g(r1))/4",
+  "w0_commit": "f5a47fc1ba40cc35f5794648b4440cb1fed782d1",
+  "w0_manifest_sha256": "2b2f3be7a14044d7b3b5a241df91db23907a97774c643a4fb66565163df06cd3",
+  "w0_d_commit": "168e5070cacbdeeaefab58ed469dd7e90db4aa3f",
+  "w0_d_manifest_sha256": "6ae88428a147467a7dc6d6025966fe7f994632013ecf0f61ffeed04ecad4c238",
+  "upstream": {
+    "url": "https://github.com/guofei9987/blind_watermark.git",
+    "vcs_info": {
+      "commit_id": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "requested_revision": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "vcs": "git"
+    }
+  },
+  "python": "3.13.14",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "blind_watermark": "0.4.4",
+    "opencv-python": "4.13.0.92",
+    "PyWavelets": "1.10.0",
+    "numpy": "2.4.6",
+    "Pillow": "12.3.0",
+    "pytest": "9.2.0",
+    "matplotlib": "3.11.1"
+  },
+  "opencv": "4.13.0",
+  "pillow_jpeg": "8.0",
+  "pillow_libjpeg_turbo": "3.1.4.1",
+  "inputs": {
+    "revision": "ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8",
+    "release": "scikit-image v0.26.0",
+    "license_reference": "https://scikit-image.org/docs/0.26.x/api/skimage.data.html",
+    "preprocessing": "None. Original distributed PNG bytes.",
+    "images": [
+      {
+        "id": "astronaut",
+        "file": "astronaut.png",
+        "sha256": "88431cd9653ccd539741b555fb0a46b61558b301d4110412b5bc28b5e3ea6cb5",
+        "size": [
+          512,
+          512
+        ],
+        "mode": "RGB",
+        "bit_depth": 8,
+        "license": "NASA (public domain)",
+        "texture": "portrait, smooth and high-contrast areas",
+        "source": "https://raw.githubusercontent.com/scikit-image/scikit-image/ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8/src/skimage/data/astronaut.png"
+      },
+      {
+        "id": "chelsea",
+        "file": "chelsea.png",
+        "sha256": "596aa1e7cb875eb79f437e310381d26b338a81c2da23439704a73c4651e8c4bb",
+        "size": [
+          451,
+          300
+        ],
+        "mode": "RGB",
+        "bit_depth": 8,
+        "license": "Stefan van der Walt (CC0)",
+        "texture": "fur and diagonal edges",
+        "source": "https://raw.githubusercontent.com/scikit-image/scikit-image/ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8/src/skimage/data/chelsea.png"
+      },
+      {
+        "id": "coffee",
+        "file": "coffee.png",
+        "sha256": "cc02f8ca188b167c775a7101b5d767d1e71792cf762c33d6fa15a4599b5a8de7",
+        "size": [
+          600,
+          400
+        ],
+        "mode": "RGB",
+        "bit_depth": 8,
+        "license": "Rachel Michetti (CC0), courtesy of Pikolo Espresso Bar",
+        "texture": "smooth porcelain and wood grain",
+        "source": "https://raw.githubusercontent.com/scikit-image/scikit-image/ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8/src/skimage/data/coffee.png"
+      }
+    ]
+  },
+  "payload": "10110010111001000101101011010001",
+  "keys": {
+    "password_img": 1,
+    "password_wm": 1
+  },
+  "mode": "common",
+  "fast_mode": false,
+  "d1": 36,
+  "d2": 20,
+  "block_shape": [
+    4,
+    4
+  ],
+  "decoder": "WaterMark.extract(mode=bit), upstream 1D k-means + bit unshuffle",
+  "color": "Pillow RGB uint8 -> OpenCV BGR uint8 -> upstream float32 YUV",
+  "psnr": {
+    "peak": 255,
+    "dtype": "float64",
+    "reference": "original RGB"
+  },
+  "conditions": [
+    "PNG",
+    "Q10",
+    "Q20",
+    "Q30"
+  ],
+  "sampling": "4:4:4",
+  "archive_only": true,
+  "images": {
+    "outputs/run-w0/astronaut_marked.png": "86efaf5877a4b6e5ffbd882429bcf13b6dc4b7cdf9b9faf481ec5f93f41a151f",
+    "outputs/run-w0/chelsea_marked.png": "27d047fb7fac64f9c14c35c0c29b7b0d3edef36a15d3fd3d1294f175a27500d5",
+    "outputs/run-w0/coffee_marked.png": "542ce726b445e940da8ef56d847008653fd047c574c300bb7ddd10b1f32fc59a",
+    "outputs/run-w0-d/astronaut_A_q10.jpg": "d422aab5373fee34ea2c2dcb31498c20f7fdacc8c13d804d1607fa48d930146b",
+    "outputs/run-w0-d/astronaut_A_q20.jpg": "1e02ad4180774c0304cc7b84f1aaa7a9ae22c83d612b61b47d825ca794245d2f",
+    "outputs/run-w0-d/astronaut_A_q30.jpg": "fcbb3e84ba4e238a675931b1bf46561168d294f2a46e9277082de52dd835a42f",
+    "outputs/run-w0-d/chelsea_A_q10.jpg": "9a86c07e4aa417b8bad68cb278e8a995cc059bb220ce2ccd577257a1b45e9be5",
+    "outputs/run-w0-d/chelsea_A_q20.jpg": "a2a67f0c961aa630c412528eb5809e9a0e551235da4b105f23ea632190c7684f",
+    "outputs/run-w0-d/chelsea_A_q30.jpg": "167e4487267cdbd0ffe4dff484f8ebcf3a3283d0eb8099c979baa16e56250860",
+    "outputs/run-w0-d/coffee_A_q10.jpg": "a1d0fe493663ff655e1e491edb9b87702a7c4a22f474e0c22a56c124c86c4ef1",
+    "outputs/run-w0-d/coffee_A_q20.jpg": "31ece02c368042ba94e7adb3431267405fa8403b4ee2a535e53f2395ad36fd9b",
+    "outputs/run-w0-d/coffee_A_q30.jpg": "beafd6dbcd8c86309dd475b6d1ac71e1b256af97f88c7c410d3a268a730cc658"
+  },
+  "historical_hard_rows_verified": 12,
+  "files": {
+    "comparison.png": "ec022752aa062085301a847d9bcbda0263eb2a653a32c829861bcee1683135ad",
+    "decision_scores.csv": "46ea5a183cf24469fd63a156a5267ebd4d918335b84b57a018084a19e60666ae",
+    "opencv-build.txt": "8a55f551e40cf84d0fa7e2509bb9544da66782a8cbc017d7ce27a9de0ef9c1ac",
+    "results.csv": "9785a769bf843b29f1a8a321e81724c2d609b52e5187c106f5492aa4de24f3f1",
+    "summary.csv": "d9fde55672f2808228bd0caf6f6f4278052e11612f1c2b1fa16c254885dc5085"
+  }
+}
