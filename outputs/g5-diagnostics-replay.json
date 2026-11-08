@@ -1,0 +1,8 @@
+{
+  "first": "outputs\\run-g5-diagnostics",
+  "second": "outputs\\run-g5-diagnostics-repeat",
+  "pass": true,
+  "files_checked": 4,
+  "changed_manifest_fields": [],
+  "changed_files": []
+}
