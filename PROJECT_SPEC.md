@@ -1,36 +1,38 @@
-# 正式研究規格｜SVD 浮水印改良與 JPEG 抗壓縮能力
+# 專題正式規格｜以 SVD 方法改善 JPEG 壓縮後的浮水印 BER
 
-## 1. 不可偏離的主要目標
+## 研究目標
 
-> **以 [guofei9987/blind_watermark](https://github.com/guofei9987/blind_watermark) 為基礎，改良其 SVD 浮水印嵌入或擷取方法，使浮水印經 JPEG 壓縮後，以比原版更低的位元錯誤率（BER）被正確擷取。**
+以 [guofei9987/blind_watermark](https://github.com/guofei9987/blind_watermark) 為開源基礎，改良 [bwm_core.py](https://github.com/guofei9987/blind_watermark/blob/master/blind_watermark/bwm_core.py) 的 **SVD 浮水印嵌入或擷取方法**，使低 JPEG Quality Factor（QF，強壓縮）下的 **Bit Error Rate（BER）低於原版**。**正式性能評估只需不同 QF 下的 BER，不增加 PSNR 等指標。**
 
-主要研究指標是 **JPEG 後的 BER**。影像品質（PSNR）、SVD 保序、Frobenius 失真、數學證明及程式可重現性均為必要的約束、分析或次要結果，**不得替代 BER 的成效判準**。若無有效改善，研究結論須明確寫「主要目標未達成」。
+## 階段 1：原版 JPEG BER–QF 基準
 
-## 2. 基準及允許改動
+- 上游 [att.py](https://github.com/guofei9987/blind_watermark/blob/master/blind_watermark/att.py) 沒有本專題所需的 JPEG 壓縮攻擊，須自行實作 JPEG 編碼、解碼、送入原版擷取與逐位 BER 計算。
+- 固定上游提交 `322c90dc02d45644692095b34d3a6b735b6edbd8`，保留原版 `bwm_core.py` 的演算法及公開 bit API。不要使用會漂移的 `master` 作為實驗固定版本。
+- 固定測試圖、浮水印 bit、金鑰、JPEG 編碼器、取樣方式、QF 列表、存檔步驟及種子；逐影像、逐 QF 留存原始位元、解出位元、錯誤數／總位元與 BER。使用相同條件比較原版與候選。
+- 現有 W0／W0-D 是已封存基準：JPEG 4:4:4 的 QF10 = 12／96、QF20 = 78／96、QF30 = 0／96（各三張圖、每圖 32 位元）。**這是固定樣本的觀察值，不保證 BER 隨 QF 單調**。詳細資料與其他 QF 參照 [實驗索引](docs/EXPERIMENT_INDEX.md)。
 
-- **上游與版本**：`guofei9987/blind_watermark`，固定提交 `322c90dc02d45644692095b34d3a6b735b6edbd8`。[bwm_core.py](https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/blind_watermark/bwm_core.py) · [公開 bit 介面](https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/blind_watermark/blind_watermark.py) · [MIT 授權](https://github.com/guofei9987/blind_watermark/blob/322c90dc02d45644692095b34d3a6b735b6edbd8/LICENSE)。
-- **允許研究的變因**：**SVD 區塊的嵌入方法、擷取方法或兩者**。原版 DWT、區塊 DCT、區塊洗牌、色彩轉換、跨區塊與通道聚合、公開 API、一維 K-means 與金鑰還原固定為控制條件，除非主持人明確批准擴大範圍。
-- **盲式要求**：最終擷取只能取得受攻擊圖、必要金鑰、預先設定參數及尺寸；不能使用正確 payload、未受攻擊標記圖或原圖作判決。這些資料僅供事後評估與機制診斷。
-- **上游原版規則**：common、`fast_mode=False`、4×4 SVD 區塊。原版嵌入 `q_j=d_j(floor(s_j/d_j)+1/4+b/2)`，(d_0=36,d_1=20)；擷取由奇異值餘數硬判決、3:1 融合、跨區塊平均、`one_dim_kmeans` 與位元順序還原完成。須區分「修改嵌入」與「修改擷取」，不得把 G5 當作只改擷取。
+## 階段 2：自行改良 SVD
 
-## 3. 比較與驗證規則
+- 可自行提出並實作 SVD 區塊的**嵌入或擷取**改良；不限定量化方法、奇異值操作或區塊判決形式。
+- 若需要修改非 SVD 模組（DWT、DCT、洗牌、JPEG 編碼、K-means、公開 API 等），先取得主持人同意，並與 SVD 改良分開定義比較。
+- 真正的盲式擷取不能使用原始浮水印、原圖或未受攻擊標記圖。正確 payload 僅可於離線 BER 評估使用。
+- 每個候選需先記錄：數學動機、唯一改動、實驗設定、預期改善的低 QF 範圍、測試／重跑命令；再和原版配對比較 BER，確認是否降低。**矩陣理論用於解釋可行性與機制，不能取代 BER 證據。**
 
-- **主要條件**：三張固定 RGB 圖、固定 32-bit payload、金鑰與 codec、JPEG Q10／4:4:4；原版基準 **12／96（BER 12.50%）**。Q20／4:4:4 為高壓失效分析（原版 78／96）；Q30 為零錯誤對照（原版 0／96）；無攻擊 PNG 也須保留。
-- 任何新方法要**事前登錄**公式、改動面、必要參數、樣本、固定品質限制與成功條件，然後在完全相同條件下配對。嵌入端修改時，需從各自的標記 PNG 獨立生成 JPEG；僅改擷取端時兩版共用同一批 JPEG。
-- **成功標準**：在事前固定的品質限制內，主要 Q10 BER **低於**原版，且不存在隱藏的取樣或基準變更。這表示觀察改善；若要宣稱具有一般化抗壓能力，還需要未參與方法選擇的獨立影像／payload 驗證。
-- 所有負結果須逐圖揭露。不可把單一 Q20 局部改善、PNG PSNR、排序修正、Q30 零錯誤或統計假說改寫成主要目標達成；不可把相依的 96 個位元當獨立實驗樣本做顯著性檢定。
+## 階段 3：迭代、停損與成功判定
 
-## 4. 固定研究歷史與暫停線
+- 允許在本專題的 SVD 範圍內**反覆提出新候選**，直到找到在預先指定的低 QF 測試下 **BER 下降且可重現** 的方法。確認後停止候選搜尋，整理作為最終專題成果。
+- 低 QF 成功條件的具體 QF 組合與降低幅度、是否需要新圖或新 payload 作獨立驗證，**尚待主持人決定**；不可事後依結果更換主條件，亦不可把一次偶然改善外推成一般性結論。
+- 若一次迭代未改善，可繼續尋找下一候選，不應把前次數學成果誤當抗 JPEG 成功。每輪的負結果仍保存在倉庫供追溯。
+- 新增正式候選或對既有檔案作實質破壞性清理前，先提出當輪方案與影響，未定事項詢問主持人。
 
-- **W0、W0-D**：基準與 JPEG 壓力診斷，[#13](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/13)、[#14](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/14)。Q10 12／96，Q20 78／96，Q30 0／96。
-- **G2**：第二奇異值步長探索，[#17](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/17)；未改善主要 Q10。
-- **G3**：擷取端軟判決，[#18](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/18)；Q10 13／96。
-- **G4**：第一奇異值硬判決，[#20](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/20)；Q10 17／96。
-- **G5**：前置排序與相位診斷 [#21](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/21)；非負保序最近格點嵌入 [#22](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/22)，Q10 24／96，PNG PSNR 改善但**未通過事先固定的 ±0.5／±1.0 dB 品質匹配窗口**，不得宣稱品質匹配下的抗壓結論。
-- **G2–G5 候選搜尋已結束**。下一步只允許先利用現有檔案做唯讀的 D0（分數與門檻）、D1（通道投票）、D2（JPEG 餘數位移）失效機制分析。任何進一步候選、新 payload、參數搜尋、合併或正式實驗均須另行核准，不能因為目標未達成就無限擴張。
+## 報告內容與研究誠信
 
-## 5. 歷史留存與專案整理
+- **正式書面專題**：著重來源演算法、另行實作 JPEG 攻擊、BER–QF 基準、成功 SVD 方法、矩陣理論說明及結果。**不要求列出全部失敗候選，也不強制加入 PSNR。**
+- **內部 GitHub 紀錄**：保存每輪探索、原始測試輸出、正負結果及版本，不能偽造數據或選擇性隱藏足以改變結論的反例。正式結論只能限於實際驗證過的 QF／影像／payload。
+- 每次 GitHub 作業採獨立分支、更新 README／規格／進度及相應程式、測試、輸出；開 Draft PR 供審查。主分支合併、移除核心證據、非 SVD 範圍擴張均需主持人批准。
 
-- 已產生的原始結果、CSV、manifest、雜湊、測試、上游授權、歷史 PR 與負結果是可重現證據；**禁止為使首頁看來成功而刪除**。
-- 歷史低秩重建與一般 JPEG 頻譜分析（M0–M4 等）只屬於探索背景，不應放在現行研究首頁或冒充浮水印 BER 證據。整理時優先刪減重複敘事及失效指示；移除資料或程式須先確認依賴並保留可追溯連結。
-- 任何對 `main` 的合併都需要研究主持人明確批准。
+## 溝通與回報
+
+每輪提供：**完成階段、已做修改、各 QF 的 BER 比較、資料與 PR 連結、研究風險、下一步**。無法判定的方法優劣、比較條件或刪檔價值，先提出具體問題供主持人選擇，不擅自作決定；除非有明確排程能力，所有回報在互動中進行，不暗示會無人觸發地背景執行。
+
+[實驗證據索引](docs/EXPERIMENT_INDEX.md) · [Codex 交接](docs/CODEX_NEXT_SESSION.md)
