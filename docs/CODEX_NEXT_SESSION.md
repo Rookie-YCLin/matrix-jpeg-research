@@ -1,5 +1,7 @@
 # Codex 交接｜新原圖與 QF=x 優先
 
+**倉庫管理授權（2026-11-08）**：研究主持人已授權專題倉庫全權管理；代理可自行建立、修訂、刪除適當檔案、開啟與合併 PR、更新 `main`、執行既定實驗及管理分支，**不需要逐項徵求批准**。保留可重現證據、上游授權及真實研究紀錄；重大研究判斷自主決策並在互動中主動回報。
+
 **主持人已核定（2026-11-08）**：完整掃描 **QF=5、10、15、…、95（19 點）**；原版 BER 最大值若有多個 QF 並列，**取其中最小 QF**，將該值固定為 `x`，再測試 SVD 候選。相對 BER 降幅 `R=(BER_base(x)-BER_new(x))/BER_base(x)×100%`，**R≥5% 達標，R≥10% 優秀**。這些已非待決設定。
 
 
@@ -22,8 +24,8 @@
 ## 目前已有證據
 - W0 [#13](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/13)、W0-D [#14](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/14)：4:4:4 QF10=12／96、QF20=78／96、QF30=0／96。
 - G2 [#17](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/17)、G3 [#18](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/18)、G4 [#20](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/20)、G5 [#21](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/21)／[#22](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/22) 是已封存探索；截至目前**沒有確認的低 QF BER 正向成果**。
-- 舊「禁止再產生候選」限制已被新的三步驟工作規格取代，但不代表可以未經核准直接開跑大量調參。
+- 舊「禁止再產生候選」限制已被新的三步驟工作規格取代，但新實驗須先固定假說與比較條件、記錄全數結果，避免無限制事後調參。
 - 正式交付只需要來源、JPEG 測試、BER–QF 比較與成功方法的矩陣理論說明，**無須 PSNR、無須逐一記載失敗候選**；內部紀錄仍保留實驗全貌。
 
 ## 行動與回報
-先向主持人回報所選低 QF 主條件、候選方法、修改檔案／資料範圍及預期驗證方式，未經同意不做新正式實驗。每階段都更新 GitHub PR／PROGRESS，提供 BER–QF 表格、固定輸出連結、阻礙與明確待決問題。不得合併 main 或刪除可重現證據。
+自行決定及執行正式新實驗，事先固定低 QF 主條件、候選方法、修改範圍及預期驗證方式；完成後主動回報。每階段都更新 GitHub PR／PROGRESS，提供 BER–QF 表格、固定輸出連結、阻礙與明確待決問題。PR 可由倉庫管理者自行合併 main；精簡時保留或歸檔可重現證據。
