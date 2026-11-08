@@ -93,4 +93,4 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 
 ## 2026-11-08 浮水印報告前半部
 
-- 保留緒論、基礎、原版演算法與配對實驗方法，主文聚焦 SVD 區塊改良及 JPEG 抗壓縮驗證。第四、第五章待 G5 診斷與最終候選實測。[報告 PDF](reports/WATERMARK_REPORT.pdf) · [排版與來源核對](reports/WATERMARK_REPORT_REVIEW.md)
+- 保留緒論、基礎、原版演算法與配對實驗方法，主文聚焦 SVD 區塊改良及 JPEG 抗壓縮驗證。已按固定上游與 PR #21 補強理論、排序診斷及配對實驗設計，九頁 PDF 已逐頁核對。第四、第五章待 G5 正式實測。[報告 PDF](reports/WATERMARK_REPORT.pdf) · [排版與來源核對](reports/WATERMARK_REPORT_REVIEW.md)
