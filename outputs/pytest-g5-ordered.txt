@@ -1,0 +1,39 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.14, pytest-9.2.0, pluggy-1.7.0 -- <repo>\.venv-w0-clean\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: <repo>
+plugins: platformdirs-4.14.5
+collecting ... collected 30 items
+
+tests/test_comparison.py::test_signed_projection_matches_frobenius_inner_product PASSED [  3%]
+tests/test_comparison.py::test_comparison_recomputes_measurements_from_each_jpeg[fresh] PASSED [  6%]
+tests/test_comparison.py::test_comparison_plots_use_csv_columns[fresh] PASSED [ 10%]
+tests/test_comparison.py::test_comparison_recomputes_measurements_from_each_jpeg[archived] PASSED [ 13%]
+tests/test_comparison.py::test_comparison_plots_use_csv_columns[archived] PASSED [ 16%]
+tests/test_experiment.py::test_output_manifest_and_images PASSED         [ 20%]
+tests/test_experiment.py::test_jpeg_metrics_and_spectra_use_decoded_pixels PASSED [ 23%]
+tests/test_ordered_embedding.py::test_global_optimum_against_exhaustive_grid[0] PASSED [ 26%]
+tests/test_ordered_embedding.py::test_global_optimum_against_exhaustive_grid[1] PASSED [ 30%]
+tests/test_ordered_embedding.py::test_tie_and_quality_cost PASSED        [ 33%]
+tests/test_ordered_embedding.py::test_recomputed_svd_and_actual_upstream_block_reader[0] PASSED [ 36%]
+tests/test_ordered_embedding.py::test_recomputed_svd_and_actual_upstream_block_reader[1] PASSED [ 40%]
+tests/test_ordered_trial.py::test_fresh_trial_uses_independent_matching_pngs PASSED [ 43%]
+tests/test_ordered_trial.py::test_saved_evidence_and_paired_quality PASSED [ 46%]
+tests/test_svd.py::test_rectangular_rank_one_sum[matrix0] PASSED         [ 50%]
+tests/test_svd.py::test_rectangular_rank_one_sum[matrix1] PASSED         [ 53%]
+tests/test_svd.py::test_zero_matrix PASSED                               [ 56%]
+tests/test_svd.py::test_out_of_range_rank[-1] PASSED                     [ 60%]
+tests/test_svd.py::test_out_of_range_rank[3] PASSED                      [ 63%]
+tests/test_svd.py::test_validation_rejects_inconsistent_factors PASSED   [ 66%]
+tests/test_watermark_baseline.py::test_fixed_payload_order_and_public_decoder PASSED [ 70%]
+tests/test_watermark_baseline.py::test_rgb_bgr_and_metrics PASSED        [ 73%]
+tests/test_watermark_baseline.py::test_png_failure_stops_all_jpeg PASSED [ 76%]
+tests/test_watermark_baseline.py::test_each_attack_reopens_same_png PASSED [ 80%]
+tests/test_watermark_baseline.py::test_archived_results PASSED           [ 83%]
+tests/test_watermark_mechanism.py::test_modulus_boundary_and_circular_wrap PASSED [ 86%]
+tests/test_watermark_mechanism.py::test_archive_counts_match_block_rows PASSED [ 90%]
+tests/test_watermark_stress.py::test_each_quality_and_sampling_reopens_same_marked_png PASSED [ 93%]
+tests/test_watermark_stress.py::test_separate_scores_recover_public_bit_order_without_payload PASSED [ 96%]
+tests/test_watermark_stress.py::test_archive_metrics_and_diagnostics PASSED [100%]
+
+============================= 30 passed in 39.82s =============================

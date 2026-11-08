@@ -27,8 +27,8 @@ def spectrum(block, shuffle, shape):
     return upstream.svd(upstream.dct(block).flatten()[shuffle].reshape(shape))[1]
 
 
-def observe_embedding(rgb):
-    wm = w0.new_watermark()
+def observe_embedding(rgb, factory=w0.new_watermark):
+    wm = factory()
     core = wm.bwm_core
     wm.read_img(img=w0.to_bgr(rgb))
     wm.read_wm([int(bit) for bit in w0.PAYLOAD], mode="bit")
