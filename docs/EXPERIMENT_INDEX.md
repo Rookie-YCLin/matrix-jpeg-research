@@ -1,5 +1,16 @@
 # 實驗索引
 
+## W1｜指定原圖之上游 BER–QF 基準
+
+- [PR #24](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/24) · [實際 GitHub Actions 執行](https://github.com/Rookie-YCLin/matrix-jpeg-research/actions/runs/42461739759) · [CSV](../outputs/ori-qf-scan/results.csv) · [manifest](../outputs/ori-qf-scan/manifest.json) · [實驗摘要](../outputs/ori-qf-scan/README.md)。
+- 唯一來源為上游 `examples/pic/ori_img.jpeg`，固定原版 SVD、32-bit payload、Pillow JPEG RGB／4:4:4，QF=5～95、每 5 一點。僅評估 BER。
+- 最高 BER：QF15、20 均 **32/32（100%）**；依事先規則 **x=15**。QF5 12/32、QF10 1/32、QF25～95 全為 0/32；未攻擊 PNG 0/32。
+- QF15、20 解出向量均恰好是原始 payload 的互補值；這是值得後續驗證的極性反轉線索，不能直接當成 SVD 抗壓改善。
+- 改善驗收在 x=15：相對降幅 R≥5% 對應候選錯誤 ≤30/32，R≥10% 對應 ≤28/32。**這是原版基準，不是改良結果。**
+- 以下 W0–G5 是先前不同三圖實驗，不能混作此指定圖的比較。
+
+---
+
 固定版本連結可在 PR 合併前讀取。CI 成功為技術驗收，主持人負責研究驗收。
 
 ## W0｜原版基準

@@ -36,3 +36,46 @@ jobs:
             echo 'FAIL — 請查看 Verify research results 的 pytest 錯誤紀錄' | tee -a "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
+
+  original-image-qf-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Install pinned original algorithm
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install opencv-python==4.13.0.92 PyWavelets==1.10.0 setuptools==84.2.1
+          python -m pip install --no-build-isolation 'blind_watermark @ git+https://github.com/guofei9987/blind_watermark.git@322c90dc02d45644692095b34d3a6b735b6edbd8'
+          python -m pip check
+      - name: Verify tie-breaking and relative reduction
+        run: |
+          python - <<'PY'
+          from experiments.ori_qf_scan import choose_worst_quality, relative_reduction
+          assert choose_worst_quality([{'qf': 10, 'error_count': 6}, {'qf': 5, 'error_count': 6}, {'qf': 15, 'error_count': 5}]) == 5
+          assert relative_reduction(20, 19) == 5.0
+          assert relative_reduction(20, 18) == 10.0
+          assert relative_reduction(0, 0) is None
+          print('QF selection and relative BER rules: PASS')
+          PY
+      - name: Run 19-quality original BER scan
+        run: |
+          python -m experiments.ori_qf_scan --output-dir "$RUNNER_TEMP/ori-qf-scan"
+          cat "$RUNNER_TEMP/ori-qf-scan/results.csv"
+          cat "$RUNNER_TEMP/ori-qf-scan/manifest.json"
+      - name: Archive experimental outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-ori-image-qf5-to-95
+          path: ${{ runner.temp }}/ori-qf-scan
+          if-no-files-found: warn
+          retention-days: 30

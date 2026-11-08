@@ -1,0 +1,104 @@
+{
+  "status": "complete",
+  "upstream_commit": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+  "upstream_provenance": {
+    "url": "https://github.com/guofei9987/blind_watermark.git",
+    "vcs_info": {
+      "commit_id": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "requested_revision": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "vcs": "git"
+    }
+  },
+  "source_url": "https://raw.githubusercontent.com/guofei9987/blind_watermark/master/examples/pic/ori_img.jpeg",
+  "source_git_blob_sha": "ef48a056b3cab1d2c08723c014d8d515963f5a07",
+  "source_sha256": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+  "source_shape_rgb": [
+    1108,
+    738,
+    3
+  ],
+  "source_dtype": "uint8",
+  "payload": "10110010111001000101101011010001",
+  "keys": {
+    "password_img": 1,
+    "password_wm": 1
+  },
+  "watermark_length": 32,
+  "d1": 36,
+  "d2": 20,
+  "fast_mode": false,
+  "jpeg": {
+    "encoder": "Pillow",
+    "format": "RGB",
+    "subsampling": 0,
+    "optimize": false,
+    "progressive": false,
+    "qualities": [
+      5,
+      10,
+      15,
+      20,
+      25,
+      30,
+      35,
+      40,
+      45,
+      50,
+      55,
+      60,
+      65,
+      70,
+      75,
+      80,
+      85,
+      90,
+      95
+    ]
+  },
+  "python": "3.13.18",
+  "packages": {
+    "blind_watermark": "0.4.4",
+    "opencv-python": "4.13.0.92",
+    "PyWavelets": "1.10.0",
+    "numpy": "2.4.6",
+    "Pillow": "12.3.0"
+  },
+  "pillow_jpeg": "6.2",
+  "opencv": "4.13.0",
+  "png_error_count": 0,
+  "peak_qf": 15,
+  "peak_error_count": 32,
+  "peak_ber": 1,
+  "peak_tie_qfs": [
+    15,
+    20
+  ],
+  "peak_rule": "Smallest QF among maximum baseline BER across QF=5,10,...,95",
+  "relative_improvement_threshold_pass": 5,
+  "relative_improvement_threshold_excellent": 10,
+  "files": {
+    "marked.png": "fbda0597cf80d25ee9540045617b9332a88e3ba245ed9d9286c75a6719945a6f",
+    "ori_img.jpeg": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+    "png_gate.csv": "7e660dc9dbe3cc45006909898fe8fbe718a9268f318dad994fff6f15bf8b961f",
+    "qf_05.jpg": "d0638cd310c1c21f3953d997e4b8a1e00bf5d4b36a2a3eda637a7d1b78ff387c",
+    "qf_10.jpg": "0dfb428702517987294f023f3c1e624ebec7c5d95ffcafe4af9df5cfa5121f5c",
+    "qf_15.jpg": "394044b652b111bedc9c229d6430b02641e7b4707ffb1b026e6df8f7dd8e13a4",
+    "qf_20.jpg": "837a7e4bb24781ab79f346287a8fb1cbf48eef13124cb4c551a34a0c845cea9e",
+    "qf_25.jpg": "b21ec35d75fff77bad736f2fac443d9456ebe7afe1f83eb215d5505945d27792",
+    "qf_30.jpg": "1831fc5e85b29ae682b4e518f139f1315d3459c8f7663f492db1de8361f6660e",
+    "qf_35.jpg": "1f3475c110e5e31c5ac7a4559af3d2213dc78c0bdac5bf0fc45783fe61b87f77",
+    "qf_40.jpg": "9db46eda195cac860b273e674f43894c8c5969eab30b97310ee03cc73346dfb0",
+    "qf_45.jpg": "5553a7b6b110151edb3e61085c2115deb0f402625b3880b05df0f98b19db7182",
+    "qf_50.jpg": "a49aafd9c24a8cb6a38806a9a040da0e2df31853cb4f9a79fec8d5d47aa56f23",
+    "qf_55.jpg": "cf177d60d0d858dc704bd301adb4f88d0eb0a69f6b29db3c6cc028301fee5015",
+    "qf_60.jpg": "981cc0f89dcd2424aad7df76034f1c44e69173ac1c020e68348f35c31659297c",
+    "qf_65.jpg": "1168208cd786e78cb4cb63e5e2429f68aa01489a87343dfeae8cf41bf6ce8721",
+    "qf_70.jpg": "7a91aa8468784d31a8d7b41fba082923ecea3ab67263a754e748002f910a0220",
+    "qf_75.jpg": "934099e98302fc1d8a3c510277032c3bb4f9827550a0e65f62ecb7897b456eef",
+    "qf_80.jpg": "5a93d5a26049c2da185b6ecb1e0dd00bc5692eb11c83468e28516da85db2363f",
+    "qf_85.jpg": "f00c30e522d7db5387c1a29b3c8d77bbc81385cd26d181a1198c9d5d6e565086",
+    "qf_90.jpg": "c34329f39a74e85fc8c3a5d1dca3ab8e10d6ebc89bc28284ec040b15474611d9",
+    "qf_95.jpg": "2902100395650ed99da1af05ad1af8215adf0c8717fb9eb75c2477dcab5e2bc1",
+    "results.csv": "bc9dc448f3cfb20d37485c52790d78d8d1b00056048ac44c322f32692c5d61c6"
+  }
+}
