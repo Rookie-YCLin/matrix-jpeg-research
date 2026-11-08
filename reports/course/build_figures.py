@@ -74,8 +74,10 @@ def main():
     ax.set(xlabel="JPEG quality factor", ylabel="BER (%)", xticks=range(5, 100, 10), ylim=(-5, 108))
     ax.axvline(15, color="#666666", linestyle=":", linewidth=1)
     ax.grid(alpha=.22)
-    ax.legend()
-    save(fig, out, "ber",)
+    ax.annotate("QF15: 32 → 0 errors", (15, 100), (25, 94), arrowprops={"arrowstyle":"->"})
+    ax.annotate("QF5: 12 → 32 errors", (5, 37.5), (21, 49), arrowprops={"arrowstyle":"->"})
+    ax.legend(loc="center right")
+    save(fig, out, "ber")
 
     fig, ax = plt.subplots(figsize=(7, 3.1))
     vals = {(r["variant"], r["stage"]): float(r["psnr_db"]) for r in rows(PSNR / "results.csv")}
@@ -83,10 +85,14 @@ def main():
         bars = ax.bar([j*.32, 1+j*.32], [vals[variant,s] for s in ("uncompressed_embedded","qf15_attacked")], .29, color=COLORS[j],label=label)
         ax.bar_label(bars, fmt="%.3f", padding=2)
     ax.set(xticks=(.16,1.16), xticklabels=("Marked PNG","JPEG QF15"), ylabel="PSNR (dB)", ylim=(0,47))
-    ax.legend()
+    for x, stage in zip((.16, 1.16), ("uncompressed_embedded", "qf15_attacked")):
+        delta = vals["svd_step_90", stage] - vals["upstream", stage]
+        ax.text(x, 13, f"Δ {delta:+.3f} dB", ha="center", color="white",
+                bbox={"facecolor":"#26333b", "edgecolor":"none", "pad":3})
+    ax.legend(loc="upper right")
     save(fig, out, "psnr")
 
-    fig, axes = plt.subplots(2, 1, figsize=(7.1, 2.7), sharex=True)
+    fig, axes = plt.subplots(2, 1, figsize=(7.1, 3.25), sharex=True)
     for ax, d in zip(axes,(36,90)):
         ax.axvspan(0,d/2,color=COLORS[0],alpha=.12)
         ax.axvspan(d/2,d,color=COLORS[1],alpha=.12)
@@ -94,7 +100,11 @@ def main():
         for b,x in enumerate((d/4,3*d/4)):
             ax.scatter(x,0,c=COLORS[b],zorder=3)
             ax.text(x,.13,f"bit {b}: {x:g}",ha="center")
-        ax.text(d/2,-.21,f"boundary {d/2:g}",ha="center")
+        for x, label in ((0, "0"), (d/2, f"d/2 = {d/2:g}"), (d, f"d = {d:g}")):
+            ax.axvline(x, color="#667f91", linewidth=.8, linestyle=":")
+            ax.text(x, -.27, label, ha="center", fontsize=8)
+        ax.annotate("", (d/2, -.10), (d/4, -.10), arrowprops={"arrowstyle":"<->"})
+        ax.text(3*d/8, -.19, f"d/4 = {d/4:g}", ha="center", fontsize=8)
         ax.set(ylim=(-.36,.35),yticks=[],ylabel=f"d={d}")
         ax.spines[["top","left","right"]].set_visible(False)
     axes[-1].set_xlabel("Remainder (singular-value units) · schematic")
@@ -102,8 +112,8 @@ def main():
     fig, ax = plt.subplots(figsize=(7.2, 2.5))
     ax.set_axis_off()
     for y, labels in (
-        (.74, ["RGB input", "Haar DWT\nlow band", "4×4 DCT\npermute", "SVD → QIM", "Inverse path\nmarked PNG"]),
-        (.25, ["JPEG decode", "Same block\ntransform", "Sorted SVD", "Modulo votes\n3:1 fusion", "Mean + K-means\nRestore order"]),
+        (.74, ["BGR → YUV", "Haar DWT\nlow band", "4×4 DCT\nkey permutation", "SVD → QIM", "Undo permutation\nIDCT / IDWT\nYUV → BGR / PNG"]),
+        (.25, ["JPEG decode\nBGR → YUV", "Haar DWT / DCT\nkey permutation", "Sorted SVD", "Modulo votes\n3:1 fusion", "Block / channel mean\nK-means\nRestore bit order"]),
     ):
         for i, label in enumerate(labels):
             x = .10 + .20*i
@@ -112,6 +122,8 @@ def main():
             if i:
                 ax.annotate("", xy=(x-.087,y), xytext=(x-.12,y), xycoords="axes fraction",
                             arrowprops={"arrowstyle":"->","color":"#4d5b66"})
+    ax.annotate("JPEG attack", xy=(.10,.41), xytext=(.90,.53), xycoords="axes fraction",
+                ha="center", fontsize=9, arrowprops={"arrowstyle":"->", "color":"#4d5b66"})
     save(fig, out, "flow")
     (out / "provenance.json").write_text(json.dumps({
         "source_sha256":archive["source_sha256"], "upstream":archive["upstream"],

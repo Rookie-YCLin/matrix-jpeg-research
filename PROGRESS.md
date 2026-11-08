@@ -154,3 +154,7 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 
 - 原版與 G6 的 QF15 BER 為 32/32 與 0/32，PNG 均為 0/32。G6 相對原版的 PNG 與 QF15 PSNR 分別為 −6.600、−1.671 dB。兩次獨立執行的六個索引檔案一致。
 - [報告、重跑方式及限制](reports/SVD_QIM_PSNR_TRADEOFF.md) · [量測與 manifest](outputs/svd-qim-psnr-qf15)。範圍限兩組固定步長、原 payload、唯一影像及 QF15。
+
+## G6 課程報告 V2.0
+
+依 Issue #32 修訂課程報告。兩筆 QF15 診斷 JPEG 與正式封存雜湊一致。原版分群前已出現反向分數排列，前置原因未證實。詳見 [修訂紀錄](reports/course/ISSUE_32_V2.md) 與 [教授式審查](reports/course/PROFESSOR_REVIEW_V2.md)。

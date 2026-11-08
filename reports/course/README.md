@@ -13,3 +13,7 @@
     python reports/course/build_report.py --figures <figures> --output <report.docx> --math-xsl <Office MML2OMML.XSL>
 
 公式以可編輯的 Word 公式物件寫入。以 Word 開啟、重新分頁並匯出 PDF，再以 pdfinfo、pdffonts 及 pdftoppm 核對紙張、字型及每頁。PDF 與 DOCX 皆由同一來源生成。此次 Word 匯出為 18 頁，包含封面、摘要、15 頁正文及參考資料；標楷體、Times New Roman 和公式用 Cambria Math 均嵌入。此次環境未安裝 LibreOffice，視覺查核採 Word 的實際排版結果。
+
+## V2.0
+
+V2.0 的報告編製說明及診斷命令見 [Issue #32 修訂紀錄](ISSUE_32_V2.md)。生成正式檔時將 `--output` 設為 `G6_Course_Report_V2.docx`，使用 Word 匯出同名 PDF。V1 編製檔可從 V1 分支的 `46379c6` 取得。

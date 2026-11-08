@@ -1,0 +1,43 @@
+{
+  "source_sha256": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+  "upstream": {
+    "url": "https://github.com/guofei9987/blind_watermark.git",
+    "vcs_info": {
+      "commit_id": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "requested_revision": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "vcs": "git"
+    }
+  },
+  "jpeg": {
+    "encoder": "Pillow",
+    "quality": 15,
+    "subsampling": 0,
+    "optimize": false,
+    "progressive": false
+  },
+  "crop_xyxy": [
+    160,
+    360,
+    480,
+    680
+  ],
+  "illustrative_qf_matches_sealed_bytes": {
+    "5": true,
+    "15": true,
+    "50": true,
+    "95": false
+  },
+  "figure_sha256": {
+    "ber.png": "daaac12dee00e6ab3728f5cad145cb6592244509dfefed9648ec3d8eca6b1835",
+    "flow.png": "8975d1b62a4ff9d92c89e7a58bd2aad90289e786095b022d05b2fd5e01702410",
+    "original-qf05.jpg": "d0638cd310c1c21f3953d997e4b8a1e00bf5d4b36a2a3eda637a7d1b78ff387c",
+    "original-qf15.jpg": "394044b652b111bedc9c229d6430b02641e7b4707ffb1b026e6df8f7dd8e13a4",
+    "original-qf50.jpg": "a49aafd9c24a8cb6a38806a9a040da0e2df31853cb4f9a79fec8d5d47aa56f23",
+    "original-qf95.jpg": "a655f4850f9e86753284b56515189549ae02a5919e6c6f165fece8a285ad061c",
+    "paired.png": "64870101047878f6ae9381c8057bc166549ad043ffada009c355a6f74606df0b",
+    "paired_crop.png": "ca22acb316ea3a084ab066f1b4dd3a7dfec28ea7ecb2984f6890e97cfa1f618b",
+    "psnr.png": "7b22838484d40eb8f20f2855f185ebfc79a7506973c3d9832dea16b612451ad1",
+    "qim.png": "92cb28459ce62dbc8ea120bf9209331753c3de7ce2f6004d3b91e342d4d6c9b8",
+    "quality.png": "a660f9df31af14678fe4f60dde644b0b62e23a4fd92c16d07d8dc9213b7f88e7"
+  }
+}
