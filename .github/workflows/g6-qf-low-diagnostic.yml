@@ -7,6 +7,7 @@ on:
       - 'experiments/g6_low_qf_controls.py'
       - '.github/workflows/g6-qf-low-diagnostic.yml'
       - 'experiments/g6_failure_localize_and_pilot.py'
+      - 'experiments/g6_no_pilot_32bit_comparison.py'
 
 permissions:
   contents: read
@@ -46,6 +47,12 @@ jobs:
           cat "$RUNNER_TEMP/g6-qf-diagnose/local_vote_gaps.csv"
           cat "$RUNNER_TEMP/g6-qf-diagnose/extraction_variants.csv"
           cat "$RUNNER_TEMP/g6-qf-diagnose/pilot_results.csv"
+      - name: Run pilot-free 32-bit SVD decoder candidates and gap-QIM experiment
+        run: |
+          python -m experiments.g6_no_pilot_32bit_comparison --output-dir "$RUNNER_TEMP/g6-no-pilot"
+          cat "$RUNNER_TEMP/g6-no-pilot/decoder_diagnostics.csv"
+          cat "$RUNNER_TEMP/g6-no-pilot/decoder_results.csv"
+          cat "$RUNNER_TEMP/g6-no-pilot/gap_results.csv"
       - name: Archive evidence including curve and per-bit results
         if: always()
         uses: actions/upload-artifact@v4
