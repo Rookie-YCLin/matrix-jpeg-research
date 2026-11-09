@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'experiments/g6_qf1_to15_diagnostic.py'
+      - 'experiments/g6_low_qf_controls.py'
       - '.github/workflows/g6-qf-low-diagnostic.yml'
 
 permissions:
@@ -34,11 +35,17 @@ jobs:
           python -m experiments.g6_qf1_to15_diagnostic --output-dir "$RUNNER_TEMP/g6-qf1-to15"
           cat "$RUNNER_TEMP/g6-qf1-to15/results.csv"
           cat "$RUNNER_TEMP/g6-qf1-to15/manifest.json"
+      - name: Control test of KMeans polarity and alternative payloads
+        run: |
+          python -m experiments.g6_low_qf_controls --output-dir "$RUNNER_TEMP/g6-controls"
+          cat "$RUNNER_TEMP/g6-controls/controls.csv"
       - name: Archive evidence including curve and per-bit results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: g6-qf1-to15-results
-          path: ${{ runner.temp }}/g6-qf1-to15
+          path: |
+            ${{ runner.temp }}/g6-qf1-to15
+            ${{ runner.temp }}/g6-controls
           if-no-files-found: warn
           retention-days: 30
