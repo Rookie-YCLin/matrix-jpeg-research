@@ -1,0 +1,44 @@
+name: G6 Low-QF BER Diagnostic
+
+on:
+  pull_request:
+    paths:
+      - 'experiments/g6_qf1_to15_diagnostic.py'
+      - '.github/workflows/g6-qf-low-diagnostic.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  g6-low-qf-ber:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Install pinned G6 runtime
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install opencv-python==4.13.0.92 PyWavelets==1.10.0 setuptools==84.2.1
+          python -m pip install --no-build-isolation 'blind_watermark @ git+https://github.com/guofei9987/blind_watermark.git@322c90dc02d45644692095b34d3a6b735b6edbd8'
+          python -m pip check
+      - name: Execute independent QF 1 to 15 scan
+        run: |
+          python -m experiments.g6_qf1_to15_diagnostic --output-dir "$RUNNER_TEMP/g6-qf1-to15"
+          cat "$RUNNER_TEMP/g6-qf1-to15/results.csv"
+          cat "$RUNNER_TEMP/g6-qf1-to15/manifest.json"
+      - name: Archive evidence including curve and per-bit results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g6-qf1-to15-results
+          path: ${{ runner.temp }}/g6-qf1-to15
+          if-no-files-found: warn
+          retention-days: 30
