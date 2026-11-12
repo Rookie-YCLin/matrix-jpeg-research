@@ -1,0 +1,50 @@
+{
+  "upstream_provenance": {
+    "url": "https://github.com/guofei9987/blind_watermark.git",
+    "vcs_info": {
+      "commit_id": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "requested_revision": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "vcs": "git"
+    }
+  },
+  "source": "outputs\\matrix-margin720\\ori_img.jpeg",
+  "source_sha256": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+  "payload": "10110010111001000101101011010001",
+  "keys": {
+    "password_img": 1,
+    "password_wm": 1
+  },
+  "variants": [
+    "matrix_margin720"
+  ],
+  "qualities": [
+    5,
+    10,
+    15,
+    20
+  ],
+  "jpeg": {
+    "subsampling": 0,
+    "optimize": false,
+    "progressive": false
+  },
+  "python": "3.13.14",
+  "pillow_jpeg": "8.0",
+  "packages": {
+    "numpy": "2.4.6",
+    "Pillow": "12.3.0",
+    "opencv-python": "4.13.0.92",
+    "PyWavelets": "1.10.0",
+    "blind_watermark": "0.4.4"
+  },
+  "code_sha256": "a3c8a3c98bf7ac6912570c7e2d16cab27156cc008919ee6332fc2e8cae021ca8",
+  "files_sha256": {
+    "matrix_margin720_marked.png": "9c3fd3dd43b2b067e2f535795833abe9a2dd1e1e3ad1fdaba3d430d6f76b23fa",
+    "matrix_margin720_qf05.jpg": "fd5cf7d704d25a668d12d8a3e0f557fa65c0ef7f7d2515d48d7e8790e8fa12ce",
+    "matrix_margin720_qf10.jpg": "7dbedba93757203b238d2ccb77b83aabf599edce78a0c986a8dacba421c7016a",
+    "matrix_margin720_qf15.jpg": "e1db0ba29131c2d6a1b484dff11c0b40175426438af9ca9f51e9a092f1314af1",
+    "matrix_margin720_qf20.jpg": "223f904700c5fa96f74ef776553e4b36fe3c31624c2a31a4635118bfa914e659",
+    "ori_img.jpeg": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+    "results.csv": "3d02725e7ec68234f35be9e1e840361f83722f59f601113212e02e85c3887e40"
+  }
+}

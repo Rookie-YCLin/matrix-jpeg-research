@@ -63,9 +63,9 @@ def paper_extract(self, args):
 
 
 def instance(variant):
-    if variant not in ('upstream', 'g6', 'paper_centered90', 'paper_ratio_floor90', 'paper_nearest_zero90'):
+    if variant not in ('upstream', 'g6', 'paper_centered90', 'paper_ratio_floor90', 'paper_nearest_zero90', 'matrix_margin720'):
         raise ValueError(variant)
-    wm = configured_instance(36 if variant == 'upstream' else 90, 20)
+    wm = configured_instance(36 if variant == 'upstream' else (720 if variant == 'matrix_margin720' else 90), 20)
     if variant.startswith('paper_'):
         core = wm.bwm_core
         core.paper_ratio = variant == 'paper_ratio_floor90'
