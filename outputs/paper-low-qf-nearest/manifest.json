@@ -1,0 +1,50 @@
+{
+  "upstream_provenance": {
+    "url": "https://github.com/guofei9987/blind_watermark.git",
+    "vcs_info": {
+      "commit_id": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "requested_revision": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "vcs": "git"
+    }
+  },
+  "source": "outputs\\paper-low-qf-nearest\\ori_img.jpeg",
+  "source_sha256": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+  "payload": "10110010111001000101101011010001",
+  "keys": {
+    "password_img": 1,
+    "password_wm": 1
+  },
+  "variants": [
+    "paper_nearest_zero90"
+  ],
+  "qualities": [
+    5,
+    10,
+    15,
+    20
+  ],
+  "jpeg": {
+    "subsampling": 0,
+    "optimize": false,
+    "progressive": false
+  },
+  "python": "3.13.14",
+  "pillow_jpeg": "8.0",
+  "packages": {
+    "numpy": "2.4.6",
+    "Pillow": "12.3.0",
+    "opencv-python": "4.13.0.92",
+    "PyWavelets": "1.10.0",
+    "blind_watermark": "0.4.4"
+  },
+  "code_sha256": "cf733b754a80ff0d530e25e8f759c66d846a65bb49d19f3460924fc1a27afba3",
+  "files_sha256": {
+    "ori_img.jpeg": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+    "paper_nearest_zero90_marked.png": "7f15ea39da328003fc63ecf9b5ca71c84f4a1cebacb695268efd385691edf73b",
+    "paper_nearest_zero90_qf05.jpg": "260026b74cc357f1e24e96991b2dc97108c83f08e3da4c2e11dcc85416969a66",
+    "paper_nearest_zero90_qf10.jpg": "c78d6b4c9af8858e8b8e3d682be50f31eea77813152c3852db41d3a794dc3e8b",
+    "paper_nearest_zero90_qf15.jpg": "cd1ba49cde0ff93ef04685de70002e9694a20443c6335598eee37c4dad2b629f",
+    "paper_nearest_zero90_qf20.jpg": "0e04b967441790e392675f03d70956251ec36c4a8fea19bf350e9596c37c2f13",
+    "results.csv": "a004f5183c01bcebd7ba7baa343389a0293f056251556dc1064920fd44fde0fb"
+  }
+}

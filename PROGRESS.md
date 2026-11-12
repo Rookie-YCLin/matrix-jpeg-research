@@ -1,3 +1,9 @@
+> 2026-11-12 後續：矩陣裕度方案d1=720在QF5–95每5點均0/32，但PNG PSNR僅15.56 dB；保留獨立高失真候選，不替換G6。見[驗證報告](reports/MATRIX_MARGIN_LOW_QF.md)。
+
+## 2026-11-12 論文導向低 QF 試驗（未修復）
+
+三個有限 SVD-QIM 候選在 QF5 均32/32錯，QF10/15/20及PNG均0錯。未採用候選；G6保持原狀。已保存全部正負結果與奇異值診斷，本機29 tests通過。見 [完整報告](reports/PAPER_LOW_QF_FINDINGS.md)。
+
 # 專案進度
 
 ## G6 矩陣理論與答辯（2026-11-08）
@@ -154,3 +160,11 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 
 - 原版與 G6 的 QF15 BER 為 32/32 與 0/32，PNG 均為 0/32。G6 相對原版的 PNG 與 QF15 PSNR 分別為 −6.600、−1.671 dB。兩次獨立執行的六個索引檔案一致。
 - [報告、重跑方式及限制](reports/SVD_QIM_PSNR_TRADEOFF.md) · [量測與 manifest](outputs/svd-qim-psnr-qf15)。範圍限兩組固定步長、原 payload、唯一影像及 QF15。
+## 2026-11-12 Sparse-margin SVD-QIM
+
+- New blind sparse-margin algorithm: selected first-singular-value QIM at d1=720, one deterministic embedding cycle out of 32; unselected blocks remain unchanged.
+- Fixed-image QF5--95 step-5 validation is 0/32 at every point. PNG PSNR is 31.083 dB, substantially above all-block d1=720 (15.564 dB), though below the 35 dB aspirational visual-quality target.
+- [Theory, limitations and reproduction](reports/SPARSE_MARGIN_SVD_QIM.md).
+
+---
+

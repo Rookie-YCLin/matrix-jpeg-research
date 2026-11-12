@@ -1,3 +1,9 @@
+> 2026-11-12 後續：矩陣裕度方案d1=720在QF5–95每5點均0/32，但PNG PSNR僅15.56 dB；保留獨立高失真候選，不替換G6。見[驗證報告](../reports/MATRIX_MARGIN_LOW_QF.md)。
+
+## 2026-11-12 論文導向低 QF（負結果）
+
+[報告](../reports/PAPER_LOW_QF_FINDINGS.md) · [事前方案](PAPER_LOW_QF_PLAN.md) · [首輪CSV](../outputs/paper-low-qf-initial/results.csv) · [追加CSV](../outputs/paper-low-qf-nearest/results.csv)。三候選QF5均32/32，未修復，保留G6。
+
 # 實驗索引
 
 ## G6｜已達標的 SVD QIM 步長改良
@@ -83,3 +89,10 @@ python -m pytest -v
 ```
 
 既有 M0–M4、M2 封存輸出與 [PR #7 PDF](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/7) 保留。[PR #15](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/15) 保留無金鑰審查驗證及設計，AI 正式模式暫不啟用。
+## Sparse-margin SVD-QIM｜低 QF BER--PSNR 折衷
+
+- [Report](../reports/SPARSE_MARGIN_SVD_QIM.md) · [QF5--20 evidence](../outputs/sparse-margin720/results.csv) · [QF5--95 evidence](../outputs/sparse-margin720-validation/results.csv).
+- The deterministic sparse d1=720 selection produces 0/32 at all tested QFs and a PNG PSNR of 31.083 dB. It is limited to the fixed image/payload/encoder and does not meet a 35 dB target.
+
+---
+
