@@ -1,0 +1,80 @@
+{
+  "upstream_provenance": {
+    "url": "https://github.com/guofei9987/blind_watermark.git",
+    "vcs_info": {
+      "commit_id": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "requested_revision": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "vcs": "git"
+    }
+  },
+  "source": "outputs\\adaptive-top-energy720-replay-grid\\ori_img.jpeg",
+  "source_sha256": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+  "payload": "10110010111001000101101011010001",
+  "keys": {
+    "password_img": 1,
+    "password_wm": 1
+  },
+  "variants": [
+    "adaptive_top_energy720"
+  ],
+  "qualities": [
+    5,
+    10,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50,
+    55,
+    60,
+    65,
+    70,
+    75,
+    80,
+    85,
+    90,
+    95
+  ],
+  "jpeg": {
+    "subsampling": 0,
+    "optimize": false,
+    "progressive": false
+  },
+  "python": "3.13.14",
+  "pillow_jpeg": "8.0",
+  "packages": {
+    "numpy": "2.4.6",
+    "Pillow": "12.3.0",
+    "opencv-python": "4.13.0.92",
+    "PyWavelets": "1.10.0",
+    "blind_watermark": "0.4.4"
+  },
+  "code_sha256": "0ccb8602d0d2ff45bdb334f1a241dfb1cd701d11f511a64e67164e9bac6ad43b",
+  "files_sha256": {
+    "adaptive_top_energy720_marked.png": "833907b212256c0aa484d349ded19199386e956a7f21e7810ea385a484f980d1",
+    "adaptive_top_energy720_qf05.jpg": "29a35d0d62f0e9b820a8feada2e938ebb7169242a6f84db4e4d87b99db675c50",
+    "adaptive_top_energy720_qf10.jpg": "b53b4b8a4e3c760368259c1527e7ca003c78ee48de3c335156471686cd371871",
+    "adaptive_top_energy720_qf15.jpg": "514d7f8ee52db3c8a67dd2d2c83dee5d5b3dfeecd02fb19f33082eed01c5ef41",
+    "adaptive_top_energy720_qf20.jpg": "8976de4c02da3a424fc4eb64fcb1febeb6ab62288a480ac0f49bceeef536ccd2",
+    "adaptive_top_energy720_qf25.jpg": "775231bdfc7989d03e5d2d8ac3160f0524d81ffeb632831e8a523abceb388a11",
+    "adaptive_top_energy720_qf30.jpg": "2af12c795a740b1b63edec64a167fab8f15dd8789a54f1327bb7ed8a5f1ad8b5",
+    "adaptive_top_energy720_qf35.jpg": "654d26bcb513ba61d3e0df11e91023e7be4136744600ff7db54645d6d35f350a",
+    "adaptive_top_energy720_qf40.jpg": "249c8451ad1cd7abfa8251c61d5bfabbf952fbd640d649a984a05a43556f23d2",
+    "adaptive_top_energy720_qf45.jpg": "34e89010eeb158f313e0588671c4b4bf39f114b27dee2d9925ca9e0cbc6a8e72",
+    "adaptive_top_energy720_qf50.jpg": "712b46ac9cf48516384eec9d7824d7bcc2106a3c3f6f5a630438786a3707bc91",
+    "adaptive_top_energy720_qf55.jpg": "7170ebb94c4c4b932a5fe85b96737e8221d333b6b6198f397d54bf9d64909196",
+    "adaptive_top_energy720_qf60.jpg": "a31c9adecea79aeee8881e990d46018f9d2b9b2e30bc4c24c0cab61f36744712",
+    "adaptive_top_energy720_qf65.jpg": "05dc755219669951fb57dae090ece60e3b438fe596aba986b8609ecb9da7dc28",
+    "adaptive_top_energy720_qf70.jpg": "badf20e3b641f1a4b3c4e95c6ddabc83f21af8aecda3bff8f42b2b26ff520fed",
+    "adaptive_top_energy720_qf75.jpg": "324d4dc0003e3e68bd636e44a921cd1c014d62cbc80183c79f6b5cb4acd083c3",
+    "adaptive_top_energy720_qf80.jpg": "1a0262ed05eb33202ccb9b3552b298aa1971651571f57892820eca82715b000a",
+    "adaptive_top_energy720_qf85.jpg": "b5e362f5cd45bd1de127a3239c4d36a9d1907ac6e76d5dc38fd2b24c5128cf14",
+    "adaptive_top_energy720_qf90.jpg": "fbde28ce7c912eecebad5f7bce54f3c2740b590ba127de0ff599156df479d72b",
+    "adaptive_top_energy720_qf95.jpg": "cab537423e0f6637492b5355605b9a8e18f81a12ab0e8ad5615a6a1a4d0ad166",
+    "ori_img.jpeg": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+    "results.csv": "000800cdc65371091e6ab586f6f9aa8d613b90bd8332268c065128b481782584"
+  }
+}
