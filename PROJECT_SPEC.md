@@ -1,3 +1,5 @@
+> **2026-11-12 使用者更新：** 明確授權以提供的 Hwang et al. 論文處理 d1=90 在 QF5–10 的 BER 問題，覆蓋以下禁止 QF<15 研究／新增候選的舊限制。本輪有限三候選均未改善 QF5，未採用為修復；保留 G6 與歷史證據。方案與範圍見 [低 QF 實驗紀錄](docs/PAPER_LOW_QF_PLAN.md)。
+
 > **UPDATED SCOPE 2026-11-08:** Original BER objective has already been satisfied by G6 d1=90, d2=20. The only additional metric now requested is a narrow **paired PSNR comparison at QF15** (and optionally before JPEG) to discuss the BER/imperceptibility trade-off, alongside a mathematically rigorous SVD-QIM derivation. See [docs/RESEARCH_NEXT_PHASE.md](docs/RESEARCH_NEXT_PHASE.md). This overrides below historical text saying PSNR is unnecessary or candidate search should continue; other reproducibility, ethics, fixed-source and prior-result requirements remain in force.
 
 # 正式規格｜單圖 JPEG BER–QF 掃描與 SVD 改良

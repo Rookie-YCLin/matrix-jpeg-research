@@ -8,6 +8,44 @@ permissions:
   contents: read
 
 jobs:
+  paper-low-qf:
+    if: github.head_ref == 'codex/paper-qim-low-qf'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Install pinned watermark runtime
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install opencv-python==4.13.0.92 PyWavelets==1.10.0 setuptools==84.2.1
+          python -m pip install --no-build-isolation 'blind_watermark @ git+https://github.com/guofei9987/blind_watermark.git@322c90dc02d45644692095b34d3a6b735b6edbd8'
+          python -m pip check
+      - name: Test and reproduce all three finite candidates
+        run: |
+          python -m pytest -q
+          python -m experiments.paper_low_qf --output-dir "$RUNNER_TEMP/paper-low-qf" --variants upstream g6 paper_centered90 paper_ratio_floor90 paper_nearest_zero90
+          python - "$RUNNER_TEMP/paper-low-qf/results.csv" <<'PY'
+          import csv, sys
+          from pathlib import Path
+          expected = {}
+          for folder in ('paper-low-qf-initial', 'paper-low-qf-nearest'):
+              for row in csv.DictReader((Path('outputs')/folder/'results.csv').open()):
+                  expected[row['variant'],row['qf']] = row['extracted_bits']
+          observed = {(r['variant'],r['qf']):r['extracted_bits'] for r in csv.DictReader(open(sys.argv[1]))}
+          assert expected == observed, (expected, observed)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: paper-low-qf-replay
+          path: ${{ runner.temp }}/paper-low-qf
+          if-no-files-found: warn
   research:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -39,7 +77,7 @@ jobs:
 
   original-image-qf-scan:
     # The paired PSNR PR is scoped to QF15; leave the historical scan intact elsewhere.
-    if: github.head_ref != 'codex/g6-psnr-qf15'
+    if: github.head_ref != 'codex/g6-psnr-qf15' && github.head_ref != 'codex/paper-qim-low-qf'
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
@@ -83,7 +121,7 @@ jobs:
           retention-days: 30
 
   svd-qim-qf15-exploration:
-    if: github.head_ref != 'codex/g6-psnr-qf15'
+    if: github.head_ref != 'codex/g6-psnr-qf15' && github.head_ref != 'codex/paper-qim-low-qf'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
@@ -117,7 +155,7 @@ jobs:
           retention-days: 30
 
   svd-qim-selected-validation:
-    if: github.head_ref != 'codex/g6-psnr-qf15'
+    if: github.head_ref != 'codex/g6-psnr-qf15' && github.head_ref != 'codex/paper-qim-low-qf'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:

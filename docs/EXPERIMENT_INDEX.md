@@ -1,3 +1,7 @@
+## 2026-11-12 論文導向低 QF（負結果）
+
+[報告](../reports/PAPER_LOW_QF_FINDINGS.md) · [事前方案](PAPER_LOW_QF_PLAN.md) · [首輪CSV](../outputs/paper-low-qf-initial/results.csv) · [追加CSV](../outputs/paper-low-qf-nearest/results.csv)。三候選QF5均32/32，未修復，保留G6。
+
 # 實驗索引
 
 ## G6｜已達標的 SVD QIM 步長改良
