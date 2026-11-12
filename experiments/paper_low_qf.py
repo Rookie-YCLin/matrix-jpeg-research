@@ -16,6 +16,7 @@ from PIL import Image, features
 
 from experiments import ori_qf_scan as fixed
 from experiments.svd_qim_sweep import configured_instance
+from blind_watermark.bwm_core import one_dim_kmeans, random_strategy1
 
 
 def centered_quantize(value, period, bit, minimum=0.0):
@@ -62,10 +63,57 @@ def paper_extract(self, args):
     return (3 * first + second) / 4
 
 
+# One selected cycle out of every 32 carries each payload bit.  The pattern is
+# deterministic from the public block index and therefore available blind at
+# extraction, but is independent of the JPEG QF and of the unknown bit value.
+SPARSE_CYCLE_PERIOD = 32
+
+
+def sparse_selected(i, wm_size):
+    return (i // wm_size) % SPARSE_CYCLE_PERIOD == 0
+
+
+def sparse_embed(self, args):
+    block, shuffler, i = args
+    if not sparse_selected(i, self.wm_size):
+        return block.copy()
+    bit = self.wm_bit[i % self.wm_size]
+    u, s, v = np.linalg.svd(dct(block).flatten()[shuffler].reshape(self.block_shape))
+    s[0] = (s[0] // self.d1 + 0.25 + 0.5 * bit) * self.d1
+    flat = (u @ np.diag(s) @ v).flatten()
+    flat[shuffler] = flat.copy()
+    return idct(flat.reshape(self.block_shape))
+
+
+def sparse_extract_with_kmeans(self, img, wm_shape):
+    self.wm_size = np.array(wm_shape).prod()
+    self.read_img_arr(img=img)
+    self.init_block_index()
+    self.idx_shuffle = random_strategy1(self.password_img, self.block_num, 16)
+    values = [[] for _ in range(self.wm_size)]
+    for channel in range(3):
+        selected = [i for i in range(self.block_num) if sparse_selected(i, self.wm_size)]
+        blocks = [
+            (self.ca_block[channel][self.block_index[i]], self.idx_shuffle[i])
+            for i in selected
+        ]
+        decoded = self.pool.map(self.block_get_wm_slow, blocks)
+        for i, bit in zip(selected, decoded):
+            values[i % self.wm_size].append(float(bit))
+    if any(not x for x in values):
+        raise RuntimeError("Sparse extractor selected no replicas for a payload bit")
+    return one_dim_kmeans(np.array([np.mean(x) for x in values]))
+
+
 def instance(variant):
-    if variant not in ('upstream', 'g6', 'paper_centered90', 'paper_ratio_floor90', 'paper_nearest_zero90', 'matrix_margin720'):
+    if variant not in ('upstream', 'g6', 'paper_centered90', 'paper_ratio_floor90', 'paper_nearest_zero90', 'matrix_margin720', 'sparse_margin720'):
         raise ValueError(variant)
-    wm = configured_instance(36 if variant == 'upstream' else (720 if variant == 'matrix_margin720' else 90), 20)
+    wm = configured_instance(36 if variant == 'upstream' else (720 if variant in ('matrix_margin720', 'sparse_margin720') else 90), 20)
+    if variant == 'sparse_margin720':
+        core = wm.bwm_core
+        core.block_add_wm_slow = MethodType(sparse_embed, core)
+        core.extract_with_kmeans = MethodType(sparse_extract_with_kmeans, core)
+        return wm
     if variant.startswith('paper_'):
         core = wm.bwm_core
         core.paper_ratio = variant == 'paper_ratio_floor90'

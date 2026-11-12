@@ -1,0 +1,80 @@
+{
+  "upstream_provenance": {
+    "url": "https://github.com/guofei9987/blind_watermark.git",
+    "vcs_info": {
+      "commit_id": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "requested_revision": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "vcs": "git"
+    }
+  },
+  "source": "outputs\\sparse-margin720-validation\\ori_img.jpeg",
+  "source_sha256": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+  "payload": "10110010111001000101101011010001",
+  "keys": {
+    "password_img": 1,
+    "password_wm": 1
+  },
+  "variants": [
+    "sparse_margin720"
+  ],
+  "qualities": [
+    5,
+    10,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50,
+    55,
+    60,
+    65,
+    70,
+    75,
+    80,
+    85,
+    90,
+    95
+  ],
+  "jpeg": {
+    "subsampling": 0,
+    "optimize": false,
+    "progressive": false
+  },
+  "python": "3.13.14",
+  "pillow_jpeg": "8.0",
+  "packages": {
+    "numpy": "2.4.6",
+    "Pillow": "12.3.0",
+    "opencv-python": "4.13.0.92",
+    "PyWavelets": "1.10.0",
+    "blind_watermark": "0.4.4"
+  },
+  "code_sha256": "30ac54773954aae59f70f2515de9f5abec0d9ac86ea0a3b6f65700e7a9e47748",
+  "files_sha256": {
+    "ori_img.jpeg": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+    "results.csv": "74e0985651cb9449a4d75f2c06d72015ce785896b42eb1ea86986094c8d203ea",
+    "sparse_margin720_marked.png": "d57232f379084ef7063bece2e561f57f4e1d5ce1dca59540debd805c0407b402",
+    "sparse_margin720_qf05.jpg": "d7bd2e9e38b88cf17a211e51a07cb1ede26917f4a3079c8afc12958d21169127",
+    "sparse_margin720_qf10.jpg": "7af72fb9f0a91e7b826fc31df715b0914cf147d0215004a3abccc31205b6e017",
+    "sparse_margin720_qf15.jpg": "50a6bcb63d6cfe27afea3343f09b8486326254df4f825af1a9559050f6ea7caa",
+    "sparse_margin720_qf20.jpg": "b30094ff6e6a2de4a4022a5c1609a596fae1b434492ebe6c340d8670efc183c2",
+    "sparse_margin720_qf25.jpg": "59b13d520ba61f0192ee4d8d09b242cd488678e11d8052fb39278d6854813579",
+    "sparse_margin720_qf30.jpg": "44a082b833e1c9bc4be515aa3f85d284ff794ae25b79d67eec696dfc96e02984",
+    "sparse_margin720_qf35.jpg": "afc0ae4614eba7d1c23f03662f2d36c451883c26bb901e498b543e78825d6938",
+    "sparse_margin720_qf40.jpg": "ac556a3b668adaf9a1a1ffe21f3a883f3234993cab1e60f402c87fdca926a134",
+    "sparse_margin720_qf45.jpg": "dc66c2f329c52487724e7e396b9a516b91f3751568c2fbe823f6ded1e9f155a6",
+    "sparse_margin720_qf50.jpg": "b5474a366bd7662668f83af6e698ebb341bc6800df55ec5333cd1f6c92c72284",
+    "sparse_margin720_qf55.jpg": "a8b2b9a0ca54d4d1e73216abef2890f45b6207502cfc271087a40fe3eae4400e",
+    "sparse_margin720_qf60.jpg": "21e43b5db5ceabea9cdc0af784b80921d3e4135a1f384f45d29bd6400a063588",
+    "sparse_margin720_qf65.jpg": "a1a8cc960314b5ba71043cbd8d0210e54f3de23a93dcd099a52b4e717f2f8dbb",
+    "sparse_margin720_qf70.jpg": "82eac0ae5d7a9507083555821c259d6aaf160578e5c0d7dec2c2fafaab41bb6e",
+    "sparse_margin720_qf75.jpg": "f572bf76eab494b0f0daee8247b192c047288112fc9b95ada97fa8528f1d2f22",
+    "sparse_margin720_qf80.jpg": "a0ecff3cc357ba7ea726272710cb5a0735814d5a94df7b4aa8594fba247d174c",
+    "sparse_margin720_qf85.jpg": "3754abb25f651e88f10cce246b7b9c6e5c918ff096009b911d20021755dc8988",
+    "sparse_margin720_qf90.jpg": "b2055b34e44c82d1638b5adf6f93fdd68e71fc4fb65e4927d626407ac84cc4a5",
+    "sparse_margin720_qf95.jpg": "686150833bfec63b94c7625f173d05484562027ad9d3c6ac8ffc8bf5f2843575"
+  }
+}

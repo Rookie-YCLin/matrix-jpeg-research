@@ -5,7 +5,10 @@ import numpy as np
 import pytest
 
 pytest.importorskip('blind_watermark')
-from experiments.paper_low_qf import centered_decode, centered_quantize, decode, nearest_zero_quantize, nearest_zero_decode
+from experiments.paper_low_qf import (
+    SPARSE_CYCLE_PERIOD, centered_decode, centered_quantize, decode,
+    nearest_zero_quantize, nearest_zero_decode, sparse_selected,
+)
 
 
 @pytest.mark.parametrize('period', [90.0, 173.0])
@@ -38,3 +41,12 @@ def test_nearest_legal_lattice_and_margin(bit):
         assert abs(target-value) == pytest.approx(np.min(abs(candidates-value)))
         for error in [-22.4, 0, 22.4]:
             assert nearest_zero_decode(target+error, 90) == bit
+
+
+def test_sparse_schedule_gives_every_bit_the_same_replica_count():
+    wm_size = 32
+    selected = [i for i in range(127 * wm_size) if sparse_selected(i, wm_size)]
+    counts = np.bincount(np.array(selected) % wm_size, minlength=wm_size)
+    assert SPARSE_CYCLE_PERIOD == 32
+    assert np.all(counts == 4)
+    assert all(sparse_selected(i, wm_size) == sparse_selected(i, wm_size) for i in range(128))
