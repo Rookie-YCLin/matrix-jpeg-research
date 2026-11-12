@@ -96,3 +96,10 @@ python -m pytest -v
 
 ---
 
+## Content-adaptive top-energy SVD-QIM
+
+- [Report](../reports/ADAPTIVE_TOP_ENERGY_SVD_QIM.md) · [Primary QF5--20 CSV](../outputs/adaptive-top-energy720-replay/results.csv) · [Primary full grid CSV](../outputs/adaptive-top-energy720-replay-grid/results.csv).
+- The blind top-seven-σ1 selector gives 0/32 across the pinned QF5--95 grid and PNG PSNR 31.191 dB. External local validation is supplementary, not a replacement for the pinned primary protocol.
+
+---
+

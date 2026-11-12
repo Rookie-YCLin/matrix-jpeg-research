@@ -1,5 +1,6 @@
 """QIM decision margins and blind decoder interface contracts."""
 import inspect
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -8,6 +9,7 @@ pytest.importorskip('blind_watermark')
 from experiments.paper_low_qf import (
     SPARSE_CYCLE_PERIOD, centered_decode, centered_quantize, decode,
     nearest_zero_quantize, nearest_zero_decode, sparse_selected,
+    top_energy_indices,
 )
 
 
@@ -50,3 +52,17 @@ def test_sparse_schedule_gives_every_bit_the_same_replica_count():
     assert SPARSE_CYCLE_PERIOD == 32
     assert np.all(counts == 4)
     assert all(sparse_selected(i, wm_size) == sparse_selected(i, wm_size) for i in range(128))
+
+
+def test_top_energy_selector_keeps_the_largest_candidate_per_bit():
+    blocks = np.zeros((2, 2, 4, 4), dtype=np.float32)
+    blocks[0, 0, 0, 0] = 1
+    blocks[0, 1, 0, 0] = 9
+    blocks[1, 0, 0, 0] = 8
+    blocks[1, 1, 0, 0] = 2
+    core = SimpleNamespace(
+        block_num=4, wm_size=2, block_shape=np.array([4, 4]),
+        block_index=[(0, 0), (0, 1), (1, 0), (1, 1)],
+        idx_shuffle=np.tile(np.arange(16), (4, 1)), ca_block=[blocks],
+    )
+    assert top_energy_indices(core, 0, 1) == [2, 1]

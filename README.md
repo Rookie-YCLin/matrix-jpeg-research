@@ -62,3 +62,5 @@
 [完整規格](PROJECT_SPEC.md) · [代理規範](AGENTS.md) · [實驗索引](docs/EXPERIMENT_INDEX.md) · [Codex 交接](docs/CODEX_NEXT_SESSION.md) · [研究進度](PROGRESS.md)
 > 2026-11-12：新增稀疏大裕度 SVD-QIM。固定樣本的 QF5--95 BER 均為0/32，PNG PSNR為31.083 dB；完整限制與重跑見 [報告](reports/SPARSE_MARGIN_SVD_QIM.md)。
 
+> 2026-11-12：新增內容自適應 top-energy SVD-QIM；固定主圖 QF5--95每5點均0/32，PNG PSNR為31.191 dB。見 [報告](reports/ADAPTIVE_TOP_ENERGY_SVD_QIM.md)。
+

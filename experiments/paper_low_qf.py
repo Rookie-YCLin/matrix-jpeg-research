@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import csv
 import json
 import platform
@@ -11,8 +12,10 @@ from types import MethodType
 from urllib.request import urlopen
 
 import numpy as np
+import cv2
 from cv2 import dct, idct
 from PIL import Image, features
+from pywt import idwt2
 
 from experiments import ori_qf_scan as fixed
 from experiments.svd_qim_sweep import configured_instance
@@ -67,15 +70,16 @@ def paper_extract(self, args):
 # deterministic from the public block index and therefore available blind at
 # extraction, but is independent of the JPEG QF and of the unknown bit value.
 SPARSE_CYCLE_PERIOD = 32
+ADAPTIVE_REPLICAS_PER_CHANNEL = 7
 
 
-def sparse_selected(i, wm_size):
-    return (i // wm_size) % SPARSE_CYCLE_PERIOD == 0
+def sparse_selected(i, wm_size, cycle_period=SPARSE_CYCLE_PERIOD):
+    return (i // wm_size) % cycle_period == 0
 
 
 def sparse_embed(self, args):
     block, shuffler, i = args
-    if not sparse_selected(i, self.wm_size):
+    if not sparse_selected(i, self.wm_size, self.sparse_cycle_period):
         return block.copy()
     bit = self.wm_bit[i % self.wm_size]
     u, s, v = np.linalg.svd(dct(block).flatten()[shuffler].reshape(self.block_shape))
@@ -85,6 +89,70 @@ def sparse_embed(self, args):
     return idct(flat.reshape(self.block_shape))
 
 
+def top_energy_indices(core, channel, replicas):
+    """Pick the largest sigma_1 values separately for every repeated payload bit."""
+    scores = np.empty(core.block_num, dtype=np.float64)
+    for i, index in enumerate(core.block_index):
+        block = core.ca_block[channel][index]
+        shuffled = dct(block).flatten()[core.idx_shuffle[i]].reshape(core.block_shape)
+        scores[i] = np.linalg.svd(shuffled, compute_uv=False)[0]
+    selected = []
+    for bit_index in range(core.wm_size):
+        candidates = np.arange(bit_index, core.block_num, core.wm_size)
+        order = np.argsort(-scores[candidates], kind="stable")
+        selected.extend(candidates[order[:replicas]].tolist())
+    return selected
+
+
+def adaptive_top_energy_embed(self):
+    self.init_block_index()
+    embedded_ca = copy.deepcopy(self.ca)
+    embedded_yuv = [np.array([])] * 3
+    self.idx_shuffle = random_strategy1(self.password_img, self.block_num, 16)
+    for channel in range(3):
+        selected = set(top_energy_indices(self, channel, self.adaptive_replicas))
+        updated = []
+        for i, index in enumerate(self.block_index):
+            block = self.ca_block[channel][index]
+            if i not in selected:
+                updated.append(block.copy())
+                continue
+            bit = self.wm_bit[i % self.wm_size]
+            shuffled = dct(block).flatten()[self.idx_shuffle[i]].reshape(self.block_shape)
+            u, s, v = np.linalg.svd(shuffled)
+            s[0] = (s[0] // self.d1 + 0.25 + 0.5 * bit) * self.d1
+            flat = (u @ np.diag(s) @ v).flatten()
+            flat[self.idx_shuffle[i]] = flat.copy()
+            updated.append(idct(flat.reshape(self.block_shape)))
+        for i, index in enumerate(self.block_index):
+            self.ca_block[channel][index] = updated[i]
+        self.ca_part[channel] = np.concatenate(np.concatenate(self.ca_block[channel], 1), 1)
+        embedded_ca[channel][:self.part_shape[0], :self.part_shape[1]] = self.ca_part[channel]
+        embedded_yuv[channel] = idwt2((embedded_ca[channel], self.hvd[channel]), "haar")
+    result_yuv = np.stack(embedded_yuv, axis=2)[:self.img_shape[0], :self.img_shape[1]]
+    result = np.clip(cv2.cvtColor(result_yuv, cv2.COLOR_YUV2BGR), 0, 255)
+    if self.alpha is not None:
+        result = cv2.merge([result.astype(np.uint8), self.alpha])
+    return result
+
+
+def adaptive_top_energy_extract_with_kmeans(self, img, wm_shape):
+    self.wm_size = np.array(wm_shape).prod()
+    self.read_img_arr(img=img)
+    self.init_block_index()
+    self.idx_shuffle = random_strategy1(self.password_img, self.block_num, 16)
+    votes = [[] for _ in range(self.wm_size)]
+    for channel in range(3):
+        for i in top_energy_indices(self, channel, self.adaptive_replicas):
+            index = self.block_index[i]
+            shuffled = dct(self.ca_block[channel][index]).flatten()[self.idx_shuffle[i]].reshape(self.block_shape)
+            s = np.linalg.svd(shuffled, compute_uv=False)
+            votes[i % self.wm_size].append(float(s[0] % self.d1 > self.d1 / 2))
+    if any(not bit_votes for bit_votes in votes):
+        raise RuntimeError("Adaptive selector selected no replicas for a payload bit")
+    return one_dim_kmeans(np.array([np.mean(bit_votes) for bit_votes in votes]))
+
+
 def sparse_extract_with_kmeans(self, img, wm_shape):
     self.wm_size = np.array(wm_shape).prod()
     self.read_img_arr(img=img)
@@ -92,7 +160,10 @@ def sparse_extract_with_kmeans(self, img, wm_shape):
     self.idx_shuffle = random_strategy1(self.password_img, self.block_num, 16)
     values = [[] for _ in range(self.wm_size)]
     for channel in range(3):
-        selected = [i for i in range(self.block_num) if sparse_selected(i, self.wm_size)]
+        selected = [
+            i for i in range(self.block_num)
+            if sparse_selected(i, self.wm_size, self.sparse_cycle_period)
+        ]
         blocks = [
             (self.ca_block[channel][self.block_index[i]], self.idx_shuffle[i])
             for i in selected
@@ -106,11 +177,18 @@ def sparse_extract_with_kmeans(self, img, wm_shape):
 
 
 def instance(variant):
-    if variant not in ('upstream', 'g6', 'paper_centered90', 'paper_ratio_floor90', 'paper_nearest_zero90', 'matrix_margin720', 'sparse_margin720'):
+    if variant not in ('upstream', 'g6', 'paper_centered90', 'paper_ratio_floor90', 'paper_nearest_zero90', 'matrix_margin720', 'sparse_margin720', 'adaptive_top_energy720'):
         raise ValueError(variant)
-    wm = configured_instance(36 if variant == 'upstream' else (720 if variant in ('matrix_margin720', 'sparse_margin720') else 90), 20)
+    wm = configured_instance(36 if variant == 'upstream' else (720 if variant in ('matrix_margin720', 'sparse_margin720', 'adaptive_top_energy720') else 90), 20)
+    if variant == 'adaptive_top_energy720':
+        core = wm.bwm_core
+        core.adaptive_replicas = ADAPTIVE_REPLICAS_PER_CHANNEL
+        core.embed = MethodType(adaptive_top_energy_embed, core)
+        core.extract_with_kmeans = MethodType(adaptive_top_energy_extract_with_kmeans, core)
+        return wm
     if variant == 'sparse_margin720':
         core = wm.bwm_core
+        core.sparse_cycle_period = 32
         core.block_add_wm_slow = MethodType(sparse_embed, core)
         core.extract_with_kmeans = MethodType(sparse_extract_with_kmeans, core)
         return wm

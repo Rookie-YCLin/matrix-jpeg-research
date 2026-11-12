@@ -168,3 +168,11 @@ M0、M1 技術驗收完成，無未修復的測試失敗。交付後，使用者
 
 ---
 
+## 2026-11-12 Content-adaptive top-energy SVD-QIM
+
+- New blind adaptive selector ranks candidate blocks by dominant singular value for each bit and channel, then embeds d1=720 in the top seven only.
+- Fixed primary image: PNG and QF5--95 step-5 are all 0/32; PNG PSNR is 31.191 dB. Seven separate local images are 0/32 at PNG, QF5 and QF15, with PNG PSNR mean 33.169 dB.
+- [Theory, primary evidence and limitations](reports/ADAPTIVE_TOP_ENERGY_SVD_QIM.md).
+
+---
+

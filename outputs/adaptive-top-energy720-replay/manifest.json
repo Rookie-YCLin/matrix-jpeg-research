@@ -1,0 +1,50 @@
+{
+  "upstream_provenance": {
+    "url": "https://github.com/guofei9987/blind_watermark.git",
+    "vcs_info": {
+      "commit_id": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "requested_revision": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "vcs": "git"
+    }
+  },
+  "source": "outputs\\adaptive-top-energy720-replay\\ori_img.jpeg",
+  "source_sha256": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+  "payload": "10110010111001000101101011010001",
+  "keys": {
+    "password_img": 1,
+    "password_wm": 1
+  },
+  "variants": [
+    "adaptive_top_energy720"
+  ],
+  "qualities": [
+    5,
+    10,
+    15,
+    20
+  ],
+  "jpeg": {
+    "subsampling": 0,
+    "optimize": false,
+    "progressive": false
+  },
+  "python": "3.13.14",
+  "pillow_jpeg": "8.0",
+  "packages": {
+    "numpy": "2.4.6",
+    "Pillow": "12.3.0",
+    "opencv-python": "4.13.0.92",
+    "PyWavelets": "1.10.0",
+    "blind_watermark": "0.4.4"
+  },
+  "code_sha256": "0ccb8602d0d2ff45bdb334f1a241dfb1cd701d11f511a64e67164e9bac6ad43b",
+  "files_sha256": {
+    "adaptive_top_energy720_marked.png": "833907b212256c0aa484d349ded19199386e956a7f21e7810ea385a484f980d1",
+    "adaptive_top_energy720_qf05.jpg": "29a35d0d62f0e9b820a8feada2e938ebb7169242a6f84db4e4d87b99db675c50",
+    "adaptive_top_energy720_qf10.jpg": "b53b4b8a4e3c760368259c1527e7ca003c78ee48de3c335156471686cd371871",
+    "adaptive_top_energy720_qf15.jpg": "514d7f8ee52db3c8a67dd2d2c83dee5d5b3dfeecd02fb19f33082eed01c5ef41",
+    "adaptive_top_energy720_qf20.jpg": "8976de4c02da3a424fc4eb64fcb1febeb6ab62288a480ac0f49bceeef536ccd2",
+    "ori_img.jpeg": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+    "results.csv": "72c9b2078e8683dc7cb69e1d3db1ed695f1f7d8694439ff47ec7df11ed72c7eb"
+  }
+}
