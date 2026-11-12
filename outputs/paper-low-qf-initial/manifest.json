@@ -1,0 +1,68 @@
+{
+  "upstream_provenance": {
+    "url": "https://github.com/guofei9987/blind_watermark.git",
+    "vcs_info": {
+      "commit_id": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "requested_revision": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "vcs": "git"
+    }
+  },
+  "source": "outputs\\paper-low-qf-initial\\ori_img.jpeg",
+  "source_sha256": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+  "payload": "10110010111001000101101011010001",
+  "keys": {
+    "password_img": 1,
+    "password_wm": 1
+  },
+  "variants": [
+    "upstream",
+    "g6",
+    "paper_centered90",
+    "paper_ratio_floor90"
+  ],
+  "qualities": [
+    5,
+    10,
+    15,
+    20
+  ],
+  "jpeg": {
+    "subsampling": 0,
+    "optimize": false,
+    "progressive": false
+  },
+  "python": "3.13.14",
+  "pillow_jpeg": "8.0",
+  "packages": {
+    "numpy": "2.4.6",
+    "Pillow": "12.3.0",
+    "opencv-python": "4.13.0.92",
+    "PyWavelets": "1.10.0",
+    "blind_watermark": "0.4.4"
+  },
+  "code_sha256": "0513ef8b680de6880abc5447c7677509b3b3495b1736706e35f0f9cf1d2dabd9",
+  "files_sha256": {
+    "g6_marked.png": "81d3bbe193b70ea94487e0a79b19865e800eaaaa16078e71022e25e0edddf069",
+    "g6_qf05.jpg": "36b17c7e66ce0d3e5349c74889a0a9218ffd3fd878e5ba12671dbc71214c35eb",
+    "g6_qf10.jpg": "c8e86aaf3f0972d02b77917aa9557e3b1605f7cee45a6fc043cde29d2bed8886",
+    "g6_qf15.jpg": "444aeffe34e10bfb141c7b9391c4800d38cc5f30c8bcc9bf8b74076a5ca94f83",
+    "g6_qf20.jpg": "21ff0065d3b85c9c464be474ec176eda5b6d219b1374fce283333f3fdf9db38b",
+    "ori_img.jpeg": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+    "paper_centered90_marked.png": "67065f7d6790a5da89afcc50a764c991c2d363ad59e00ad225ef057ebffcfb00",
+    "paper_centered90_qf05.jpg": "eec26c30cf81d387d8c6a11e62d3e565979def5d24d6ab5dc87634b185670966",
+    "paper_centered90_qf10.jpg": "e01554822d83436286f64272f710ff5364423038e426454d05341fba60726138",
+    "paper_centered90_qf15.jpg": "47d5d4fe12b625a82fb63f4d147aa56cd400e707b6e956a8bf7d7efeca28d246",
+    "paper_centered90_qf20.jpg": "dc5788de681a4f18f1e1fb22984e86c2b01cc697ac37307c6e62f486998141e5",
+    "paper_ratio_floor90_marked.png": "1896fcec6485caeaef58b8bba4292b16dec4077fda2126ecd939a522dad120e3",
+    "paper_ratio_floor90_qf05.jpg": "fca69b19ebc8cd19736797ee8bd7b1d525b2798c635ee43d8560a5f0364a2d53",
+    "paper_ratio_floor90_qf10.jpg": "77772287c6b158a5bac213f47baaa9fa3cdc670aa4e9e8d057d791c0494d241b",
+    "paper_ratio_floor90_qf15.jpg": "24b571a67dca18d4d33133782e0ee17a014e6382d47bcd2be5bf60d6a0dd6089",
+    "paper_ratio_floor90_qf20.jpg": "6cbf24f37abf9bd8c680e0dff50a80250bacc3ef97b5ee21231dd10d32f315bb",
+    "results.csv": "4e8b4f81f596ac24c991b0375ab8b5b01d89f55283e4904ba1f509e3f3b0eb6f",
+    "upstream_marked.png": "2653e4395dc69ec25c22d7eb3411785d9d772acb721a6e68b68c470d481e6d3d",
+    "upstream_qf05.jpg": "d0638cd310c1c21f3953d997e4b8a1e00bf5d4b36a2a3eda637a7d1b78ff387c",
+    "upstream_qf10.jpg": "0dfb428702517987294f023f3c1e624ebec7c5d95ffcafe4af9df5cfa5121f5c",
+    "upstream_qf15.jpg": "394044b652b111bedc9c229d6430b02641e7b4707ffb1b026e6df8f7dd8e13a4",
+    "upstream_qf20.jpg": "837a7e4bb24781ab79f346287a8fb1cbf48eef13124cb4c551a34a0c845cea9e"
+  }
+}

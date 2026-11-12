@@ -1,3 +1,5 @@
+> **2026-11-12 使用者更新：** 明確授權以提供的 Hwang et al. 論文處理 d1=90 在 QF5–10 的 BER 問題，覆蓋以下禁止 QF<15 研究／新增候選的舊限制。本輪有限三候選均未改善 QF5，未採用為修復；保留 G6 與歷史證據。方案與範圍見 [低 QF 實驗紀錄](docs/PAPER_LOW_QF_PLAN.md)。
+
 > **LATEST DIRECTIVE (2026-11-08, overrides older conflicting instructions below):** G6 BER study is complete; no further parameter sweeps. **Next work is only (1) paired QF15 PSNR comparison of (36,20) vs (90,20), and (2) rigorous professor-ready SVD/QIM/singular-value perturbation/Frobenius derivation.** Keep one original platelet image, 32-bit payload, d2=20. Do not investigate QF<15 mechanisms, claim a globally optimal pair, add new images, or test all integer QFs. Read [docs/RESEARCH_NEXT_PHASE.md](docs/RESEARCH_NEXT_PHASE.md); handoffs: [Codex](docs/PROMPT_CODEX_PSNR.md), [Work](docs/PROMPT_WORK_MATRIX_THEORY.md). Historical BER-only directives below no longer override this PSNR addendum.
 
 # 研究代理規格｜唯一圖、最大 BER QF、SVD 改良
