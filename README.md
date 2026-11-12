@@ -1,3 +1,7 @@
+> 2026-11-12 後續：矩陣裕度方案d1=720在QF5–95每5點均0/32，但PNG PSNR僅15.56 dB；保留獨立高失真候選，不替換G6。見[驗證報告](reports/MATRIX_MARGIN_LOW_QF.md)。
+
+> 2026-11-12：已依新授權進行論文導向QF5–10有限修正試驗，三候選均未改善QF5，**尚未修復**。見 [完整負結果與診斷](reports/PAPER_LOW_QF_FINDINGS.md)。
+
 > **2026-11-08 正式收尾：** G6 單參數 d1=36→90 的 BER、PSNR 與矩陣理論已全部完成；[正式整合報告](reports/G6_FINAL_PROJECT_REPORT.md) · [教授角度審查](reports/G6_FINAL_REVIEW_CHECKLIST.md) · [完整推導](reports/SVD_QIM_MATRIX_THEORY.md) · [PSNR 實測](reports/SVD_QIM_PSNR_TRADEOFF.md)。主條件 JPEG QF15：BER 32/32→0/32，PSNR 29.225→27.554 dB（−1.671 dB）；QF5 仍有已知退步。已合併 [PSNR PR #29](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/29) 和 [理論 PR #30](https://github.com/Rookie-YCLin/matrix-jpeg-research/pull/30)。**以下歷史階段文字若提到「待補 PSNR」「尚未完成 G6」「仍需候選搜尋」，均不是目前狀態。**
 
 > **2026-11-08 最新研究交接：** G6 單參數 d1=36→90 已完成且封存 BER 實測；後續 **只補 PSNR（QF15 影像品質 trade-off）與有脈絡的矩陣理論推導**。固定 d2=20、同一張圖片與 32-bit payload；不搜尋新步長、不研究 QF<15 機制、不追求全域最優。詳見 [最新工作規格](docs/RESEARCH_NEXT_PHASE.md)、[Codex PSNR 提示詞](docs/PROMPT_CODEX_PSNR.md)、[Work 理論提示詞](docs/PROMPT_WORK_MATRIX_THEORY.md)。**較下方「不需要 PSNR」敘述為舊階段規格，已由本段取代。**

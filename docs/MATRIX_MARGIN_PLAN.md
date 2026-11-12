@@ -1,0 +1,5 @@
+# Matrix perturbation candidate (2026-11-12)
+User reopens autonomous matrix-theoretic research after three failed candidates.
+For A+E, |sigma_i(A+E)-sigma_i(A)| <= ||E||_2. A QIM center has decision margin d/4. Previous observed singular-value displacements reach about153, exceeding90/4. Those observations are NOT an upper bound on spectral perturbation, nor a guarantee for a different embedding.
+Predeclare one conservative candidate d1=720=8*90, d2=20. Margin180 exceeds the observed153 but JPEG perturbation and clipping must be measured anew. This changes embedding strength, not a fixed-d1=90 decoder repair. No claim of optimality or guaranteed robustness. Frobenius local distortion squared equals sum of squared singular-value modifications; larger margin may incur substantial image distortion.
+Same original image, payload, keys, transformations and encoder. Primary QF5 improvement requires errors<=30/32, PNG/QF10/15/20 zero. Record PSNR and all negatives. If passes, validate19 QF points, stop searching. Decode has neither truth nor QF input.

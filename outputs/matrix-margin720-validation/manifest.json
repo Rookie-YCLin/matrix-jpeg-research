@@ -1,0 +1,80 @@
+{
+  "upstream_provenance": {
+    "url": "https://github.com/guofei9987/blind_watermark.git",
+    "vcs_info": {
+      "commit_id": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "requested_revision": "322c90dc02d45644692095b34d3a6b735b6edbd8",
+      "vcs": "git"
+    }
+  },
+  "source": "outputs\\matrix-margin720-validation\\ori_img.jpeg",
+  "source_sha256": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+  "payload": "10110010111001000101101011010001",
+  "keys": {
+    "password_img": 1,
+    "password_wm": 1
+  },
+  "variants": [
+    "matrix_margin720"
+  ],
+  "qualities": [
+    5,
+    10,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50,
+    55,
+    60,
+    65,
+    70,
+    75,
+    80,
+    85,
+    90,
+    95
+  ],
+  "jpeg": {
+    "subsampling": 0,
+    "optimize": false,
+    "progressive": false
+  },
+  "python": "3.13.14",
+  "pillow_jpeg": "8.0",
+  "packages": {
+    "numpy": "2.4.6",
+    "Pillow": "12.3.0",
+    "opencv-python": "4.13.0.92",
+    "PyWavelets": "1.10.0",
+    "blind_watermark": "0.4.4"
+  },
+  "code_sha256": "a3c8a3c98bf7ac6912570c7e2d16cab27156cc008919ee6332fc2e8cae021ca8",
+  "files_sha256": {
+    "matrix_margin720_marked.png": "9c3fd3dd43b2b067e2f535795833abe9a2dd1e1e3ad1fdaba3d430d6f76b23fa",
+    "matrix_margin720_qf05.jpg": "fd5cf7d704d25a668d12d8a3e0f557fa65c0ef7f7d2515d48d7e8790e8fa12ce",
+    "matrix_margin720_qf10.jpg": "7dbedba93757203b238d2ccb77b83aabf599edce78a0c986a8dacba421c7016a",
+    "matrix_margin720_qf15.jpg": "e1db0ba29131c2d6a1b484dff11c0b40175426438af9ca9f51e9a092f1314af1",
+    "matrix_margin720_qf20.jpg": "223f904700c5fa96f74ef776553e4b36fe3c31624c2a31a4635118bfa914e659",
+    "matrix_margin720_qf25.jpg": "b55eeecd747b06150e4e86215fc35a94c990572767ac3238a8bb9742c4450ec6",
+    "matrix_margin720_qf30.jpg": "d8c464a95ed6b375531c4f416d6df8471d200afc40187f684590cb9b7a91fba1",
+    "matrix_margin720_qf35.jpg": "d6485d08df29e94b9ab172a29c7285ddabe3d26e271c4c0f797cb372891a0b0c",
+    "matrix_margin720_qf40.jpg": "dfa170c9f4f8b1cc8d600ae8260b11ba5ca3a1155ee0f75e97caa708ec2312b1",
+    "matrix_margin720_qf45.jpg": "50a7c68a7c05aec97449269724bedfe4e922368f6c1258d811d412de5dec92dd",
+    "matrix_margin720_qf50.jpg": "d71570d6e4e60d8d5258bd7ac689421ee5115f40c314c203bb29cd985939466c",
+    "matrix_margin720_qf55.jpg": "83185c03e9aa083f5148a83a1ae7bed428538485e5a0464c75ef7093fff796d5",
+    "matrix_margin720_qf60.jpg": "1f7dab4944b333a016f19c29d37afea46710d8435f7f73076aec848db97054de",
+    "matrix_margin720_qf65.jpg": "bfd0734be537626a86a492348e9176ca5d92b32d42cf39d636734f600a3a715f",
+    "matrix_margin720_qf70.jpg": "e93cd63401819efa0599859aeadeb4be24a6782ec0bed1501ae1f9b06e0d0f5d",
+    "matrix_margin720_qf75.jpg": "636efb9de319ffd6054da784d2e1565ca3946fa3a7886afa87796ca770a4e67b",
+    "matrix_margin720_qf80.jpg": "1ec71d5eca163bfae80bcde519ca830cdef93abb61e5ce6d6fc680b38dce0c45",
+    "matrix_margin720_qf85.jpg": "98d6055e27a4f04942101eb10edc14cae324ba34f4c714073106e2da34f8e622",
+    "matrix_margin720_qf90.jpg": "b471afb2e92c3912f7f3788f5d659252e9f4dff7ee1e9168d3b286048eb03d85",
+    "matrix_margin720_qf95.jpg": "468dba3d9818138360618fcecc7e89248f9177ead3f6d08d8d6c0aa84ba01559",
+    "ori_img.jpeg": "17bed8cfeb5534351d2f35d4addd9407e0c0132132444276a0f826c7ae9923c2",
+    "results.csv": "44c748d7fe691da862c389f9fb543ca1d25ff5bd53c9092229705ff5f15563af"
+  }
+}

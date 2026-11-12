@@ -1,3 +1,5 @@
+> **2026-11-12 使用者更新：** 明確授權以提供的 Hwang et al. 論文處理 d1=90 在 QF5–10 的 BER 問題，覆蓋以下禁止 QF<15 研究／新增候選的舊限制。本輪有限三候選均未改善 QF5，未採用為修復；保留 G6 與歷史證據。方案與範圍見 [低 QF 實驗紀錄](PAPER_LOW_QF_PLAN.md)。
+
 > **CURRENT CODEX TASK (2026-11-08):** [docs/RESEARCH_NEXT_PHASE.md](RESEARCH_NEXT_PHASE.md) is authoritative. BER G6 (36,20)→(90,20) is complete; **implement only paired PSNR QF15 + optional no-attack PSNR**, tests, evidence, and a clear trade-off report. See [the complete Codex prompt](PROMPT_CODEX_PSNR.md). Do **not** redo candidate search or change d2. Older tasks below are archived historical context and may contain stale requests.
 
 # Codex 交接｜新原圖與 QF=x 優先
