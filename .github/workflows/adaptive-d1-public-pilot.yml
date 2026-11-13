@@ -1,0 +1,41 @@
+name: Adaptive d1 real-JPEG public-image pilot
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - research/pso-literature-objective-design-20261113
+    paths:
+      - '.github/workflows/adaptive-d1-public-pilot.yml'
+jobs:
+  real-jpeg-pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned watermark and image dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy==1.26.4 Pillow==10.4.0 scipy==1.13.1 scikit-image==0.24.0 opencv-python-headless==4.10.0.84 PyWavelets==1.6.0 pytest==8.3.3
+          python -m pip install 'git+https://github.com/guofei9987/blind_watermark.git@322c90dc02d45644692095b34d3a6b735b6edbd8'
+      - name: Generate reproducible public sample images
+        run: |
+          python -m experiments.adaptive_d1_public_image_corpus --output-dir /tmp/adaptive-d1-public
+          mkdir -p /tmp/adaptive-d1-pilot-input
+          cp /tmp/adaptive-d1-public/astronaut.png /tmp/adaptive-d1-pilot-input/
+          cp /tmp/adaptive-d1-public/chelsea.png /tmp/adaptive-d1-pilot-input/
+          cp /tmp/adaptive-d1-public/coffee.png /tmp/adaptive-d1-pilot-input/
+      - name: Run unit tests
+        run: python -m pytest -q tests/test_adaptive_d1_multimage_grid.py tests/test_adaptive_d1_adaptive_regions.py
+      - name: Real watermark embedding and JPEG QF 5-10 pilot
+        run: |
+          python -m experiments.adaptive_d1_multimage_grid --input-dir /tmp/adaptive-d1-pilot-input --output-dir /tmp/adaptive-d1-pilot-results --d1-start 1 --d1-stop 24
+      - name: Upload pilot BER and PSNR outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: adaptive-d1-real-jpeg-pilot
+          path: /tmp/adaptive-d1-pilot-results
+          if-no-files-found: warn
