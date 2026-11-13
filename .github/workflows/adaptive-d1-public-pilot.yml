@@ -6,6 +6,9 @@ on:
       - research/pso-literature-objective-design-20261113
     paths:
       - '.github/workflows/adaptive-d1-public-pilot.yml'
+      - 'experiments/adaptive_d1_multimage_grid.py'
+      - 'experiments/adaptive_d1_grid.py'
+      - 'experiments/adaptive_d1_public_image_corpus.py'
 jobs:
   real-jpeg-pilot:
     runs-on: ubuntu-latest
