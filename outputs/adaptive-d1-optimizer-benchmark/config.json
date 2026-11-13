@@ -1,0 +1,27 @@
+{
+  "oracle_csv": "outputs\\adaptive-d1-grid-qf5-qf10-d1-1-150\\per_d1.csv",
+  "domain": [
+    1,
+    150
+  ],
+  "objective": "model_b_lambda_0_5",
+  "budget": 24,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "methods": [
+    "random",
+    "pso",
+    "de",
+    "bo"
+  ]
+}
