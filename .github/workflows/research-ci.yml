@@ -24,6 +24,9 @@ jobs:
         run: |
           python --version
           python -m pip install -r requirements.txt
+          # The multi-image test imports the real watermark/JPEG pipeline at collection time.
+          python -m pip install opencv-python==4.13.0.92 PyWavelets==1.10.0 setuptools==84.2.1
+          python -m pip install --no-build-isolation 'blind_watermark @ git+https://github.com/guofei9987/blind_watermark.git@322c90dc02d45644692095b34d3a6b735b6edbd8'
           python -m pip check
           python -m pip freeze
           python -m PIL
