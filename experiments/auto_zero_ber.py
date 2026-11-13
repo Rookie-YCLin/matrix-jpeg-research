@@ -80,24 +80,39 @@ def _next_candidate(seen: Mapping[int, Measurement], step: int) -> tuple[int, st
             raise RuntimeError('No unmeasured candidate remains')
         return remaining[0], 'remaining_gap'
 
+    feasible = [m for m in seen.values() if m.feasible]
+    incumbent = min(feasible, key=lambda m: (-m.psnr_db, m.d1))
+    # Lower d1 often offers higher PSNR, but this is a search preference,
+    # never a claim that BER or PSNR is globally monotonic.
+    lower_gaps = [t for t in mids if t[2] < incumbent.d1]
+
     if (step + 1) % _EXPLORE_PERIOD == 0:
-        a, b, d, _ = max(mids, key=lambda v: (v[1] - v[0], -v[0]))
-        return d, 'explore_largest_gap'
+        pool = lower_gaps or mids
+        a, b, d, _ = max(pool, key=lambda v: (v[1] - v[0], v[0]))
+        return d, 'explore_lower_unmeasured_gap' if lower_gaps else 'explore_largest_gap'
 
     def priority(item: tuple[int, int, int, int]) -> tuple[float, ...]:
         a, b, d, tier = item
         width = b - a
-        if tier == 0:
-            left_candidate = a if seen[a].feasible else b
-            return (0, left_candidate, -width, d)
-        if tier == 1:
-            return (1, a, -width, d)
-        violation = min(seen[a].worst_ber, seen[b].worst_ber)
-        return (2, violation, -width, a)
+        lower = d < incumbent.d1
+        if tier == 0 and lower:
+            return (0, b, -width, d)
+        if tier == 2 and lower:
+            # An unmeasured interval can hide a feasible island even when
+            # *both* observed endpoints fail (critical on the coffee image).
+            return (1, -width, -b, d)
+        if tier == 1 and lower:
+            return (2, a, -width, d)
+        if lower:
+            return (3, -width, a, d)
+        return (4 + tier, -width, a, d)
 
     a, b, d, tier = min(mids, key=priority)
-    return d, ('refine_feasibility_transition' if tier == 0 else
-               'refine_feasible_region' if tier == 1 else 'probe_failed_region')
+    if tier == 0:
+        return d, 'refine_feasibility_transition'
+    if tier == 2 and d < incumbent.d1:
+        return d, 'search_disconnected_island'
+    return d, 'refine_or_explore'
 
 
 def select_step(evaluate: Callable[[int], Mapping[str, object]]) -> SearchOutcome:
