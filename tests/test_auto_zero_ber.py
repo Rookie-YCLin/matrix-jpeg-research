@@ -23,7 +23,7 @@ def test_automatic_candidates_unique_and_budget():
         m.psnr_db for m in result.measurements if m.feasible
     )
     assert result.measurements[0].d1 == 720
-    assert 'explore_largest_gap' in result.reasons
+    assert any(reason.startswith('explore_') for reason in result.reasons)
 
 
 def test_unqualified_image_stops_at_eligibility():
@@ -74,3 +74,18 @@ def test_disconnected_feasible_island_and_anchor_guarantee():
     assert islands(outcome.best_d1)['worst_ber'] == 0.
     assert outcome.best_d1 in {m.d1 for m in outcome.measurements}
     assert outcome.best_psnr_db >= islands(720)['png_psnr_db']
+
+
+def test_lower_disconnected_island_found_at_same_budget():
+    # Synthetic regression guard inspired by the observed coffee failure;
+    # this is not replay of real JPEG measurements.
+    def landscape(d):
+        return {
+            'worst_ber': 0.0 if 97 <= d <= 107 or d >= 163 else .9,
+            'clean_errors': 0,
+            'png_psnr_db': 50 - d / 20,
+        }
+    result = select_step(landscape)
+    assert result.best_d1 == 97
+    assert result.evaluations == 36
+    assert 'search_disconnected_island' in result.reasons
