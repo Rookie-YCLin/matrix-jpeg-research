@@ -1,0 +1,63 @@
+name: Automatic zero-BER d1 real-JPEG pilot
+
+on:
+  pull_request:
+    paths:
+      - 'experiments/auto_zero_ber.py'
+      - 'experiments/auto_zero_ber_pilot.py'
+      - 'tests/test_auto_zero_ber.py'
+      - '.github/workflows/auto-zero-ber-pilot.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  policy-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install test dependency
+        run: python -m pip install pytest==8.3.3
+      - name: Test optimizer without JPEG
+        run: python -m pytest -q tests/test_auto_zero_ber.py
+
+  real-jpeg:
+    needs: policy-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [astronaut, chelsea, coffee]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned image dependencies
+        run: |
+          python -m pip install numpy==1.26.4 Pillow==10.4.0 scipy==1.13.1 scikit-image==0.24.0 opencv-python-headless==4.10.0.84 PyWavelets==1.6.0 pytest==8.3.3
+          python -m pip install --no-build-isolation 'git+https://github.com/guofei9987/blind_watermark.git@322c90dc02d45644692095b34d3a6b735b6edbd8'
+      - name: Generate original public images
+        run: python -m experiments.adaptive_d1_public_image_corpus --output-dir /tmp/auto-images
+      - name: Run automatic nine-QF JPEG search (no d1 arguments)
+        run: |
+          mkdir -p /tmp/auto-input
+          cp /tmp/auto-images/${{ matrix.image }}.png /tmp/auto-input/
+          python -m experiments.auto_zero_ber_pilot --input-dir /tmp/auto-input --output-dir /tmp/auto-results
+      - name: Archive complete trace and real JPEG measurements
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: auto-zero-ber-${{ matrix.image }}
+          path: /tmp/auto-results
+          if-no-files-found: warn
+          retention-days: 90
