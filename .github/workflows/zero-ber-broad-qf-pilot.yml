@@ -1,6 +1,11 @@
 name: Zero-BER broad-QF real JPEG pilot
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/zero-ber-broad-qf-pilot.yml'
+      - 'experiments/adaptive_d1_zero_ber_pilot.py'
+      - 'experiments/adaptive_d1_zero_ber_selection.py'
   push:
     branches:
       - research/pso-literature-objective-design-20261113
@@ -12,6 +17,9 @@ jobs:
   broad-qf:
     runs-on: ubuntu-latest
     timeout-minutes: 180
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
     strategy:
       fail-fast: false
       matrix:
