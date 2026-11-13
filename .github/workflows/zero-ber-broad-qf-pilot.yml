@@ -12,6 +12,10 @@ jobs:
   broad-qf:
     runs-on: ubuntu-latest
     timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [astronaut, chelsea, coffee]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -28,14 +32,12 @@ jobs:
       - name: Real JPEG zero-BER broad-QF experiment
         run: |
           mkdir -p /tmp/zero-ber-input
-          cp /tmp/zero-ber-images/astronaut.png /tmp/zero-ber-input/
-          cp /tmp/zero-ber-images/chelsea.png /tmp/zero-ber-input/
-          cp /tmp/zero-ber-images/coffee.png /tmp/zero-ber-input/
+          cp /tmp/zero-ber-images/${{ matrix.image }}.png /tmp/zero-ber-input/
           python -m experiments.adaptive_d1_zero_ber_pilot --input-dir /tmp/zero-ber-input --output-dir /tmp/zero-ber-results
       - name: Upload results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: zero-ber-broad-qf-results
+          name: zero-ber-broad-qf-${{ matrix.image }}
           path: /tmp/zero-ber-results
           if-no-files-found: warn
