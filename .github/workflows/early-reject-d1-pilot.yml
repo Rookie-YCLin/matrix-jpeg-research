@@ -1,0 +1,61 @@
+name: V2 zero-BER QF early-rejection experiment
+
+on:
+  pull_request:
+    paths:
+      - 'experiments/early_reject_policy.py'
+      - 'experiments/early_reject_d1_pilot.py'
+      - 'tests/test_early_reject_policy.py'
+      - '.github/workflows/early-reject-d1-pilot.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pure-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install pytest==8.3.3
+      - run: python -m pytest -q tests/test_early_reject_policy.py tests/test_auto_zero_ber.py
+
+  real-jpeg:
+    needs: pure-policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [astronaut, chelsea, coffee]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install same pinned dependencies as V2 pilot
+        run: |
+          python -m pip install numpy==1.26.4 Pillow==10.4.0 scipy==1.13.1 scikit-image==0.24.0 opencv-python-headless==4.10.0.84 PyWavelets==1.6.0 pytest==8.3.3
+          python -m pip install --no-build-isolation 'git+https://github.com/guofei9987/blind_watermark.git@322c90dc02d45644692095b34d3a6b735b6edbd8'
+      - name: Generate original three public images
+        run: python -m experiments.adaptive_d1_public_image_corpus --output-dir /tmp/qf-early-input
+      - name: Run real JPEG V2 with QF first-failure screening
+        run: |
+          mkdir -p /tmp/single-image
+          cp /tmp/qf-early-input/${{ matrix.image }}.png /tmp/single-image/
+          python -m experiments.early_reject_d1_pilot --input-dir /tmp/single-image --output-dir /tmp/qf-early-results
+      - name: Archive observed QFs and any skipped-QF markers
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qf-early-${{ matrix.image }}
+          path: /tmp/qf-early-results
+          if-no-files-found: warn
+          retention-days: 90
