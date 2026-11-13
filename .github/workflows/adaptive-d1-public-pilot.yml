@@ -9,10 +9,14 @@ on:
       - 'experiments/adaptive_d1_multimage_grid.py'
       - 'experiments/adaptive_d1_grid.py'
       - 'experiments/adaptive_d1_public_image_corpus.py'
+concurrency:
+  group: adaptive-d1-public-pilot-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   real-jpeg-pilot:
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    # Dedicated JPEG/BER pilot: independent of the larger Research CI.
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
