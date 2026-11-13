@@ -7,6 +7,7 @@ import argparse
 import csv
 import json
 from pathlib import Path
+from dataclasses import asdict
 import tempfile
 import numpy as np
 from PIL import Image
@@ -26,16 +27,27 @@ def run(input_dir: Path, output_dir: Path) -> None:
         folder = output_dir / source.stem
         folder.mkdir(exist_ok=True)
         rows = []
+        per_qf_rows = []
         with tempfile.TemporaryDirectory() as tmp:
             for d1 in D1_VALUES:
-                result = grid.summarise(grid.evaluate_d1(rgb, d1, Path(tmp)))[0]
+                measurements = grid.evaluate_d1(rgb, d1, Path(tmp))
+                result = grid.summarise(measurements)[0]
                 rows.append(result)
+                per_qf_rows.extend(asdict(item) for item in measurements)
                 print(f"{source.name} d1={d1} worst_ber={result['worst_ber']:.5f}", flush=True)
                 with (folder / "per_d1.csv").open("w", newline="", encoding="utf-8") as handle:
                     writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
                     writer.writeheader()
                     writer.writerows(rows)
-        report = {"image": source.name, "qfs": QFS, "d1_values": D1_VALUES, **select(rows)}
+        with (folder / "per_qf.csv").open("w", newline="", encoding="utf-8") as handle:
+            writer = csv.DictWriter(handle, fieldnames=list(per_qf_rows[0]))
+            writer.writeheader()
+            writer.writerows(per_qf_rows)
+        baselines = {str(d): next((row for row in rows if row["d1"] == d), None) for d in (36, 90, 720)}
+        report = {"image": source.name, "qfs": QFS, "d1_values": D1_VALUES,
+                  "baseline_d1_36_90_720": baselines,
+                  "note": "Sparse-grid feasibility pilot; absence of zero BER does not prove global infeasibility.",
+                  **select(rows)}
         (folder / "zero_ber_result.json").write_text(json.dumps(report, indent=2) + "\n")
         print(json.dumps(report), flush=True)
 
