@@ -1,0 +1,48 @@
+name: Automatic zero-BER held-out image pilot
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/auto-zero-ber-heldout.yml'
+      - 'experiments/auto_zero_ber.py'
+      - 'experiments/auto_zero_ber_pilot.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  held-out-real-jpeg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [camera, coins, moon, rocket]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install identical pinned image dependencies
+        run: |
+          python -m pip install numpy==1.26.4 Pillow==10.4.0 scipy==1.13.1 scikit-image==0.24.0 opencv-python-headless==4.10.0.84 PyWavelets==1.6.0 pytest==8.3.3
+          python -m pip install --no-build-isolation 'git+https://github.com/guofei9987/blind_watermark.git@322c90dc02d45644692095b34d3a6b735b6edbd8'
+      - name: Generate preregistered held-out image corpus
+        run: python -m experiments.adaptive_d1_public_image_corpus --output-dir /tmp/heldout-corpus
+      - name: Evaluate frozen V2 automatically without any d1 configuration
+        run: |
+          mkdir -p /tmp/heldout-input
+          cp /tmp/heldout-corpus/${{ matrix.image }}.png /tmp/heldout-input/
+          python -m experiments.auto_zero_ber_pilot --input-dir /tmp/heldout-input --output-dir /tmp/heldout-results
+      - name: Archive eligible and ineligible image evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: heldout-v2-${{ matrix.image }}
+          path: /tmp/heldout-results
+          if-no-files-found: warn
+          retention-days: 90
