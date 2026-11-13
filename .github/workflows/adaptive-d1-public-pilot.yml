@@ -1,6 +1,12 @@
 name: Adaptive d1 real-JPEG public-image pilot
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/adaptive-d1-public-pilot.yml'
+      - 'experiments/adaptive_d1_multimage_grid.py'
+      - 'experiments/adaptive_d1_grid.py'
+      - 'experiments/adaptive_d1_public_image_corpus.py'
   push:
     branches:
       - research/pso-literature-objective-design-20261113
