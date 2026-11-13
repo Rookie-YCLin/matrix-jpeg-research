@@ -1,0 +1,36 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.14, pytest-9.2.0, pluggy-1.7.0 -- <project>\.venv-r1\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: <project>
+plugins: platformdirs-4.14.5
+collecting ... collected 27 items
+
+tests/test_comparison.py::test_signed_projection_matches_frobenius_inner_product PASSED [  3%]
+tests/test_comparison.py::test_comparison_recomputes_measurements_from_each_jpeg[fresh] PASSED [  7%]
+tests/test_comparison.py::test_comparison_plots_use_csv_columns[fresh] PASSED [ 11%]
+tests/test_comparison.py::test_comparison_recomputes_measurements_from_each_jpeg[archived] PASSED [ 14%]
+tests/test_comparison.py::test_comparison_plots_use_csv_columns[archived] PASSED [ 18%]
+tests/test_experiment.py::test_output_manifest_and_images PASSED         [ 22%]
+tests/test_experiment.py::test_jpeg_metrics_and_spectra_use_decoded_pixels PASSED [ 25%]
+tests/test_r1.py::test_orthonormal_dct_matrix PASSED                     [ 29%]
+tests/test_r1.py::test_dct_inverse_and_parseval PASSED                   [ 33%]
+tests/test_r1.py::test_rank_one_blocks_agree_with_direct_2d_dct PASSED   [ 37%]
+tests/test_r1.py::test_invalid_weight_shape_sign_or_total_rejected[bad0] PASSED [ 40%]
+tests/test_r1.py::test_invalid_weight_shape_sign_or_total_rejected[bad1] PASSED [ 44%]
+tests/test_r1.py::test_invalid_weight_shape_sign_or_total_rejected[bad2] PASSED [ 48%]
+tests/test_r1.py::test_sensitivity_hand_calculation PASSED               [ 51%]
+tests/test_r1.py::test_asymmetric_dqt_distinguishes_zigzag_and_transpose PASSED [ 55%]
+tests/test_r1.py::test_archived_m2_jpeg_table[40] PASSED                 [ 59%]
+tests/test_r1.py::test_archived_m2_jpeg_table[60] PASSED                 [ 62%]
+tests/test_r1.py::test_archived_m2_jpeg_table[80] PASSED                 [ 66%]
+tests/test_r1.py::test_archived_m2_jpeg_table[95] PASSED                 [ 70%]
+tests/test_r1.py::test_wrong_input_rejected_before_output PASSED         [ 74%]
+tests/test_r1.py::test_full_r1_csv_weights_and_replay PASSED             [ 77%]
+tests/test_svd.py::test_rectangular_rank_one_sum[matrix0] PASSED         [ 81%]
+tests/test_svd.py::test_rectangular_rank_one_sum[matrix1] PASSED         [ 85%]
+tests/test_svd.py::test_zero_matrix PASSED                               [ 88%]
+tests/test_svd.py::test_out_of_range_rank[-1] PASSED                     [ 92%]
+tests/test_svd.py::test_out_of_range_rank[3] PASSED                      [ 96%]
+tests/test_svd.py::test_validation_rejects_inconsistent_factors PASSED   [100%]
+
+============================= 27 passed in 11.67s =============================
