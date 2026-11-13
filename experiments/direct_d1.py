@@ -47,9 +47,10 @@ def _children(cell: Cell) -> list[Cell]:
     if n == 2:
         parts = [(cell.lo, cell.lo), (cell.hi, cell.hi)]
     else:
-        a = cell.lo + n // 3
-        b = cell.lo + (2 * n) // 3
-        parts = [(cell.lo, a - 1), (a, b - 1), (b, cell.hi)]
+        flank = n // 3
+        a = cell.lo + flank
+        b = cell.hi - flank
+        parts = [(cell.lo, a - 1), (a, b), (b + 1, cell.hi)]
     children = [Cell(a, b, (a + b) // 2) for a, b in parts]
     if not any(child.center == cell.center for child in children):
         raise AssertionError('A split must retain the old center sample')
@@ -96,7 +97,6 @@ def _surrogate_probe(seen: Mapping[int, Measurement]) -> int | None:
     Only use triples already verified feasible. Model predictions are merely
     candidate proposals, not substitutions for JPEG evaluations.
     """
-    points = sorted(d for d, m in seen.items() if m.feasible)
     candidates = []
     best_score = min(_score(m) for m in seen.values() if m.feasible)
     # Do not bridge an infeasible observed point between feasible samples.
