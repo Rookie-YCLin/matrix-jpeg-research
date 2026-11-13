@@ -78,7 +78,7 @@ def run(input_dir: Path, output_dir: Path) -> None:
             'image': source.name,
             'source_sha256': sha256(source.read_bytes()).hexdigest(),
             'shape_rgb': list(rgb.shape),
-            'method': 'auto_zero_ber_v1',
+            'method': 'auto_zero_ber_v2',
             'status': outcome.status,
             'qfs': list(QFS),
             'fixed_d2': grid.D2,
