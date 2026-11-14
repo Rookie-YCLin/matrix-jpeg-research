@@ -1,4 +1,4 @@
-"""Paired extreme secondary quantizer study, pinned to upstream and archived payload."""
+"""Three-arm quantization step comparison with the pinned original watermark pipeline."""
 from __future__ import annotations
 import csv, json
 from pathlib import Path
@@ -11,7 +11,7 @@ from PIL import Image
 from experiments import ori_qf_scan as fixed
 from experiments.svd_qim_psnr import rgb_psnr
 
-ARMS = {"original_d2_20":(36,20), "extreme_d2_720":(36,720)}
+ARMS = {"baseline_36_20":(36,20), "extreme_d1_720_d2_20":(720,20), "extreme_d1_36_d2_720":(36,720)}
 QFS = (5,10,15,20,25,50,95)
 
 def decode(rgb, d1, d2):
