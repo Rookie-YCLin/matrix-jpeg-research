@@ -21,6 +21,7 @@ from experiments import adaptive_d1_grid as grid
 from experiments.adaptive_d1_zero_ber_pilot import QFS
 from experiments.auto_zero_ber import select_step as v2_select_step
 from experiments.constrained_bo_d1 import select_step as bo_select_step
+from experiments.constrained_bo_d1_v2 import select_step as bo_v2_select_step
 from experiments.early_reject_d1_pilot import evaluate_d1_early
 
 
@@ -51,17 +52,18 @@ def _run_method(rgb: np.ndarray, source: Path, folder: Path, method: str) -> dic
                   f"PSNR={row['png_psnr_db']:.4f}", flush=True)
             return row
 
-        result = bo_select_step(evaluate) if method == "bo" else v2_select_step(evaluate)
+        selector = {"bo": bo_select_step, "bo2": bo_v2_select_step, "v2": v2_select_step}[method]
+        result = selector(evaluate)
     wall = perf_counter() - started
     trace = []
     for i, (measurement, reason) in enumerate(
-        zip(result.observations if method == "bo" else result.measurements,
+        zip(result.observations if method in ("bo", "bo2") else result.measurements,
             result.reasons), 1
     ):
         row = per_d1[i - 1]
         assert measurement.d1 == row["d1"]
         verified = row["full_qf_verification"]
-        if method == "bo":
+        if method in ("bo", "bo2"):
             assert measurement.verified_feasible == verified
         else:
             assert measurement.feasible == verified
@@ -77,7 +79,7 @@ def _run_method(rgb: np.ndarray, source: Path, folder: Path, method: str) -> dic
         "image": source.name,
         "source_sha256": sha256(source.read_bytes()).hexdigest(),
         "shape_rgb": list(rgb.shape),
-        "method": "integer_constrained_bo_gp_eic" if method == "bo" else "v2_early_rejection",
+        "method": {"bo": "integer_constrained_bo_gp_eic_v1", "bo2": "failure_aware_gp_eic_v2", "v2": "v2_early_rejection"}[method],
         "status": result.status,
         "fixed_d2": grid.D2,
         "qfs": list(QFS),
@@ -96,7 +98,7 @@ def _run_method(rgb: np.ndarray, source: Path, folder: Path, method: str) -> dic
     return outcome
 
 
-def run(input_dir: Path, output_dir: Path, compare_v2: bool = False) -> None:
+def run(input_dir: Path, output_dir: Path, compare_v2: bool = False, bo_version: str = "v1") -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     sources = sorted(input_dir.glob("*.png"))
     if not sources:
@@ -107,7 +109,8 @@ def run(input_dir: Path, output_dir: Path, compare_v2: bool = False) -> None:
         with Image.open(source) as image:
             rgb = np.asarray(image.convert("RGB"), dtype=np.uint8)
         folder = output_dir / source.stem
-        bo = _run_method(rgb, source, folder / "bo", "bo")
+        method = {"v1": "bo", "v2": "bo2"}[bo_version]
+        bo = _run_method(rgb, source, folder / "bo", method)
         if compare_v2:
             v2 = _run_method(rgb, source, folder / "v2", "v2")
             comparison = {
@@ -134,8 +137,9 @@ def main() -> None:
     parser.add_argument("--input-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--compare-v2", action="store_true")
+    parser.add_argument("--bo-version", choices=("v1", "v2"), default="v1")
     args = parser.parse_args()
-    run(args.input_dir, args.output_dir, compare_v2=args.compare_v2)
+    run(args.input_dir, args.output_dir, compare_v2=args.compare_v2, bo_version=args.bo_version)
 
 
 if __name__ == "__main__":
