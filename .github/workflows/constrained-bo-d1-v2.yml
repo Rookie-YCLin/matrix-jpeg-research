@@ -1,0 +1,63 @@
+name: CBO V2 paired real-JPEG evidence
+
+on:
+  pull_request:
+    paths:
+      - 'experiments/constrained_bo_d1_v2.py'
+      - 'experiments/constrained_bo_d1_pilot.py'
+      - 'tests/test_constrained_bo_d1_v2.py'
+      - '.github/workflows/constrained-bo-d1-v2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  policy-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install GP numerical dependencies
+        run: python -m pip install numpy==1.26.4 scipy==1.13.1 scikit-learn==1.8.0 pytest==8.3.3
+      - name: Run CBO policy and legacy invariants
+        run: python -m pytest -q tests/test_constrained_bo_d1.py tests/test_constrained_bo_d1_v2.py tests/test_auto_zero_ber.py tests/test_early_reject_policy.py
+
+  paired-real-jpeg:
+    needs: policy-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [astronaut, chelsea, coffee, camera, coins, moon, rocket]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install original pinned JPEG and watermark dependencies plus GP
+        run: |
+          python -m pip install numpy==1.26.4 Pillow==10.4.0 scipy==1.13.1 scikit-learn==1.8.0 scikit-image==0.24.0 opencv-python-headless==4.10.0.84 PyWavelets==1.6.0 pytest==8.3.3
+          python -m pip install --no-build-isolation 'git+https://github.com/guofei9987/blind_watermark.git@322c90dc02d45644692095b34d3a6b735b6edbd8'
+      - name: Generate same public images as V2
+        run: python -m experiments.adaptive_d1_public_image_corpus --output-dir /tmp/bo2-input
+      - name: Compare CBO V2 vs original V2 using identical JPEG evaluator and 36 candidates
+        run: |
+          mkdir -p /tmp/bo2-single
+          cp /tmp/bo2-input/${{ matrix.image }}.png /tmp/bo2-single/
+          python -m experiments.constrained_bo_d1_pilot --input-dir /tmp/bo2-single --output-dir /tmp/bo2-results --bo-version v2 --compare-v2
+      - name: Preserve per-QF, per-d1, trace, and paired comparison even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cbov2-${{ matrix.image }}
+          path: /tmp/bo2-results
+          if-no-files-found: warn
+          retention-days: 90
