@@ -1,0 +1,70 @@
+name: SVD-QIM exact optimality certificate and real JPEG verification
+
+on:
+  pull_request:
+    paths:
+      - 'experiments/spectral_certificate_qim.py'
+      - 'experiments/exact_rgb_objective.py'
+      - 'experiments/spectral_certificate_qim_pilot.py'
+      - 'tests/test_spectral_certificate_qim.py'
+      - 'tests/test_exact_rgb_objective.py'
+      - '.github/workflows/spectral-certificate-qim.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mathematical-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pure mathematical testing dependencies
+        run: python -m pip install numpy==1.26.4 scipy==1.13.1 scikit-learn==1.8.0 pytest==8.3.3
+      - name: Check Frobenius identity, global optimality, adversarial constraints
+        run: python -m pytest -q tests/test_spectral_certificate_qim.py
+
+  pinned-upstream-and-real-jpeg:
+    needs: mathematical-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 170
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [moon, coffee]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install exact pinned watermark/JPEG dependencies
+        run: |
+          python -m pip install numpy==1.26.4 Pillow==10.4.0 scipy==1.13.1 scikit-learn==1.8.0 scikit-image==0.24.0 opencv-python-headless==4.10.0.84 PyWavelets==1.6.0 pytest==8.3.3
+          python -m pip install --no-build-isolation 'git+https://github.com/guofei9987/blind_watermark.git@322c90dc02d45644692095b34d3a6b735b6edbd8'
+      - name: Bit-for-bit match original upstream PNG encoding
+        run: python -m pytest -q tests/test_exact_rgb_objective.py
+      - name: Prepare public unmodified study images
+        run: |
+          mkdir -p /tmp/cert-input
+          python -c "from skimage import data; from PIL import Image; import numpy as np; a=np.asarray(getattr(data, '${{ matrix.image }}')(),dtype=np.uint8); a=np.repeat(a[:,:,None],3,axis=2) if a.ndim==2 else a; Image.fromarray(a,'RGB').save('/tmp/cert-input/${{ matrix.image }}.png')"
+      - name: Run exact RGB PSNR finite-domain certificate versus existing V2
+        run: |
+          python -m experiments.spectral_certificate_qim_pilot --objective rgb_mse --input-dir /tmp/cert-input --output-dir /tmp/cert-results --compare-v2
+      - name: Archive full 720-point ranked objective, JPEG evidence and marked PNG
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: certificate-${{ matrix.image }}
+          path: /tmp/cert-results
+          if-no-files-found: warn
+          retention-days: 90
