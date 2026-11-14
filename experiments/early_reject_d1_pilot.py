@@ -88,6 +88,8 @@ def evaluate_d1_early(
             'png_mse_rgb_8bit': png_mse,
             'jpeg_attacks': len(records),
             'tested_qfs': ','.join(str(q) for q in checked),
+            # Actual measured per-QF bit errors; never impute skipped attacks.
+            'qf_error_counts': ','.join(str(r.errors) for r in records),
             'skipped_qfs': ','.join(str(q) for q in QFS if q not in checked),
             'full_qf_verification': verified,
             'rejected_at_qf': (
