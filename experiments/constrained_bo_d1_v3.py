@@ -1,4 +1,4 @@
-"""CBO V3: partial-QF-aware constrained BO for integer SVD-QIM d1.
+"""CBO V3.1: partial-QF-aware BO with bounded repeated-failure expenditure.
 
 Research variant. The objective and the *joint* feasibility probability are
 modelled separately; per-QF evidence is used for targeted exploration, NEVER
@@ -122,6 +122,49 @@ def _qf_information(candidates: np.ndarray, observations: tuple[Evidence, ...]):
     return np.mean(scores, axis=0)
 
 
+def _failure_saturation(candidates: np.ndarray, observations: tuple[Evidence, ...]):
+    """Limit repeated EI expenditure after *multiple* nearby failures at one QF.
+
+    A single failed neighbor is never penalized: a narrow feasible island may
+    be just one integer away. Once >=3 local observations fail at the SAME
+    observed first-failing QF, EI is progressively attenuated in that region.
+    Fully verified nearby successes offset the penalty. No integer is removed
+    from the domain or excluded from QF/gap exploration. This is an explicitly
+    heuristic finite-budget safeguard, not a calibrated feasibility posterior.
+    """
+    successes = np.array(
+        [e.observation.d1 for e in observations if e.observation.verified_feasible],
+        dtype=float,
+    )
+    nearby_successes = (
+        np.sum(np.abs(candidates[:, None] - successes[None, :]) <= 12, axis=1)
+        if len(successes) else np.zeros(len(candidates), dtype=int)
+    )
+    failure_groups: dict[int, list[int]] = {}
+    for item in observations:
+        if item.observation.verified_feasible:
+            continue
+        if item.observation.clean_errors:
+            first_failed = -1  # clean extraction is a separate hard constraint.
+        else:
+            failed_qfs = [
+                q for q, count in zip(QFS, item.qf_errors)
+                if count is not None and count > 0
+            ]
+            if not failed_qfs:
+                raise ValueError("Rejected candidate without measured failure")
+            first_failed = failed_qfs[0]
+        failure_groups.setdefault(first_failed, []).append(item.observation.d1)
+
+    local_max = np.zeros(len(candidates), dtype=int)
+    for values in failure_groups.values():
+        x = np.asarray(values, dtype=float)
+        counts = np.sum(np.abs(candidates[:, None] - x[None, :]) <= 12, axis=1)
+        local_max = np.maximum(local_max, counts)
+    excess = np.maximum(local_max - (2 + 2 * nearby_successes), 0)
+    return np.power(0.02, excess.astype(float))
+
+
 def _qf_explorer(candidates: np.ndarray, observed: tuple[Evidence, ...],
                  mean: np.ndarray, std: np.ndarray) -> int:
     """Probe uncertain partial constraints where PNG quality might improve."""
@@ -207,10 +250,10 @@ def select_step(evaluate: Callable[[int], Mapping[str, object]],
             reason = "partial_qf_information_exploration"
         else:
             # Standard feasibility-weighted EI; NO power-of-four,
-            # failure-neighbour penalty, or independent QF product.
-            scores = ei * joint_p
+            # one-neighbour repulsion, or independent QF product.
+            scores = ei * joint_p * _failure_saturation(remaining, observed)
             if not np.any(scores > 1e-14):
-                scores = joint_p * (std + 0.05)
+                scores = joint_p * (std + 0.05) * _failure_saturation(remaining, observed)
             chosen = int(remaining[int(np.argmax(scores))])
             reason = "joint_constrained_ei"
         measure(chosen, reason)

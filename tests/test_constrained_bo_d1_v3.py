@@ -4,7 +4,7 @@ import pytest
 
 from experiments.constrained_bo_d1 import QFS
 from experiments.constrained_bo_d1_v3 import (
-    BOUNDS, INITIAL, _parse_evidence, _qf_information, select_step,
+    BOUNDS, INITIAL, _parse_evidence, _qf_information, _failure_saturation, select_step,
 )
 
 
@@ -100,3 +100,37 @@ def test_false_prefix_before_early_rejection_rejected():
 def test_invalid_budget(budget):
     with pytest.raises(ValueError):
         select_step(fake, budget=budget)
+
+
+def test_failure_saturation_needs_three_same_qf_local_failures():
+    rows = tuple(_parse_evidence(d, fake(d, feasible=False)) for d in (1, 2, 4, 16))
+    scores = _failure_saturation(np.array([3, 98], dtype=int), rows)
+    assert 0 < scores[0] < 0.1
+    assert scores[1] == 1.0
+
+    # One failed candidate is NOT sufficient reason to suppress a neighbor.
+    single = (_parse_evidence(99, fake(99, feasible=False)),)
+    assert _failure_saturation(np.array([96], dtype=int), single)[0] == 1.0
+
+
+def test_success_offsets_local_penalty_and_different_qf_failures_do_not_stack():
+    observations = tuple(_parse_evidence(d, fake(d, feasible=False)) for d in (95, 99, 100))
+    near = np.array([98], dtype=int)
+    assert _failure_saturation(near, observations)[0] < 1.0
+    with_success = observations + (_parse_evidence(96, fake(96, feasible=True)),)
+    assert _failure_saturation(near, with_success)[0] == 1.0
+
+    different_stages = (
+        _parse_evidence(95, fake(95, feasible=False, fail_qf=5)),
+        _parse_evidence(99, fake(99, feasible=False, fail_qf=10)),
+        _parse_evidence(100, fake(100, feasible=False, fail_qf=20)),
+    )
+    assert _failure_saturation(near, different_stages)[0] == 1.0
+
+
+def test_repeated_failed_low_d1_does_not_consume_entire_budget():
+    outcome = select_step(lambda d: fake(d, feasible=(96 <= d <= 98 or d >= 160)), budget=36)
+    low_failures = sum(o.d1 <= 15 and not o.verified_feasible for o in outcome.observations)
+    assert low_failures <= 11  # Guardrail, not evidence of image-level performance.
+    assert outcome.evaluations == 36
+    assert len({o.d1 for o in outcome.observations}) == 36
