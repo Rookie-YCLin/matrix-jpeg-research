@@ -22,6 +22,7 @@ from experiments.adaptive_d1_zero_ber_pilot import QFS
 from experiments.auto_zero_ber import select_step as v2_select_step
 from experiments.constrained_bo_d1 import select_step as bo_select_step
 from experiments.constrained_bo_d1_v2 import select_step as bo_v2_select_step
+from experiments.constrained_bo_d1_v3 import select_step as bo_v3_select_step
 from experiments.early_reject_d1_pilot import evaluate_d1_early
 
 
@@ -52,18 +53,18 @@ def _run_method(rgb: np.ndarray, source: Path, folder: Path, method: str) -> dic
                   f"PSNR={row['png_psnr_db']:.4f}", flush=True)
             return row
 
-        selector = {"bo": bo_select_step, "bo2": bo_v2_select_step, "v2": v2_select_step}[method]
+        selector = {"bo": bo_select_step, "bo2": bo_v2_select_step, "bo3": bo_v3_select_step, "v2": v2_select_step}[method]
         result = selector(evaluate)
     wall = perf_counter() - started
     trace = []
     for i, (measurement, reason) in enumerate(
-        zip(result.observations if method in ("bo", "bo2") else result.measurements,
+        zip(result.observations if method in ("bo", "bo2", "bo3") else result.measurements,
             result.reasons), 1
     ):
         row = per_d1[i - 1]
         assert measurement.d1 == row["d1"]
         verified = row["full_qf_verification"]
-        if method in ("bo", "bo2"):
+        if method in ("bo", "bo2", "bo3"):
             assert measurement.verified_feasible == verified
         else:
             assert measurement.feasible == verified
@@ -79,7 +80,7 @@ def _run_method(rgb: np.ndarray, source: Path, folder: Path, method: str) -> dic
         "image": source.name,
         "source_sha256": sha256(source.read_bytes()).hexdigest(),
         "shape_rgb": list(rgb.shape),
-        "method": {"bo": "integer_constrained_bo_gp_eic_v1", "bo2": "failure_aware_gp_eic_v2", "v2": "v2_early_rejection"}[method],
+        "method": {"bo": "integer_constrained_bo_gp_eic_v1", "bo2": "failure_aware_gp_eic_v2", "bo3": "partial_qf_joint_ei_v3", "v2": "v2_early_rejection"}[method],
         "status": result.status,
         "fixed_d2": grid.D2,
         "qfs": list(QFS),
@@ -109,7 +110,7 @@ def run(input_dir: Path, output_dir: Path, compare_v2: bool = False, bo_version:
         with Image.open(source) as image:
             rgb = np.asarray(image.convert("RGB"), dtype=np.uint8)
         folder = output_dir / source.stem
-        method = {"v1": "bo", "v2": "bo2"}[bo_version]
+        method = {"v1": "bo", "v2": "bo2", "v3": "bo3"}[bo_version]
         bo = _run_method(rgb, source, folder / "bo", method)
         if compare_v2:
             v2 = _run_method(rgb, source, folder / "v2", "v2")
@@ -137,7 +138,7 @@ def main() -> None:
     parser.add_argument("--input-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--compare-v2", action="store_true")
-    parser.add_argument("--bo-version", choices=("v1", "v2"), default="v1")
+    parser.add_argument("--bo-version", choices=("v1", "v2", "v3"), default="v1")
     args = parser.parse_args()
     run(args.input_dir, args.output_dir, compare_v2=args.compare_v2, bo_version=args.bo_version)
 
