@@ -4,7 +4,7 @@
 
 ## Design
 
-Pinned guofei9987/blind_watermark commit `322c90dc02d45644692095b34d3a6b735b6edbd8`. One original `ori_img.jpeg`, 32-bit fixed payload `10110010111001000101101011010001` is **not** necessarily the original payload, so use the payload explicitly specified in `experiments/ori_qf_scan.py` instead. Same passwords, fixed 4:4:4 Pillow JPEG encoding, QFs 5,10,15,20,25,50,95 and no-attack PNG.
+Pinned guofei9987/blind_watermark commit `322c90dc02d45644692095b34d3a6b735b6edbd8`. One original `ori_img.jpeg`, fixed 32-bit payload `10110010111001000101101011010001` as specified in `experiments/ori_qf_scan.py`. Same passwords, fixed 4:4:4 Pillow JPEG encoding, QFs 5,10,15,20,25,50,95 and no-attack PNG.
 
 Six arms: common mode d1=36 and 90 with d2=0 or 20; fast mode d1=36 and 90 with d2=0. In fast mode d2 is ignored by the upstream implementation. Each arm uses the same original bit pattern and blind extraction.
 
