@@ -10,7 +10,7 @@ from PIL import Image
 from experiments import ori_qf_scan as fixed
 from experiments.svd_qim_psnr import rgb_psnr
 
-ARMS={"d1_36_d2_0":(36,0),"d1_0_d2_20":(0,20),"d1_720_d2_720":(720,720)}
+ARMS={"d1_36_d2_0":(36,0),"d1_0_d2_20":(0,20),"d1_720_d2_720":(720,720),"d1_0_d2_720":(0,720),"d1_720_d2_0":(720,0)}
 QFS=(5,10,15,20,25,50,95)
 
 def watermark(d1,d2):
