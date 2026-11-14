@@ -161,6 +161,7 @@ def select_certified(
     evaluate: Callable[[int], Mapping[str, object]],
     *,
     max_evaluations: int = len(DOMAIN),
+    objective: str = "spectral",
 ) -> SpectralCertificate:
     """Return the global spectral optimum when feasible, never a GP prediction.
 
@@ -171,6 +172,8 @@ def select_certified(
     If the budget stops before a success, return *uncertified* without claiming
     infeasibility; full 720-step exhaustion is required to prove nonexistence.
     """
+    if objective not in ("spectral", "rgb_mse"):
+        raise ValueError("objective must be spectral or rgb_mse")
     if (type(max_evaluations) is not int or
         not 1 <= max_evaluations <= len(DOMAIN)):
         raise ValueError("max_evaluations must be in 1..720")
@@ -191,7 +194,7 @@ def select_certified(
         observations.append(parsed)
         if parsed["verified_feasible"]:
             return SpectralCertificate(
-                status="certified_spectral_global_optimum",
+                status=f"certified_{objective}_global_optimum",
                 best_d1=d1,
                 best_transform_energy=float(transform_energies[d1]),
                 best_png_psnr_db=parsed["png_psnr_db"],
