@@ -84,7 +84,9 @@ def _model_scores(
     return scores, pf
 
 
-def _interval_explorer(\n    observed: tuple[Observation, ...], *, prefer_disconnected: bool = False\n) -> int | None:
+def _interval_explorer(
+    observed: tuple[Observation, ...], *, prefer_disconnected: bool = False
+) -> int | None:
     """Probe unsampled interval midpoints without assuming BER monotonicity.
 
     A wide interval whose *both* endpoints fail can still contain a feasible
@@ -106,7 +108,10 @@ def _interval_explorer(\n    observed: tuple[Observation, ...], *, prefer_discon
         both_infeasible = not left.verified_feasible and not right.verified_feasible
         # Feasible transitions and previously unsampled infeasible-infeasible
         # interiors are both useful. A wide gap is only *uncertainty*, not proof.
-        if prefer_disconnected:\n            tier = 2 if both_infeasible else 1 if transition else 0\n        else:\n            tier = 2 if transition else 1 if both_infeasible else 0
+        if prefer_disconnected:
+            tier = 2 if both_infeasible else 1 if transition else 0
+        else:
+            tier = 2 if transition else 1 if both_infeasible else 0
         gaps.append((int(below), tier, width, -middle, middle))
     if not gaps:
         return None
@@ -134,7 +139,9 @@ def select_step(evaluate, *, budget: int = BUDGET) -> Result:
         observed = tuple(seen.values())
         round_index = len(seen) - len(INITIAL) + 1
         if round_index % _COVERAGE_PERIOD == 0:
-            point = _interval_explorer(\n                observed, prefer_disconnected=((round_index // _COVERAGE_PERIOD) % 2 == 0)\n            )
+            point = _interval_explorer(
+                observed, prefer_disconnected=((round_index // _COVERAGE_PERIOD) % 2 == 0)
+            )
             if point is not None and point in remaining:
                 measure(point, "interval_feasibility_exploration")
                 continue
