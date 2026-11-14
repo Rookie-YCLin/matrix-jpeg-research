@@ -29,6 +29,7 @@ from experiments.early_reject_d1_pilot import evaluate_d1_early
 from experiments.spectral_certificate_qim import (
     DOMAIN, QFS, upstream_spectral_profile, select_certified,
 )
+from experiments.exact_rgb_objective import exact_png_rgb_mse_profile
 from experiments.svd_qim_psnr import rgb_psnr
 from experiments.svd_qim_sweep import configured_instance, extract_with_qim
 
@@ -42,7 +43,7 @@ def _write_csv(path: Path, rows: list[dict]) -> None:
 
 
 def run_one(source: Path, folder: Path, *, max_evaluations: int = len(DOMAIN),
-            compare_v2: bool = False) -> dict:
+            compare_v2: bool = False, objective: str = "rgb_mse") -> dict:
     folder.mkdir(parents=True, exist_ok=True)
     with Image.open(source) as image:
         rgb = np.asarray(image.convert("RGB"), dtype=np.uint8)
@@ -50,11 +51,14 @@ def run_one(source: Path, folder: Path, *, max_evaluations: int = len(DOMAIN),
         raise AssertionError("Changed fixed zero-BER research protocol")
 
     begin = perf_counter()
-    energies = upstream_spectral_profile(rgb)
+    if objective not in ("spectral", "rgb_mse"):
+        raise ValueError("objective must be spectral or rgb_mse")
+    energies = (upstream_spectral_profile(rgb) if objective == "spectral"
+                else exact_png_rgb_mse_profile(rgb))
     score_seconds = perf_counter() - begin
     ranked = sorted(DOMAIN, key=lambda d: (energies[d], d))
-    _write_csv(folder / "all_720_spectral_scores.csv", [
-        {"rank": rank, "d1": d, "exact_transform_energy": energies[d]}
+    _write_csv(folder / "all_720_ranked_objectives.csv", [
+        {"rank": rank, "d1": d, "objective_value": energies[d]}
         for rank, d in enumerate(ranked, 1)
     ])
     real_rows: list[dict] = []
@@ -63,7 +67,7 @@ def run_one(source: Path, folder: Path, *, max_evaluations: int = len(DOMAIN),
     with tempfile.TemporaryDirectory() as temp:
         def evaluate(d1: int) -> dict:
             row, measured_qfs = evaluate_d1_early(rgb, d1, Path(temp))
-            real_rows.append({**row, "exact_transform_energy": energies[d1]})
+            real_rows.append({**row, "objective_value": energies[d1]})
             qf_rows.extend(asdict(record) for record in measured_qfs)
             # Atomic-ish incremental archival so real measurements survive even
             # if an out-of-budget run is interrupted.
@@ -79,6 +83,7 @@ def run_one(source: Path, folder: Path, *, max_evaluations: int = len(DOMAIN),
 
         outcome = select_certified(
             energies, evaluate, max_evaluations=max_evaluations,
+            objective=objective,
         )
     total_seconds = perf_counter() - begin
     if len(real_rows) != outcome.evaluations:
@@ -88,38 +93,46 @@ def run_one(source: Path, folder: Path, *, max_evaluations: int = len(DOMAIN),
         "source": source.name,
         "sha256_source_png": sha256(source.read_bytes()).hexdigest(),
         "shape_rgb": list(rgb.shape),
-        "algorithm": "spectral_certificate_qim_exact_finite_domain",
+        "algorithm": "qim_exact_finite_domain_feasibility_certificate",
+        "objective": objective,
         "status": outcome.status,
         "certified": outcome.certified,
         "domain_scored": list([DOMAIN[0], DOMAIN[-1]]),
         "all_integer_steps_scored": len(energies),
-        "score_name": "sum_over_3_channels_and_4x4_blocks"
-                      "_of_delta_sigma0_squared_plus_delta_sigma1_squared",
+        "score_name": (
+            "actual_uint8_rgb_png_mse" if objective == "rgb_mse" else
+            "sum_per_block_delta_sigma0_squared_plus_delta_sigma1_squared"
+        ),
         "score_interpretation": (
-            "Exact SVD/DCT-domain squared Frobenius perturbation. "
-            "Not equal to actual clipped uint8 RGB PNG MSE."
+            "Exact uint8 RGB PNG MSE including all upstream encoding effects"
+            if objective == "rgb_mse" else
+            "Exact SVD/DCT-domain Frobenius squared perturbation; "
+            "not equal to uint8 RGB MSE"
         ),
         "optimality_scope": (
-            "Global optimum of transform-domain energy among all 720 d1 "
-            "subject to actual clean and nine-QF zero bit error certificates"
-        ) if outcome.status == "certified_spectral_global_optimum"
+            ("Global maximum of actual uint8 PNG RGB PSNR" if objective == "rgb_mse"
+             else "Global minimum of exact transform-domain Frobenius energy")
+            + " among all integer d1=1..720 with actual clean and nine-QF "
+              "zero bit error certificates"
+        ) if outcome.status == f"certified_{objective}_global_optimum"
         else "No global feasible optimality claim when search incomplete",
         "fixed_d2": grid.D2,
         "qfs": list(QFS),
         "best_d1": outcome.best_d1,
-        "best_transform_energy": outcome.best_transform_energy,
+        "best_objective_value": outcome.best_transform_energy,
         "best_actual_png_psnr_db": outcome.best_png_psnr_db,
         "evaluated_d1_count": outcome.evaluations,
         "actual_jpeg_attacks": len(qf_rows),
-        "spectral_scoring_seconds": score_seconds,
+        "scoring_seconds": score_seconds,
         "total_wall_seconds": total_seconds,
         "sequence": list(outcome.attempted_steps),
         "clean_and_full_qf_required": True,
-        "note": ("Zero BER is certified by real JPEG. No assumptions of "
-                 "BER monotonicity or independent QFs. RGB PSNR is reported "
-                 "but not part of the proved spectral optimality theorem."),
+        "note": ("Every selected step has nine REAL measured JPEG zero-error "
+                 "checks. Neither BER monotonicity nor QF independence is assumed. "
+                 "Spectral scores prove only spectral optimum; RGB MSE scores prove "
+                 "global PNG PSNR optimum for the fixed 720-element domain."),
     }
-    if outcome.status == "certified_spectral_global_optimum":
+    if outcome.status == f"certified_{objective}_global_optimum":
         # Persist the real marked image selected by the exact upstream embedder.
         destination = folder / "selected_marked.png"
         wm = configured_instance(outcome.best_d1, grid.D2)
@@ -157,10 +170,10 @@ def run_one(source: Path, folder: Path, *, max_evaluations: int = len(DOMAIN),
                 manifest["total_wall_seconds"] - legacy["wall_seconds"]
             ),
             "fairness_note": (
-                "No equal-36-budget claim. Spectral method scores all 720 "
-                "analytically and may make more expensive JPEG evaluations. "
-                "Legacy V2 checks 36 distinct d1. Compare both quality and "
-                "full time/cost, never conflate spectral and RGB metrics."
+                "No equal-36-budget claim. This method ranks all 720 "
+                "candidates and may use more JPEG calls. Legacy V2 uses "
+                "36 candidate evaluations. Compare PSNR and total cost; "
+                "spectral and RGB objectives are distinctly named."
             ),
         }
         (folder / "comparison.json").write_text(
@@ -190,6 +203,8 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--max-evaluations", type=int, default=len(DOMAIN))
     parser.add_argument("--compare-v2", action="store_true")
+    parser.add_argument("--objective", choices=("rgb_mse", "spectral"),
+                        default="rgb_mse")
     args = parser.parse_args()
     files = sorted(args.input_dir.glob("*.png"))
     if not files:
@@ -199,6 +214,7 @@ def main() -> None:
             file, args.output_dir / file.stem,
             max_evaluations=args.max_evaluations,
             compare_v2=args.compare_v2,
+            objective=args.objective,
         )
 
 
